@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - '4.2'
+  - '0.12'
+
+env:
+  - DEBUG="*"
+
+addons:
+  apt:
+    packages:
+      - lintian
+
+after_success:
+  - lintian test/fixtures/out/*.deb
