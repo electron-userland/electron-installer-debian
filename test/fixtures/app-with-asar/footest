@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname "$SCRIPT")
+
+echo "$SCRIPT_PATH/resources/app.asar $@"
