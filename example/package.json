@@ -1,0 +1,28 @@
+{
+  "name": "poopie",
+  "description": "An example app, built with Electron.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Perez Alvarez",
+    "email": "unindented@gmail.com",
+    "url": "http://unindented.org/"
+  },
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "start": "electron .",
+    "exe32": "electron-packager . poopie --platform linux --arch ia32 --out dist/ --ignore \"(dist|node_modules/electron.*)\"",
+    "exe64": "electron-packager . poopie --platform linux --arch x64 --out dist/ --ignore \"(dist|node_modules/electron.*)\"",
+    "deb32": "electron-installer-debian --src dist/poopie-linux-ia32/ --arch i386 --config config.json",
+    "deb64": "electron-installer-debian --src dist/poopie-linux-x64/ --arch amd64 --config config.json",
+    "build": "npm run clean && npm run exe32 && npm run deb32 && npm run exe64 && npm run deb64"
+  },
+  "devDependencies": {
+    "electron-installer-debian": "*",
+    "electron-packager": "*",
+    "electron-prebuilt": "*",
+    "rimraf": "*"
+  }
+}
