@@ -338,10 +338,29 @@ Exec=foo %U
 ```
 
 #### options.icon
-Type: `String`
+Type: `String` or `Object[String:String]`
 Default: `undefined`
 
-Path to the image that will act as icon for the application, used in the [`Icon` field of the `desktop` specification](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html).
+Path to a single image that will act as icon for the application:
+
+```js
+{
+  icon: 'resources/Icon.png'
+}
+```
+
+Or multiple images with their corresponding resolutions:
+
+```js
+{
+  icon: {
+    '48x48': 'resources/Icon48.png',
+    '64x64': 'resources/Icon64.png',
+    '128x128': 'resources/Icon128.png',
+    '256x256': 'resources/Icon256.png'
+  }
+}
+```
 
 #### options.categories
 Type: `Array[String]`

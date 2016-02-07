@@ -264,15 +264,40 @@ var createDesktop = function (options, dir, callback) {
 }
 
 /**
- * Create icon for the package.
+ * Create pixmap icon for the package.
  */
-var createIcon = function (options, dir, callback) {
+var createPixmapIcon = function (options, dir, callback) {
   var iconFile = path.join(dir, 'usr/share/pixmaps', options.name + '.png')
   options.logger('Creating icon file at ' + iconFile)
 
   fs.copy(options.icon, iconFile, function (err) {
     callback(err && new Error('Error creating icon file: ' + (err.message || err)))
   })
+}
+
+/**
+ * Create hicolor icon for the package.
+ */
+var createHicolorIcon = function (options, dir, callback) {
+  async.forEachOf(options.icon, function (icon, resolution, callback) {
+    var iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', options.name + '.png')
+    options.logger('Creating icon file at ' + iconFile)
+
+    fs.copy(icon, iconFile, callback)
+  }, function (err) {
+    callback(err && new Error('Error creating icon file: ' + (err.message || err)))
+  })
+}
+
+/**
+ * Create icon for the package.
+ */
+var createIcon = function (options, dir, callback) {
+  if (_.isObject(options.icon)) {
+    createHicolorIcon(options, dir, callback)
+  } else {
+    createPixmapIcon(options, dir, callback)
+  }
 }
 
 /**
