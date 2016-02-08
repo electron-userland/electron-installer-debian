@@ -1,7 +1,7 @@
 'use strict'
 
-var fs = require('fs')
 var rimraf = require('rimraf')
+var access = require('./helpers/access')
 var spawn = require('./helpers/spawn')
 
 describe('cli', function () {
@@ -23,7 +23,7 @@ describe('cli', function () {
     })
 
     it('generates a `.deb` package', function (done) {
-      fs.access(dest + 'footest_0.0.1_i386.deb', done)
+      access(dest + 'footest_0.0.1_i386.deb', done)
     })
   })
 
@@ -39,7 +39,7 @@ describe('cli', function () {
     })
 
     it('generates a `.deb` package', function (done) {
-      fs.access(dest + 'bartest_0.0.1_amd64.deb', done)
+      access(dest + 'bartest_0.0.1_amd64.deb', done)
     })
   })
 })

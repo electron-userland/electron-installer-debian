@@ -2,9 +2,9 @@
 
 var installer = require('..')
 
-var fs = require('fs')
 var path = require('path')
 var rimraf = require('rimraf')
+var access = require('./helpers/access')
 
 describe('module', function () {
   this.timeout(10000)
@@ -38,7 +38,7 @@ describe('module', function () {
     })
 
     it('generates a `.deb` package', function (done) {
-      fs.access(dest + 'footest_i386.deb', done)
+      access(dest + 'footest_i386.deb', done)
     })
   })
 
@@ -82,7 +82,7 @@ describe('module', function () {
     })
 
     it('generates a `.deb` package', function (done) {
-      fs.access(dest + 'bartest_amd64.deb', done)
+      access(dest + 'bartest_amd64.deb', done)
     })
   })
 })
