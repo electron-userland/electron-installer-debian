@@ -4,15 +4,18 @@ var installer = require('..')
 
 var fs = require('fs')
 var path = require('path')
+var rimraf = require('rimraf')
 
 describe('module', function () {
   this.timeout(10000)
 
   describe('with an app with asar', function (test) {
+    var dest = 'test/fixtures/out/foo/'
+
     before(function (done) {
       installer({
         src: 'test/fixtures/app-with-asar/',
-        dest: 'test/fixtures/out/',
+        dest: dest,
         rename: function (dest) {
           return path.join(dest, '<%= name %>_<%= arch %>.deb')
         },
@@ -30,16 +33,22 @@ describe('module', function () {
       }, done)
     })
 
+    after(function (done) {
+      rimraf(dest, done)
+    })
+
     it('generates a `.deb` package', function (done) {
-      fs.access('test/fixtures/out/footest_i386.deb', done)
+      fs.access(dest + 'footest_i386.deb', done)
     })
   })
 
   describe('with an app without asar', function (test) {
+    var dest = 'test/fixtures/out/bar/'
+
     before(function (done) {
       installer({
         src: 'test/fixtures/app-without-asar/',
-        dest: 'test/fixtures/out/',
+        dest: dest,
         rename: function (dest) {
           return path.join(dest, '<%= name %>_<%= arch %>.deb')
         },
@@ -68,8 +77,12 @@ describe('module', function () {
       }, done)
     })
 
+    after(function (done) {
+      rimraf(dest, done)
+    })
+
     it('generates a `.deb` package', function (done) {
-      fs.access('test/fixtures/out/bartest_amd64.deb', done)
+      fs.access(dest + 'bartest_amd64.deb', done)
     })
   })
 })
