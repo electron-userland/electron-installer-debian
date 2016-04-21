@@ -370,6 +370,12 @@ Categories in which the application should be shown in a menu, used in the [`Cat
 
 For possible values check out the [Desktop Menu Specification](http://standards.freedesktop.org/menu-spec/latest/apa.html).
 
+#### options.mimeType
+Type: `Array[String]`
+Default: `[]`
+
+MIME types the application is able to open, used in the [`MimeType` field of the `desktop` specification](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html).
+
 #### options.lintianOverrides
 Type: `Array[String]`
 Default: `[]`
