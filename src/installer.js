@@ -172,8 +172,9 @@ var getDefaults = function (data, callback) {
         'Utility'
       ],
 
-      lintianOverrides: [
-      ]
+      mimeType: [],
+
+      lintianOverrides: []
     }
 
     callback(err, defaults)

@@ -68,6 +68,9 @@ describe('module', function () {
           categories: [
             'Utility'
           ],
+          mimeType: [
+            'text/plain'
+          ],
           lintianOverrides: [
             'changelog-file-missing-in-native-package',
             'executable-not-elf-or-script',

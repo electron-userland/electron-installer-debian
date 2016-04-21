@@ -7,4 +7,5 @@
 <% } %>Type=Application
 StartupNotify=true
 <% if (categories && categories.length) { %>Categories=<%= categories.join(';') %>;
-<% } %>MimeType=text/plain;
+<% } %><% if (mimeType && mimeType.length) { %>MimeType=<%= mimeType.join(';') %>;
+<% } %>
