@@ -1,10 +1,10 @@
 language: node_js
 node_js:
-  - '4.2'
+  - '4'
   - '0.12'
 
 env:
-  - DEBUG="*"
+  - DEBUG="electron-installer-debian"
 
 addons:
   apt:
