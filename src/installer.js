@@ -116,7 +116,9 @@ var getDefaults = function (data, callback) {
       genericName: pkg.genericName || pkg.productName || pkg.name,
       description: pkg.description,
       productDescription: pkg.productDescription || pkg.description,
-      version: pkg.version || '0.0.0',
+      // Use '~' on pre-releases for proper debain version ordering.
+      // See https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Version
+      version: (pkg.version || '0.0.0').replace(/(\d)[_\.\-\+]?((RC|rc|pre|dev|beta|alpha)[_\.\-\+]?\d*)$/, '$1~$2'),
       revision: pkg.revision || '1',
 
       section: 'utils',
