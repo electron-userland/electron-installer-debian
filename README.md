@@ -296,7 +296,7 @@ Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests
 
 #### options.maintainer
 Type: `String`
-Default: `package.author.name (package.author.email)`
+Default: `package.author.name <package.author.email>`
 
 Maintainer of the package, used in the [`Maintainer` field of the `control` specification](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Maintainer).
 
