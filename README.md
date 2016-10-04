@@ -328,7 +328,7 @@ For example, providing this configuration:
 Will create a package with the following symlink:
 
 ```
-usr/bin/foo@ -> ../share/foo/resources/cli/launcher/sh
+usr/bin/foo@ -> ../lib/foo/resources/cli/launcher.sh
 ```
 
 And a desktop specification with the following `Exec` key:
