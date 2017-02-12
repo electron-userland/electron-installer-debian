@@ -127,19 +127,17 @@ var getDefaults = function (data, callback) {
       size: Math.ceil(size / 1024),
 
       depends: [
-        'git',
-        'gconf2',
         'gconf-service',
+        'gconf2',
         'gvfs-bin',
         'libc6',
         'libcap2',
-        'libgtk2.0-0',
-        'libudev0 | libudev1',
         'libgcrypt11 | libgcrypt20',
+        'libgtk2.0-0',
         'libnotify4',
         'libnss3',
+        'libudev0 | libudev1',
         'libxtst6',
-        'python',
         'xdg-utils'
       ],
       recommends: [
