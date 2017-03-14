@@ -45,10 +45,14 @@ var spawn = function (options, command, args, callback) {
 
   spawnedProcess.on('error', function (err) {
     if (err.name === 'ENOENT') {
-      var installer = process.platform === 'darwin' ? 'brew' : 'apt-get'
+      var isFakeroot = err.syscall === 'spawn fakeroot'
+      var isDpkg = !isFakeroot && err.syscall === 'spawn dpkg'
 
-      if (err.message.indexOf('fakeroot') > -1) {
-        err.message = 'Your system is missing the fakeroot package. Try  e.g. `' + installer + ' install fakeroot`'
+      if (isFakeroot || isDpkg) {
+        var installer = process.platform === 'darwin' ? 'brew' : 'apt-get'
+        var pkg = isFakeroot ? 'fakeroot' : 'dpkg'
+
+        err.message = 'Your system is missing the fakeroot package. Try  e.g. `' + installer + ' install ' + pkg + '`'
       }
     }
 
