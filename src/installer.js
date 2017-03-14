@@ -44,11 +44,11 @@ var spawn = function (options, command, args, callback) {
   })
 
   spawnedProcess.on('error', function (err) {
-    if (err.name = 'ENOENT') {
+    if (err.name === 'ENOENT') {
       var installer = process.platform === 'darwin' ? 'brew' : 'apt-get'
 
       if (err.message.indexOf('fakeroot') > -1) {
-        err.message = 'Your system is missing the fakeroot package. Try ' + installer + ' install fakeroot'
+        err.message = 'Your system is missing the fakeroot package. Try  e.g. `' + installer + ' install fakeroot`'
       }
     }
 
