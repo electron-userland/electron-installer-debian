@@ -115,4 +115,31 @@ describe('module', function () {
       access(dest + 'bartest_amd64.deb', done)
     })
   })
+
+  describe('with an app with a productDescription containing a blank line', function (test) {
+    var dest = 'test/fixtures/out/quux/'
+
+    before(function (done) {
+      installer({
+        src: 'test/fixtures/app-without-asar/',
+        dest: dest,
+        rename: function (dest) {
+          return path.join(dest, '<%= name %>_<%= arch %>.deb')
+        },
+
+        options: {
+          productDescription: 'Line one\n\nLine 2 after a blank line',
+          arch: 'amd64'
+        }
+      }, done)
+    })
+
+    after(function (done) {
+      rimraf(dest, done)
+    })
+
+    it('generates a `.deb` package', function (done) {
+      access(dest + 'bartest_amd64.deb', done)
+    })
+  })
 })
