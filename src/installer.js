@@ -128,7 +128,7 @@ var getDefaults = function (data, callback) {
       genericName: pkg.genericName || pkg.productName || pkg.name,
       description: pkg.description,
       productDescription: pkg.productDescription || pkg.description,
-      // Use '~' on pre-releases for proper debain version ordering.
+      // Use '~' on pre-releases for proper Debian version ordering.
       // See https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Version
       version: (pkg.version || '0.0.0').replace(/(\d)[_.+-]?((RC|rc|pre|dev|beta|alpha)[_.+-]?\d*)$/, '$1~$2'),
       revision: pkg.revision || '1',
@@ -200,6 +200,12 @@ var getOptions = function (data, defaults, callback) {
   // Flatten everything for ease of use.
   var options = _.defaults({}, data, data.options, defaults)
 
+  // Replace all newlines in the description with spaces, since it's supposed
+  // to be one line.
+  options.description = options.description.replace(/[\r\n]+/g, ' ')
+
+  // Ensure blank lines have the "." that denotes a blank line in the control file.
+  options.productDescription = options.productDescription.replace(/^$/m, '.')
   // Wrap the extended description to avoid lintian warning about
   // `extended-description-line-too-long`.
   options.productDescription = wrap(options.productDescription, {width: 80, indent: ' '})
