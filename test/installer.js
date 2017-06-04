@@ -88,4 +88,31 @@ describe('module', function () {
       access(dest + 'bartest_amd64.deb', done)
     })
   })
+
+  describe('with an app with a multi-line description', function (test) {
+    var dest = 'test/fixtures/out/baz/'
+
+    before(function (done) {
+      installer({
+        src: 'test/fixtures/app-without-asar/',
+        dest: dest,
+        rename: function (dest) {
+          return path.join(dest, '<%= name %>_<%= arch %>.deb')
+        },
+
+        options: {
+          description: 'Line one\nLine 2\rLine3\r\nLine 4',
+          arch: 'amd64'
+        }
+      }, done)
+    })
+
+    after(function (done) {
+      rimraf(dest, done)
+    })
+
+    it('generates a `.deb` package', function (done) {
+      access(dest + 'bartest_amd64.deb', done)
+    })
+  })
 })
