@@ -250,7 +250,7 @@ var createControl = function (options, dir, callback) {
 /**
  * Copy debian scripts.
  */
-var copyScripts = function(options, dir, callback) {
+var copyScripts = function (options, dir, callback) {
   const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
 
   async.forEachOf(options.scripts, function (item, key, callback) {
