@@ -248,6 +248,26 @@ var createControl = function (options, dir, callback) {
 }
 
 /**
+ * Copy debian scripts.
+ */
+var copyScripts = function(options, dir, callback) {
+  const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
+
+  async.forEachOf(options.scripts, function (item, key, callback) {
+    if (_.includes(scriptNames, key)) {
+      var scriptFile = path.join(dir, 'DEBIAN', key)
+      options.logger('Creating script file at ' + scriptFile)
+
+      fs.copy(item, scriptFile, callback)
+    } else {
+      callback(new Error('Wrong executable script name: ' + key))
+    }
+  }, function (err) {
+    callback(err && new Error('Error creating script files: ' + (err.message || err)))
+  })
+}
+
+/**
  * Create the binary for the package.
  */
 var createBinary = function (options, dir, callback) {
@@ -390,6 +410,7 @@ var createContents = function (options, dir, callback) {
 
   async.parallel([
     async.apply(createControl, options, dir),
+    async.apply(copyScripts, options, dir),
     async.apply(createBinary, options, dir),
     async.apply(createDesktop, options, dir),
     async.apply(createIcon, options, dir),
