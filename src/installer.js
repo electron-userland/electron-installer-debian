@@ -11,6 +11,7 @@ var glob = require('glob')
 var path = require('path')
 var temp = require('temp').track()
 var wrap = require('word-wrap')
+var mkdirp = require('mkdirp')
 
 var pkg = require('../package.json')
 
@@ -276,11 +277,12 @@ var createBinary = function (options, dir, callback) {
   var binDest = path.join(binDir, options.name)
   options.logger('Symlinking binary from ' + binSrc + ' to ' + binDest)
 
-  async.waterfall([
-    async.apply(fs.ensureDir, binDir),
-    async.apply(fs.symlink, binSrc, binDest, 'file')
-  ], function (err) {
-    callback(err && new Error('Error creating binary file: ' + (err.message || err)))
+  mkdirp(binDir, '0755', function (err, made) {
+    if (err) callback(err && new Error('Error creating binary path: ' + (err.message || err)))
+
+    fs.symlink(binSrc, binDest, 'file', function (err) {
+      callback(err && new Error('Error creating binary file: ' + (err.message || err)))
+    })
   })
 }
 
@@ -294,11 +296,16 @@ var createDesktop = function (options, dir, callback) {
   var desktopDest = path.join(dir, 'usr/share/applications', options.name + '.desktop')
   options.logger('Creating desktop file at ' + desktopDest)
 
-  async.waterfall([
-    async.apply(generateTemplate, options, desktopSrc),
-    async.apply(fs.outputFile, desktopDest)
-  ], function (err) {
-    callback(err && new Error('Error creating desktop file: ' + (err.message || err)))
+  mkdirp(path.dirname(desktopDest), '0755', function (err, made) {
+    if (err) callback(err && new Error('Error creating desktop path: ' + (err.message || err)))
+
+    async.waterfall([
+      async.apply(generateTemplate, options, desktopSrc),
+      async.apply(fs.outputFile, desktopDest),
+      async.apply(fs.chmod, desktopDest, '0644')
+    ], function (err) {
+      callback(err && new Error('Error creating desktop file: ' + (err.message || err)))
+    })
   })
 }
 
@@ -309,8 +316,12 @@ var createPixmapIcon = function (options, dir, callback) {
   var iconFile = path.join(dir, 'usr/share/pixmaps', options.name + '.png')
   options.logger('Creating icon file at ' + iconFile)
 
-  fs.copy(options.icon, iconFile, function (err) {
-    callback(err && new Error('Error creating icon file: ' + (err.message || err)))
+  mkdirp(path.dirname(iconFile), '0755', function (err, made) {
+    if (err) callback(err && new Error('Error creating icon path: ' + (err.message || err)))
+
+    fs.copy(options.icon, iconFile, function (err) {
+      callback(err && new Error('Error creating icon file: ' + (err.message || err)))
+    })
   })
 }
 
@@ -322,7 +333,9 @@ var createHicolorIcon = function (options, dir, callback) {
     var iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', options.name + '.png')
     options.logger('Creating icon file at ' + iconFile)
 
-    fs.copy(icon, iconFile, callback)
+    mkdirp(path.dirname(iconFile), '0755', function (err, made) {
+      err ? callback(err) : fs.copy(icon, iconFile, callback)
+    })
   }, function (err) {
     callback(err && new Error('Error creating icon file: ' + (err.message || err)))
   })
@@ -346,11 +359,16 @@ var createCopyright = function (options, dir, callback) {
   var copyrightFile = path.join(dir, 'usr/share/doc', options.name, 'copyright')
   options.logger('Creating copyright file at ' + copyrightFile)
 
-  async.waterfall([
-    async.apply(readLicense, options),
-    async.apply(fs.outputFile, copyrightFile)
-  ], function (err) {
-    callback(err && new Error('Error creating copyright file: ' + (err.message || err)))
+  mkdirp(path.dirname(copyrightFile), '0755', function (err, made) {
+    if (err) callback(err && new Error('Error creating copyright path: ' + (err.message || err)))
+
+    async.waterfall([
+      async.apply(readLicense, options),
+      async.apply(fs.outputFile, copyrightFile),
+      async.apply(fs.chmod, copyrightFile, '0644')
+    ], function (err) {
+      callback(err && new Error('Error creating copyright file: ' + (err.message || err)))
+    })
   })
 }
 
@@ -362,11 +380,16 @@ var createOverrides = function (options, dir, callback) {
   var overridesDest = path.join(dir, 'usr/share/lintian/overrides', options.name)
   options.logger('Creating lintian overrides at ' + overridesDest)
 
-  async.waterfall([
-    async.apply(generateTemplate, options, overridesSrc),
-    async.apply(fs.outputFile, overridesDest)
-  ], function (err) {
-    callback(err && new Error('Error creating lintian overrides file: ' + (err.message || err)))
+  mkdirp(path.dirname(overridesDest), '0755', function (err, made) {
+    if (err) callback(err && new Error('Error creating lintian overrides path: ' + (err.message || err)))
+
+    async.waterfall([
+      async.apply(generateTemplate, options, overridesSrc),
+      async.apply(fs.outputFile, overridesDest),
+      async.apply(fs.chmod, overridesDest, '0644')
+    ], function (err) {
+      callback(err && new Error('Error creating lintian overrides file: ' + (err.message || err)))
+    })
   })
 }
 
@@ -375,13 +398,18 @@ var createOverrides = function (options, dir, callback) {
  */
 var createApplication = function (options, dir, callback) {
   var applicationDir = path.join(dir, 'usr/lib', options.name)
+  var licenseFile = path.join(applicationDir, 'LICENSE')
   options.logger('Copying application to ' + applicationDir)
 
-  async.waterfall([
-    async.apply(fs.ensureDir, applicationDir),
-    async.apply(fs.copy, options.src, applicationDir)
-  ], function (err) {
-    callback(err && new Error('Error copying application directory: ' + (err.message || err)))
+  mkdirp(applicationDir, '0755', function (err, made) {
+    if (err) callback(err && new Error('Error creating application directory: ' + (err.message || err)))
+
+    async.waterfall([
+      async.apply(fs.copy, options.src, applicationDir),
+      async.apply(fs.unlink, licenseFile)
+    ], function (err) {
+      callback(err && new Error('Error copying application directory: ' + (err.message || err)))
+    })
   })
 }
 
@@ -395,7 +423,7 @@ var createDir = function (options, callback) {
     async.apply(temp.mkdir, 'electron-'),
     function (dir, callback) {
       dir = path.join(dir, options.name + '_' + options.version + '_' + options.arch)
-      fs.ensureDir(dir, callback)
+      mkdirp(dir, '0755', callback)
     }
   ], function (err, dir) {
     callback(err && new Error('Error creating temporary directory: ' + (err.message || err)), dir)
