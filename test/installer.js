@@ -7,9 +7,10 @@ var fs = require('fs-extra')
 var path = require('path')
 var rimraf = require('rimraf')
 var access = require('./helpers/access')
+var child = require('child_process')
 
 describe('module', function () {
-  this.timeout(10000)
+  this.timeout(30000)
 
   describe('with an app with asar', function (test) {
     var dest = 'test/fixtures/out/foo/'
@@ -75,15 +76,8 @@ describe('module', function () {
           ],
           lintianOverrides: [
             'changelog-file-missing-in-native-package',
-            'executable-not-elf-or-script',
-            'extra-license-file'
-          ],
-          scripts: {
-            preinst: 'test/fixtures/debian-scripts/preinst.sh',
-            postinst: 'test/fixtures/debian-scripts/postinst.sh',
-            prerm: 'test/fixtures/debian-scripts/prerm.sh',
-            postrm: 'test/fixtures/debian-scripts/postrm.sh'
-          }
+            'executable-not-elf-or-script'
+          ]
         }
       }, done)
     })
