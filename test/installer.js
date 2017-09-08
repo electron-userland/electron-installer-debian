@@ -75,7 +75,13 @@ describe('module', function () {
             'changelog-file-missing-in-native-package',
             'executable-not-elf-or-script',
             'extra-license-file'
-          ]
+          ],
+          scripts: {
+            preinst: 'test/fixtures/debian-scripts/preinst.sh',
+            postinst: 'test/fixtures/debian-scripts/postinst.sh',
+            prerm: 'test/fixtures/debian-scripts/prerm.sh',
+            postrm: 'test/fixtures/debian-scripts/postrm.sh'
+          }
         }
       }, done)
     })

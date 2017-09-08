@@ -382,6 +382,24 @@ Default: `[]`
 
 You can use these to quieten [`lintian`](https://lintian.debian.org/manual/).
 
+#### options.scripts
+Type: `Object[String:String]`
+Default: `undefined`
+
+Path to package maintainer scripts with their corresponding name, used in the [installation procedure](https://www.debian.org/doc/debian-policy/ch-maintainerscripts.html):
+
+```js
+{
+  scripts: {
+    'preinst': 'resources/preinst_script',
+    'postinst': 'resources/postinst_script',
+    'prerm': 'resources/prerm_script',
+    'postrm': 'resources/postrm_script'
+  }
+}
+```
+You can read more about [package maintainer scripts](https://www.debian.org/doc/debian-policy/ch-maintainerscripts.html)
+
 
 ## Meta
 
