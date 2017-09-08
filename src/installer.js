@@ -320,6 +320,7 @@ var createPixmapIcon = function (options, dir, callback) {
     if (err) callback(err && new Error('Error creating icon path: ' + (err.message || err)))
 
     fs.copy(options.icon, iconFile, function (err) {
+      if (!err) fs.chmod(iconFile, '0644')
       callback(err && new Error('Error creating icon file: ' + (err.message || err)))
     })
   })
@@ -334,7 +335,12 @@ var createHicolorIcon = function (options, dir, callback) {
     options.logger('Creating icon file at ' + iconFile)
 
     mkdirp(path.dirname(iconFile), '0755', function (err, made) {
-      err ? callback(err) : fs.copy(icon, iconFile, callback)
+      if (err) callback(err)
+
+      fs.copy(icon, iconFile, function (err) {
+        if (!err) fs.chmod(iconFile, '0644')
+        callback(err)
+      })
     })
   }, function (err) {
     callback(err && new Error('Error creating icon file: ' + (err.message || err)))
