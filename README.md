@@ -400,6 +400,12 @@ Path to package maintainer scripts with their corresponding name, used in the [i
 ```
 You can read more about [package maintainer scripts](https://www.debian.org/doc/debian-policy/ch-maintainerscripts.html)
 
+#### options.desktopTemplate
+Type: `String`
+Default: [`resources/desktop.ejs`](https://github.com/unindented/electron-installer-debian/blob/master/resources/desktop.ejs)
+
+The absolute path to a custom template for the generated [FreeDesktop.org desktop
+entry](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html) file.
 
 ## Meta
 
