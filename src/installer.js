@@ -70,7 +70,7 @@ var spawn = function (options, command, args, callback) {
 }
 
 /**
- * Read `package.json` either from `resources.app.asar` (if the app is packaged)
+ * Read `package.json` either from `resources/app.asar` (if the app is packaged)
  * or from `resources/app/package.json` (if it is not).
  */
 var readMeta = function (options, callback) {
