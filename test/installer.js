@@ -9,7 +9,7 @@ var rimraf = require('rimraf')
 var access = require('./helpers/access')
 
 describe('module', function () {
-  this.timeout(10000)
+  this.timeout(30000)
 
   describe('with an app with asar', function (test) {
     var dest = 'test/fixtures/out/foo/'
@@ -75,15 +75,8 @@ describe('module', function () {
           ],
           lintianOverrides: [
             'changelog-file-missing-in-native-package',
-            'executable-not-elf-or-script',
-            'extra-license-file'
-          ],
-          scripts: {
-            preinst: 'test/fixtures/debian-scripts/preinst.sh',
-            postinst: 'test/fixtures/debian-scripts/postinst.sh',
-            prerm: 'test/fixtures/debian-scripts/prerm.sh',
-            postrm: 'test/fixtures/debian-scripts/postrm.sh'
-          }
+            'executable-not-elf-or-script'
+          ]
         }
       }, done)
     })
@@ -188,6 +181,61 @@ describe('module', function () {
               done()
             }
           })
+        })
+      })
+    })
+  })
+
+  describe('with an app with asar and debian scripts', function (test) {
+    var dest = 'test/fixtures/out/ewrf/'
+
+    before(function (done) {
+      installer({
+        src: 'test/fixtures/app-with-asar/',
+        dest: dest,
+        rename: function (dest) {
+          return path.join(dest, '<%= name %>_<%= arch %>.deb')
+        },
+
+        options: {
+          productDescription: 'Just a test.',
+          section: 'devel',
+          priority: 'optional',
+          arch: 'i386',
+          depends: [],
+          recommends: [],
+          suggests: [],
+          categories: [],
+          scripts: {
+            preinst: 'test/fixtures/debian-scripts/preinst.sh',
+            postinst: 'test/fixtures/debian-scripts/postinst.sh',
+            prerm: 'test/fixtures/debian-scripts/prerm.sh',
+            postrm: 'test/fixtures/debian-scripts/postrm.sh'
+          },
+          lintianOverrides: [
+            'binary-without-manpage',
+            'debian-changelog-file-missing',
+            'executable-not-elf-or-script'
+          ]
+        }
+      }, done)
+    })
+
+    after(function (done) {
+      rimraf(dest, done)
+    })
+
+    it('passes lintian checks', function (done) {
+      access(dest + 'footest_i386.deb', function () {
+        child.exec('lintian ' + dest + 'footest_i386.deb', function (err, stdout, stderr) {
+          if (err) {
+            console.log('error')
+            done(new Error(err + stdout))
+          } else if (stdout.match(/\n/g).length > 1) {
+            done(new Error('Warnings not overriding:\n' + stdout))
+          } else if (stdout.match(/\n/g).length === 1) {
+            done()
+          }
         })
       })
     })

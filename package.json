@@ -38,6 +38,7 @@
     "get-folder-size": "^1.0.0",
     "glob": "^7.0.0",
     "lodash": "^4.13.0",
+    "mkdirp": "^0.5.1",
     "temp": "^0.8.3",
     "word-wrap": "^1.1.0",
     "yargs": "^7.0.2"
