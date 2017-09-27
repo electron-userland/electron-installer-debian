@@ -12,7 +12,6 @@ addons:
       - fakeroot
       - lintian
       - fakeroot
-      - dpkg
 
 deploy:
   provider: npm
