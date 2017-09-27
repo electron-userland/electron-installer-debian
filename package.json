@@ -40,7 +40,7 @@
     "lodash": "^4.13.0",
     "temp": "^0.8.3",
     "word-wrap": "^1.1.0",
-    "yargs": "^7.0.2"
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
     "chai": "^3.4.1",
