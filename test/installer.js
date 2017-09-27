@@ -2,6 +2,8 @@
 
 var installer = require('..')
 
+var child = require('child_process')
+var fs = require('fs-extra')
 var path = require('path')
 var rimraf = require('rimraf')
 var access = require('./helpers/access')
@@ -146,6 +148,48 @@ describe('module', function () {
 
     it('generates a `.deb` package', function (done) {
       access(dest + 'bartest_amd64.deb', done)
+    })
+  })
+
+  describe('with a custom desktop template', function (test) {
+    var dest = 'test/fixtures/out/custom-desktop/'
+
+    before(function (done) {
+      installer({
+        src: 'test/fixtures/app-without-asar/',
+        dest: dest,
+        rename: function (dest) {
+          return path.join(dest, '<%= name %>_<%= arch %>.deb')
+        },
+
+        options: {
+          arch: 'amd64',
+          desktopTemplate: 'test/fixtures/custom.desktop.ejs'
+        }
+      }, done)
+    })
+
+    after(function (done) {
+      rimraf(dest, done)
+    })
+
+    it('generates a custom `.desktop` file', function (done) {
+      access(dest + 'bartest_amd64.deb', function () {
+        child.exec('dpkg-deb -x bartest_amd64.deb .', { cwd: dest }, function (err, stdout, stderr) {
+          if (err) return done(err)
+          if (stderr) return done(new Error(stderr.toString()))
+
+          fs.readFile(dest + 'usr/share/applications/bartest.desktop', function (err, data) {
+            if (err) return done(err)
+
+            if (data.toString().indexOf('Comment=Hardcoded comment') === -1) {
+              done(new Error('Did not use custom template'))
+            } else {
+              done()
+            }
+          })
+        })
+      })
     })
   })
 })

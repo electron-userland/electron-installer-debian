@@ -70,7 +70,7 @@ var spawn = function (options, command, args, callback) {
 }
 
 /**
- * Read `package.json` either from `resources.app.asar` (if the app is packaged)
+ * Read `package.json` either from `resources/app.asar` (if the app is packaged)
  * or from `resources/app/package.json` (if it is not).
  */
 var readMeta = function (options, callback) {
@@ -290,7 +290,7 @@ var createBinary = function (options, dir, callback) {
  * See: http://standards.freedesktop.org/desktop-entry-spec/latest/
  */
 var createDesktop = function (options, dir, callback) {
-  var desktopSrc = path.resolve(__dirname, '../resources/desktop.ejs')
+  var desktopSrc = options.desktopTemplate || path.resolve(__dirname, '../resources/desktop.ejs')
   var desktopDest = path.join(dir, 'usr/share/applications', options.name + '.desktop')
   options.logger('Creating desktop file at ' + desktopDest)
 
