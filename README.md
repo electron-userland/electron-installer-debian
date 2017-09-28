@@ -7,7 +7,7 @@
 
 ## Requirements
 
-This tool requires `fakeroot` and `dpkg` to build the `.deb` package.
+This tool requires Node 4 or greater, `fakeroot`, and `dpkg` to build the `.deb` package.
 
 I'd recommend building your packages on your target platform, but if you insist on using Mac OS X, you can install these tools through [Homebrew](http://brew.sh/):
 
