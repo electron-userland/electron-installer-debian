@@ -5,7 +5,6 @@ var installer = require('..')
 var child = require('child_process')
 var fs = require('fs-extra')
 var path = require('path')
-var rimraf = require('rimraf')
 var access = require('./helpers/access')
 
 describe('module', function () {
@@ -36,7 +35,7 @@ describe('module', function () {
     })
 
     after(function (done) {
-      rimraf(dest, done)
+      fs.remove(dest, done)
     })
 
     it('generates a `.deb` package', function (done) {
@@ -82,7 +81,7 @@ describe('module', function () {
     })
 
     after(function (done) {
-      rimraf(dest, done)
+      fs.remove(dest, done)
     })
 
     it('generates a `.deb` package', function (done) {
@@ -109,7 +108,7 @@ describe('module', function () {
     })
 
     after(function (done) {
-      rimraf(dest, done)
+      fs.remove(dest, done)
     })
 
     it('generates a `.deb` package', function (done) {
@@ -136,7 +135,7 @@ describe('module', function () {
     })
 
     after(function (done) {
-      rimraf(dest, done)
+      fs.remove(dest, done)
     })
 
     it('generates a `.deb` package', function (done) {
@@ -163,7 +162,7 @@ describe('module', function () {
     })
 
     after(function (done) {
-      rimraf(dest, done)
+      fs.remove(dest, done)
     })
 
     it('generates a custom `.desktop` file', function (done) {
@@ -222,7 +221,7 @@ describe('module', function () {
     })
 
     after(function (done) {
-      rimraf(dest, done)
+      fs.remove(dest, done)
     })
 
     it('passes lintian checks', function (done) {
