@@ -1,7 +1,7 @@
 {
   "name": "electron-installer-debian",
   "description": "Create a Debian package for your Electron app.",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "license": "MIT",
   "author": {
     "name": "Daniel Perez Alvarez",
@@ -32,25 +32,27 @@
   },
   "dependencies": {
     "asar": "^0.13.0",
-    "async": "^2.0.0",
-    "debug": "^2.2.0",
-    "fs-extra": "^1.0.0",
+    "async": "^2.5.0",
+    "debug": "^3.1.0",
+    "fs-extra": "^4.0.2",
     "get-folder-size": "^1.0.0",
-    "glob": "^7.0.0",
-    "lodash": "^4.13.0",
+    "glob": "^7.1.2",
+    "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "temp": "^0.8.3",
-    "word-wrap": "^1.1.0",
-    "yargs": "^7.0.2"
+    "word-wrap": "^1.2.3",
+    "yargs": "^9.0.1"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "eslint": "^3.2.2",
-    "eslint-config-standard": "^6.0.0",
-    "eslint-plugin-promise": "^3.0.0",
-    "eslint-plugin-standard": "^2.0.0",
-    "mocha": "^3.0.0",
-    "retry": "^0.10.0",
-    "rimraf": "^2.5.1"
+    "chai": "^4.1.2",
+    "eslint": "^4.7.2",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "mocha": "^3.5.3",
+    "retry": "^0.10.1",
+    "rimraf": "^2.6.2"
   }
 }
