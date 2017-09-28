@@ -331,7 +331,12 @@ var createPixmapIcon = function (options, dir, callback) {
  */
 var createHicolorIcon = function (options, dir, callback) {
   async.forEachOf(options.icon, function (icon, resolution, callback) {
-    var iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', options.name + '.png')
+    var iconFile
+    if (resolution === 'scalable') {
+      iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', options.name + '.svg')
+    } else {
+      iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', options.name + '.png')
+    }
     options.logger('Creating icon file at ' + iconFile)
 
     mkdirp(path.dirname(iconFile), '0755', function (err, made) {
