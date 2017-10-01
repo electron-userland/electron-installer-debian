@@ -9,6 +9,7 @@ var fs = require('fs-extra')
 var fsize = require('get-folder-size')
 var glob = require('glob')
 var path = require('path')
+var semver = require('semver')
 var temp = require('temp').track()
 var wrap = require('word-wrap')
 var mkdirp = require('mkdirp')
@@ -112,16 +113,55 @@ var getSize = function (options, callback) {
 }
 
 /**
+ * Determine the dependencies for the `shell.moveItemToTrash` API.
+ */
+var getTrashDepends = function (electronVersion) {
+  if (semver.lt(electronVersion, '1.4.1')) {
+    return 'gvfs-bin'
+  } else if (semver.lt(electronVersion, '1.7.2')) {
+    return 'kde-cli-tools | kde-runtime | trash-cli | gvfs-bin'
+  } else {
+    return 'kde-cli-tools | kde-runtime | trash-cli | libglib2.0-bin | gvfs-bin'
+  }
+}
+
+/**
+ * Determine what the default dependencies should be, based on the Electron
+ * version in use.
+ */
+var getDefaultDepends = function (options, callback) {
+  fs.readFile(path.resolve(options.src, 'version'), (err, tag) => {
+    if (err) return callback(err)
+
+    // The content of the version file is the tag name, e.g. "v1.8.1"
+    var version = tag.toString().slice(1).trim()
+
+    return callback(null, [
+      getTrashDepends(version),
+      'libc6',
+      'libgconf2-4',
+      'libgtk2.0-0',
+      'libnotify4',
+      'libnss3',
+      'libxtst6',
+      'xdg-utils'
+    ])
+  })
+}
+
+/**
  * Get the hash of default options for the installer. Some come from the info
  * read from `package.json`, and some are hardcoded.
  */
 var getDefaults = function (data, callback) {
   async.parallel([
     async.apply(readMeta, data),
-    async.apply(getSize, {src: data.src})
+    async.apply(getSize, {src: data.src}),
+    async.apply(getDefaultDepends, {src: data.src})
   ], function (err, results) {
     var pkg = results[0] || {}
     var size = results[1] || 0
+    var depends = results[2] || []
 
     var defaults = {
       name: pkg.name || 'electron',
@@ -139,20 +179,7 @@ var getDefaults = function (data, callback) {
       arch: undefined,
       size: Math.ceil(size / 1024),
 
-      depends: [
-        'gconf-service',
-        'gconf2',
-        'gvfs-bin',
-        'libc6',
-        'libcap2',
-        'libgcrypt11 | libgcrypt20',
-        'libgtk2.0-0',
-        'libnotify4',
-        'libnss3',
-        'libudev0 | libudev1',
-        'libxtst6',
-        'xdg-utils'
-      ],
+      depends: depends,
       recommends: [
         'lsb-release'
       ],
