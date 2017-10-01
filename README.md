@@ -409,6 +409,16 @@ Default: [`resources/desktop.ejs`](https://github.com/unindented/electron-instal
 The absolute path to a custom template for the generated [FreeDesktop.org desktop
 entry](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html) file.
 
+### Installed Package
+
+The package installs the Electron application into `/usr/lib`, since there are
+architecture-specific files in the package. There was a [discussion in the issue
+tracker](https://github.com/unindented/electron-installer-debian/issues/46) about the
+installation directory.
+
+In versions of `electron-installer-debian` prior to 0.5.0, the app was (incorrectly) installed in
+`/usr/share`.
+
 ## Meta
 
 * Code: `git clone git://github.com/unindented/electron-installer-debian.git`
