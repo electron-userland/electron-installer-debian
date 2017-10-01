@@ -121,8 +121,8 @@ Edit the `scripts` section of your `package.json`:
     "deb64": "electron-installer-debian --src dist/app-linux-x64/ --dest dist/installers/ --arch amd64"
   },
   "devDependencies": {
-    "electron-installer-debian": "*",
-    "electron-packager": "*",
+    "electron-installer-debian": "^0.6.0",
+    "electron-packager": "^9.0.0",
     "electron": "~1.0.0"
   }
 }
