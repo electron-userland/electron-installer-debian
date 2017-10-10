@@ -138,7 +138,6 @@ var getDefaultDepends = function (options, callback) {
 
     return callback(null, [
       getTrashDepends(version),
-      'libc6',
       'libgconf2-4',
       'libgtk2.0-0',
       'libnotify4',
@@ -181,11 +180,12 @@ var getDefaults = function (data, callback) {
 
       depends: depends,
       recommends: [
-        'lsb-release'
+        'pulseaudio | libasound2'
       ],
       suggests: [
         'gir1.2-gnomekeyring-1.0',
-        'libgnome-keyring0'
+        'libgnome-keyring0',
+        'lsb-release'
       ],
       enhances: [
       ],
