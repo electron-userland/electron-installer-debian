@@ -123,10 +123,13 @@ Edit the `scripts` section of your `package.json`:
   "devDependencies": {
     "electron-installer-debian": "^0.6.0",
     "electron-packager": "^9.0.0",
-    "electron": "~1.0.0"
+    "electron": "^2.0.0"
   }
 }
 ```
+
+_*Note*: The versions in `devDependencies` are examples only, please use the latest package versions
+when possible._
 
 And run the script:
 
