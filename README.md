@@ -41,7 +41,7 @@ Say your Electron app lives in `path/to/app`, and has a structure like this:
 ├── README.md
 ├── node_modules
 │   ├── electron-packager
-│   └── electron-prebuilt
+│   └── electron
 ├── package.json
 ├── resources
 │   ├── Icon.png
@@ -121,12 +121,15 @@ Edit the `scripts` section of your `package.json`:
     "deb64": "electron-installer-debian --src dist/app-linux-x64/ --dest dist/installers/ --arch amd64"
   },
   "devDependencies": {
-    "electron-installer-debian": "*",
-    "electron-packager": "*",
-    "electron-prebuilt": "*"
+    "electron-installer-debian": "^0.6.0",
+    "electron-packager": "^9.0.0",
+    "electron": "~1.7.0"
   }
 }
 ```
+
+_*Note*: The versions in `devDependencies` are examples only, please use the latest package versions
+when possible._
 
 And run the script:
 
