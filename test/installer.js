@@ -6,6 +6,7 @@ var child = require('child_process')
 var fs = require('fs-extra')
 var path = require('path')
 var access = require('./helpers/access')
+var chai = require('chai')
 
 describe('module', function () {
   this.timeout(30000)
@@ -154,7 +155,6 @@ describe('module', function () {
         rename: function (dest) {
           return path.join(dest, '<%= name %>_<%= arch %>.deb')
         },
-
         options: {
           arch: 'amd64',
           desktopTemplate: 'test/fixtures/custom.desktop.ejs'
@@ -171,10 +171,8 @@ describe('module', function () {
         child.exec('dpkg-deb -x bartest_amd64.deb .', { cwd: dest }, function (err, stdout, stderr) {
           if (err) return done(err)
           if (stderr) return done(new Error(stderr.toString()))
-
           fs.readFile(dest + 'usr/share/applications/bartest.desktop', function (err, data) {
             if (err) return done(err)
-
             if (data.toString().indexOf('Comment=Hardcoded comment') === -1) {
               done(new Error('Did not use custom template'))
             } else {
@@ -182,6 +180,30 @@ describe('module', function () {
             }
           })
         })
+      })
+    })
+  })
+
+  describe('with no description or productDescription provided', function (test) {
+    var dest = 'test/fixtures/out/quux/'
+
+    after(function (done) {
+      fs.remove(dest, done)
+    })
+
+    it('correct message', function (done) {
+      installer({
+        src: 'test/fixtures/app-without-description-or-product-description/',
+        dest: dest,
+        rename: function (dest) {
+          return path.join(dest, '<%= name %>_<%= arch %>.deb')
+        },
+        options: {
+          arch: 'amd64'
+        }
+      }, (error) => {
+        chai.expect(error.message).to.deep.equal('No Description or ProductDescription provided')
+        done()
       })
     })
   })

@@ -228,15 +228,23 @@ var getOptions = function (data, defaults, callback) {
   // Flatten everything for ease of use.
   var options = _.defaults({}, data, data.options, defaults)
 
+  if (!options.description && !options.productDescription) {
+    return callback(new Error('No Description or ProductDescription provided'))
+  }
+
   // Replace all newlines in the description with spaces, since it's supposed
   // to be one line.
-  options.description = options.description.replace(/[\r\n]+/g, ' ')
+  if (options.description) {
+    options.description = options.description.replace(/[\r\n]+/g, ' ')
+  }
 
   // Ensure blank lines have the "." that denotes a blank line in the control file.
-  options.productDescription = options.productDescription.replace(/^$/m, '.')
-  // Wrap the extended description to avoid lintian warning about
-  // `extended-description-line-too-long`.
-  options.productDescription = wrap(options.productDescription, {width: 80, indent: ' '})
+  if (options.productDescription) {
+    options.productDescription = options.productDescription.replace(/^$/m, '.')
+    // Wrap the extended description to avoid lintian warning about
+    // `extended-description-line-too-long`.
+    options.productDescription = wrap(options.productDescription, {width: 80, indent: ' '})
+  }
 
   callback(null, options)
 }
