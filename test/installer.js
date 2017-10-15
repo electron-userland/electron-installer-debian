@@ -155,6 +155,7 @@ describe('module', function () {
         rename: function (dest) {
           return path.join(dest, '<%= name %>_<%= arch %>.deb')
         },
+
         options: {
           arch: 'amd64',
           desktopTemplate: 'test/fixtures/custom.desktop.ejs'
@@ -171,8 +172,10 @@ describe('module', function () {
         child.exec('dpkg-deb -x bartest_amd64.deb .', { cwd: dest }, function (err, stdout, stderr) {
           if (err) return done(err)
           if (stderr) return done(new Error(stderr.toString()))
+
           fs.readFile(dest + 'usr/share/applications/bartest.desktop', function (err, data) {
             if (err) return done(err)
+
             if (data.toString().indexOf('Comment=Hardcoded comment') === -1) {
               done(new Error('Did not use custom template'))
             } else {
