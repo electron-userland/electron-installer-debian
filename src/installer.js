@@ -232,14 +232,14 @@ var getOptions = function (data, defaults, callback) {
     return callback(new Error('No Description or ProductDescription provided'))
   }
 
-  // Replace all newlines in the description with spaces, since it's supposed
-  // to be one line.
   if (options.description) {
+    // Replace all newlines in the description with spaces, since it's supposed
+    // to be one line.
     options.description = options.description.replace(/[\r\n]+/g, ' ')
   }
 
-  // Ensure blank lines have the "." that denotes a blank line in the control file.
   if (options.productDescription) {
+    // Ensure blank lines have the "." that denotes a blank line in the control file.
     options.productDescription = options.productDescription.replace(/^$/m, '.')
     // Wrap the extended description to avoid lintian warning about
     // `extended-description-line-too-long`.
