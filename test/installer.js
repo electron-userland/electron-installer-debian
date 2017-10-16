@@ -6,6 +6,7 @@ var child = require('child_process')
 var fs = require('fs-extra')
 var path = require('path')
 var access = require('./helpers/access')
+var chai = require('chai')
 
 describe('module', function () {
   this.timeout(30000)
@@ -182,6 +183,30 @@ describe('module', function () {
             }
           })
         })
+      })
+    })
+  })
+
+  describe('with no description or productDescription provided', function (test) {
+    var dest = 'test/fixtures/out/quux/'
+
+    after(function (done) {
+      fs.remove(dest, done)
+    })
+
+    it('correct message', function (done) {
+      installer({
+        src: 'test/fixtures/app-without-description-or-product-description/',
+        dest: dest,
+        rename: function (dest) {
+          return path.join(dest, '<%= name %>_<%= arch %>.deb')
+        },
+        options: {
+          arch: 'amd64'
+        }
+      }, (error) => {
+        chai.expect(error.message).to.deep.equal('No Description or ProductDescription provided')
+        done()
       })
     })
   })
