@@ -7,6 +7,7 @@ var fs = require('fs-extra')
 var path = require('path')
 var access = require('./helpers/access')
 var chai = require('chai')
+var _ = require('lodash')
 
 describe('module', function () {
   this.timeout(30000)
@@ -27,7 +28,6 @@ describe('module', function () {
           section: 'devel',
           priority: 'optional',
           arch: 'i386',
-          depends: [],
           recommends: [],
           suggests: [],
           categories: []
@@ -260,6 +260,64 @@ describe('module', function () {
             done(new Error('Warnings not overriding:\n' + stdout))
           } else if (stdout.match(/\n/g).length === 1) {
             done()
+          }
+        })
+      })
+    })
+  })
+
+  describe('with duplicate dependencies', function (test) {
+    var dest = 'test/fixtures/out/kjfq/'
+
+    // user and default duplicates
+    var depends = ['libnss3', 'libxtst6', 'dbus', 'dbus']
+
+    before(function (done) {
+      installer({
+        src: 'test/fixtures/app-with-asar/',
+        dest: dest,
+        rename: function (dest) {
+          return path.join(dest, '<%= name %>_<%= arch %>.deb')
+        },
+
+        options: {
+          productDescription: 'Just a test.',
+          section: 'devel',
+          priority: 'optional',
+          arch: 'i386',
+          depends: depends,
+          recommends: [],
+          suggests: [],
+          categories: []
+        }
+      }, done)
+    })
+
+    after(function (done) {
+      fs.remove(dest, done)
+    })
+
+    it('removes duplicate "Depends"', function (done) {
+      access(dest + 'footest_i386.deb', function () {
+        child.exec('dpkg-deb -f footest_i386.deb Depends', { cwd: dest }, function (err, stdout, stderr) {
+          if (err) return done(err)
+          if (stderr) return done(new Error(stderr.toString()))
+
+          var destDepends = _.sortBy(_.trimEnd(stdout, '\n').split(', '))
+          var baseDepends = _.sortBy(_.union([
+            'gvfs-bin',
+            'libgconf2-4',
+            'libgtk2.0-0',
+            'libnotify4',
+            'libnss3',
+            'libxtst6',
+            'xdg-utils'
+          ], depends)) // Default and user dependencies
+
+          if (_.isEqual(destDepends, baseDepends)) {
+            done()
+          } else {
+            done(new Error('There are duplicate dependencies'))
           }
         })
       })

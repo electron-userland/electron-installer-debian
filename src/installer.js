@@ -246,6 +246,11 @@ var getOptions = function (data, defaults, callback) {
     options.productDescription = wrap(options.productDescription, {width: 80, indent: ' '})
   }
 
+  // Create a unique-values array from default and user dependencies
+  if (data.options) {
+    options.depends = _.union(defaults.depends, data.options.depends)
+  }
+
   callback(null, options)
 }
 
