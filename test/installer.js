@@ -331,13 +331,13 @@ describe('module', function () {
           } // object with both user and default dependencies based on src/installer.js
 
           // Creates object based on stdout (values are still strings)
-          var destDependecies = _.fromPairs(_.chunk(_.initial(stdout.split(/\n|:\s/)), 2))
+          var destDependencies = _.fromPairs(_.chunk(_.initial(stdout.split(/\n|:\s/)), 2))
           // String values are mapped into sorted arrays
-          destDependecies = _.mapValues(destDependecies, function (value) {
+          destDependencies = _.mapValues(destDependencies, function (value) {
             if (value) return _.sortBy(value.split(', '))
           })
 
-          if (_.isEqual(baseDependencies, destDependecies)) {
+          if (_.isEqual(baseDependencies, destDependencies)) {
             done()
           } else {
             done(new Error('There are duplicate dependencies'))
