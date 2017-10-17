@@ -269,8 +269,12 @@ describe('module', function () {
   describe('with duplicate dependencies', function (test) {
     var dest = 'test/fixtures/out/kjfq/'
 
-    // user and default duplicates
+    // User options with duplicates (including defaults duplicates)
     var depends = ['libnss3', 'libxtst6', 'dbus', 'dbus']
+    var recommends = ['pulseaudio | libasound2', 'bzip2', 'bzip2']
+    var suggests = ['lsb-release', 'gvfs', 'gvfs']
+    var enhances = ['libc6', 'libc6']
+    var preDepends = ['footest', 'footest']
 
     before(function (done) {
       installer({
@@ -286,8 +290,10 @@ describe('module', function () {
           priority: 'optional',
           arch: 'i386',
           depends: depends,
-          recommends: [],
-          suggests: [],
+          recommends: recommends,
+          suggests: suggests,
+          enhances: enhances,
+          preDepends: preDepends,
           categories: []
         }
       }, done)
@@ -297,24 +303,41 @@ describe('module', function () {
       fs.remove(dest, done)
     })
 
-    it('removes duplicate "Depends"', function (done) {
+    it('removes duplicate dependencies', function (done) {
       access(dest + 'footest_i386.deb', function () {
-        child.exec('dpkg-deb -f footest_i386.deb Depends', { cwd: dest }, function (err, stdout, stderr) {
+        child.exec('dpkg-deb -f footest_i386.deb ' +
+          'Depends Recommends Suggests Enhances Pre-Depends', { cwd: dest }, function (err, stdout, stderr) {
           if (err) return done(err)
           if (stderr) return done(new Error(stderr.toString()))
 
-          var destDepends = _.sortBy(_.trimEnd(stdout, '\n').split(', '))
-          var baseDepends = _.sortBy(_.union([
-            'gvfs-bin',
-            'libgconf2-4',
-            'libgtk2.0-0',
-            'libnotify4',
-            'libnss3',
-            'libxtst6',
-            'xdg-utils'
-          ], depends)) // Default and user dependencies
+          var baseDependencies = {
+            Depends: _.sortBy(_.union([
+              'gvfs-bin',
+              'libgconf2-4',
+              'libgtk2.0-0',
+              'libnotify4',
+              'libnss3',
+              'libxtst6',
+              'xdg-utils'
+            ], depends)),
+            Recommends: _.sortBy(_.union(['pulseaudio | libasound2'], recommends)),
+            Suggests: _.sortBy(_.union([
+              'gir1.2-gnomekeyring-1.0',
+              'libgnome-keyring0',
+              'lsb-release'
+            ], suggests)),
+            Enhances: _.sortBy(_.uniq(enhances)),
+            'Pre-Depends': _.sortBy(_.uniq(preDepends))
+          } // object with both user and default dependencies based on src/installer.js
 
-          if (_.isEqual(destDepends, baseDepends)) {
+          // Creates object based on stdout (values are still strings)
+          var destDependecies = _.fromPairs(_.chunk(_.initial(stdout.split(/\n|:\s/)), 2))
+          // String values are mapped into sorted arrays
+          destDependecies = _.mapValues(destDependecies, function (value) {
+            if (value) return _.sortBy(value.split(', '))
+          })
+
+          if (_.isEqual(baseDependencies, destDependecies)) {
             done()
           } else {
             done(new Error('There are duplicate dependencies'))
