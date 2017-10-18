@@ -291,48 +291,13 @@ Default: `size of the folder`
 
 Estimate of the total amount of disk space required to install the named package, used in the [`Installed-Size` field of the `control` specification](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Installed-Size).
 
-#### options.depends
+#### options.depends, recommends, suggests, enhances, preDepends
 Type: `Array[String]`
-Default: `[TrashDependsVersion, 'libgconf2-4', 'libgtk2.0-0', 'libnotify4', 'libnss3', 'libxtst6', 'xdg-utils']`
-Relationships to other packages, used in the [`Depends` field of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
+Default: see [`src/installer.js`](https://github.com/unindented/electron-installer-debian/blob/master/src/installer.js#L181)
 
-`TrashDependsVersion` will be replaced by a string depending on the `electron` version being used. These are the output values:
-
-`electron` | `TrashDependsVersion`
--------------------|-----------------------
-< v1.4.1 | `'gvfs-bin'`
-< v1.7.2 | `'kde-cli-tools \| kde-runtime \| trash-cli \| gvfs-bin'`
-\>= v1.7.2  | `'kde-cli-tools \| kde-runtime \| trash-cli \| libglib2.0-bin \| gvfs-bin'`
+Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests`, `Enhances` and `Pre-Depends` fields of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
 
 All user dependencies will be appended to the `Default` array of dependencies and any duplicates will be removed.
-
-#### options.recommends
-Type: `Array[String]`
-Default: `['pulseaudio | libasound2']`
-
-Relationships to other packages, used in the [`Recommends` field of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
-
-All user dependencies will be appended to the `Default` array of dependencies and any duplicates will be removed.
-
-#### options.suggests
-Type: `Array[String]`
-Default: `['gir1.2-gnomekeyring-1.0', 'libgnome-keyring0', 'lsb-release']`
-
-Relationships to other packages, used in the [`Suggests` field of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
-
-All user dependencies will be appended to the `Default` array of dependencies and any duplicates will be removed.
-
-#### options.enhances
-Type: `Array[String]`
-Default: `[]`
-
-Relationships to other packages, used in the [`Enhances` field of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
-
-#### options.preDepends
-Type: `Array[String]`
-Default: `[]`
-
-Relationships to other packages, used in the [`Pre-Depends` field of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
 
 #### options.maintainer
 Type: `String`
