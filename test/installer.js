@@ -305,8 +305,9 @@ describe('module', function () {
 
     it('removes duplicate dependencies', function (done) {
       access(dest + 'footest_i386.deb', function () {
-        child.exec('dpkg-deb -f footest_i386.deb ' +
-          'Depends Recommends Suggests Enhances Pre-Depends', { cwd: dest }, function (err, stdout, stderr) {
+        var dpkgDebCmd = 'dpkg-deb -f footest_i386.deb ' +
+          'Depends Recommends Suggests Enhances Pre-Depends'
+        child.exec(dpkgDebCmd, { cwd: dest }, function (err, stdout, stderr) {
           if (err) return done(err)
           if (stderr) return done(new Error(stderr.toString()))
 
