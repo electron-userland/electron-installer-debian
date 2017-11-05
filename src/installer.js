@@ -133,6 +133,21 @@ var getTrashDepends = function (options, callback) {
 }
 
 /**
+ * Determine the default dependencies for an Electron application.
+ */
+var getDepends = function (trashDependencies) {
+  return [
+    trashDependencies,
+    'libgconf2-4',
+    'libgtk2.0-0',
+    'libnotify4',
+    'libnss3',
+    'libxtst6',
+    'xdg-utils'
+  ]
+}
+
+/**
  * Get the hash of default options for the installer. Some come from the info
  * read from `package.json`, and some are hardcoded.
  */
@@ -162,15 +177,7 @@ var getDefaults = function (data, callback) {
       arch: undefined,
       size: Math.ceil(size / 1024),
 
-      depends: [
-        trashDependencies,
-        'libgconf2-4',
-        'libgtk2.0-0',
-        'libnotify4',
-        'libnss3',
-        'libxtst6',
-        'xdg-utils'
-      ],
+      depends: getDepends(trashDependencies),
       recommends: [
         'pulseaudio | libasound2'
       ],
