@@ -291,11 +291,13 @@ Default: `size of the folder`
 
 Estimate of the total amount of disk space required to install the named package, used in the [`Installed-Size` field of the `control` specification](https://www.debian.org/doc/debian-policy/#installed-size).
 
-#### options.depends et al
+#### options.depends, recommends, suggests, enhances, preDepends
 Type: `Array[String]`
-Default: `[]`
+Default: see `src/installer.js` for [`depends`](https://github.com/unindented/electron-installer-debian/blob/16296e7/src/installer.js#L115-L148), [`recommends`, `suggests`, `enhances`, and `preDepends`](https://github.com/unindented/electron-installer-debian/blob/16296e7/src/installer.js#L181-L192)
 
-Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests`, `Enhances` and `Pre-Depends` fields of the `control` specification](https://www.debian.org/doc/debian-policy/ch-relationships.html#s-binarydeps).
+Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests`, `Enhances` and `Pre-Depends` fields of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
+
+All user dependencies will be appended to the `Default` array of dependencies and any duplicates will be removed.
 
 #### options.maintainer
 Type: `String`

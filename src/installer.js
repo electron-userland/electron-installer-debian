@@ -113,39 +113,38 @@ var getSize = function (options, callback) {
 }
 
 /**
- * Determine the dependencies for the `shell.moveItemToTrash` API.
+ * Determine the dependencies for the `shell.moveItemToTrash` API, based on the
+ * Electron version in use.
  */
-var getTrashDepends = function (electronVersion) {
-  if (semver.lt(electronVersion, '1.4.1')) {
-    return 'gvfs-bin'
-  } else if (semver.lt(electronVersion, '1.7.2')) {
-    return 'kde-cli-tools | kde-runtime | trash-cli | gvfs-bin'
-  } else {
-    return 'kde-cli-tools | kde-runtime | trash-cli | libglib2.0-bin | gvfs-bin'
-  }
-}
-
-/**
- * Determine what the default dependencies should be, based on the Electron
- * version in use.
- */
-var getDefaultDepends = function (options, callback) {
+var getTrashDepends = function (options, callback) {
   fs.readFile(path.resolve(options.src, 'version'), (err, tag) => {
     if (err) return callback(err)
 
     // The content of the version file is the tag name, e.g. "v1.8.1"
     var version = tag.toString().slice(1).trim()
-
-    return callback(null, [
-      getTrashDepends(version),
-      'libgconf2-4',
-      'libgtk2.0-0',
-      'libnotify4',
-      'libnss3',
-      'libxtst6',
-      'xdg-utils'
-    ])
+    if (semver.lt(version, '1.4.1')) {
+      return callback(null, 'gvfs-bin')
+    } else if (semver.lt(version, '1.7.2')) {
+      return callback(null, 'kde-cli-tools | kde-runtime | trash-cli | gvfs-bin')
+    } else {
+      return callback(null, 'kde-cli-tools | kde-runtime | trash-cli | libglib2.0-bin | gvfs-bin')
+    }
   })
+}
+
+/**
+ * Determine the default dependencies for an Electron application.
+ */
+var getDepends = function (trashDependencies) {
+  return [
+    trashDependencies,
+    'libgconf2-4',
+    'libgtk2.0-0',
+    'libnotify4',
+    'libnss3',
+    'libxtst6',
+    'xdg-utils'
+  ]
 }
 
 /**
@@ -156,11 +155,11 @@ var getDefaults = function (data, callback) {
   async.parallel([
     async.apply(readMeta, data),
     async.apply(getSize, {src: data.src}),
-    async.apply(getDefaultDepends, {src: data.src})
+    async.apply(getTrashDepends, {src: data.src})
   ], function (err, results) {
     var pkg = results[0] || {}
     var size = results[1] || 0
-    var depends = results[2] || []
+    var trashDependencies = results[2] || 'gvfs-bin'
 
     var defaults = {
       name: pkg.name || 'electron',
@@ -178,7 +177,7 @@ var getDefaults = function (data, callback) {
       arch: undefined,
       size: Math.ceil(size / 1024),
 
-      depends: depends,
+      depends: getDepends(trashDependencies),
       recommends: [
         'pulseaudio | libasound2'
       ],
@@ -244,6 +243,15 @@ var getOptions = function (data, defaults, callback) {
     // Wrap the extended description to avoid lintian warning about
     // `extended-description-line-too-long`.
     options.productDescription = wrap(options.productDescription, {width: 80, indent: ' '})
+  }
+
+  // Create array with unique values from default & user-supplied dependencies
+  if (data.options) {
+    options.depends = _.union(defaults.depends, data.options.depends)
+    options.recommends = _.union(defaults.recommends, data.options.recommends)
+    options.suggests = _.union(defaults.suggests, data.options.suggests)
+    options.enhances = _.uniq(data.options.enhances) // no defaults
+    options.preDepends = _.uniq(data.options.preDepends) // no defaults
   }
 
   callback(null, options)
