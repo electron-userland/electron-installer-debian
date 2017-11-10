@@ -1,0 +1,12 @@
+{
+  "productDescription": "Just a test.",
+  "section": "devel",
+  "priority": "optional",
+  "arch": "i386",
+  "depends" : ["libnss3", "libxtst6", "dbus", "dbus"],
+  "recommends" : ["pulseaudio | libasound2", "bzip2", "bzip2"],
+  "suggests" : ["lsb-release", "gvfs", "gvfs"],
+  "enhances" : ["libc6", "libc6"],
+  "preDepends" : ["footest", "footest"],
+  "categories": []
+}

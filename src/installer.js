@@ -246,12 +246,12 @@ var getOptions = function (data, defaults, callback) {
   }
 
   // Create array with unique values from default & user-supplied dependencies
-  if (data.options) {
-    options.depends = _.union(defaults.depends, data.options.depends)
-    options.recommends = _.union(defaults.recommends, data.options.recommends)
-    options.suggests = _.union(defaults.suggests, data.options.suggests)
-    options.enhances = _.uniq(data.options.enhances) // no defaults
-    options.preDepends = _.uniq(data.options.preDepends) // no defaults
+  for (var prop of ['depends', 'recommends', 'suggests', 'enhances', 'preDepends']) {
+    if (data.options) { // options passed programmatically
+      options[prop] = _.union(defaults[prop], data.options[prop])
+    } else { // options passed via command-line
+      options[prop] = _.union(defaults[prop], data[prop])
+    }
   }
 
   callback(null, options)
