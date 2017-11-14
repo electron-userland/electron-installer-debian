@@ -9,11 +9,11 @@ var fs = require('fs-extra')
 var fsize = require('get-folder-size')
 var glob = require('glob')
 var path = require('path')
-var semver = require('semver')
 var temp = require('temp').track()
 var wrap = require('word-wrap')
 var mkdirp = require('mkdirp')
 
+var dependencies = require('./dependencies')
 var pkg = require('../package.json')
 
 var defaultLogger = debug(pkg.name)
@@ -113,41 +113,6 @@ var getSize = function (options, callback) {
 }
 
 /**
- * Determine the dependencies for the `shell.moveItemToTrash` API, based on the
- * Electron version in use.
- */
-var getTrashDepends = function (options, callback) {
-  fs.readFile(path.resolve(options.src, 'version'), (err, tag) => {
-    if (err) return callback(err)
-
-    // The content of the version file is the tag name, e.g. "v1.8.1"
-    var version = tag.toString().slice(1).trim()
-    if (semver.lt(version, '1.4.1')) {
-      return callback(null, 'gvfs-bin')
-    } else if (semver.lt(version, '1.7.2')) {
-      return callback(null, 'kde-cli-tools | kde-runtime | trash-cli | gvfs-bin')
-    } else {
-      return callback(null, 'kde-cli-tools | kde-runtime | trash-cli | libglib2.0-bin | gvfs-bin')
-    }
-  })
-}
-
-/**
- * Determine the default dependencies for an Electron application.
- */
-var getDepends = function (trashDependencies) {
-  return [
-    trashDependencies,
-    'libgconf2-4',
-    'libgtk2.0-0',
-    'libnotify4',
-    'libnss3',
-    'libxtst6',
-    'xdg-utils'
-  ]
-}
-
-/**
  * Get the hash of default options for the installer. Some come from the info
  * read from `package.json`, and some are hardcoded.
  */
@@ -155,7 +120,7 @@ var getDefaults = function (data, callback) {
   async.parallel([
     async.apply(readMeta, data),
     async.apply(getSize, {src: data.src}),
-    async.apply(getTrashDepends, {src: data.src})
+    async.apply(dependencies.getTrashDepends, {src: data.src})
   ], function (err, results) {
     var pkg = results[0] || {}
     var size = results[1] || 0
@@ -177,7 +142,7 @@ var getDefaults = function (data, callback) {
       arch: undefined,
       size: Math.ceil(size / 1024),
 
-      depends: getDepends(trashDependencies),
+      depends: dependencies.getDepends(trashDependencies),
       recommends: [
         'pulseaudio | libasound2'
       ],
