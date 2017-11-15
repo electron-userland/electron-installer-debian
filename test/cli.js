@@ -1,10 +1,12 @@
 'use strict'
 
+var _ = require('lodash')
+var child = require('child_process')
 var fs = require('fs-extra')
+
+var dependencies = require('../src/dependencies')
 var access = require('./helpers/access')
 var spawn = require('./helpers/spawn')
-var child = require('child_process')
-var _ = require('lodash')
 
 describe('cli', function () {
   this.timeout(10000)
@@ -49,15 +51,9 @@ describe('cli', function () {
     var dest = 'test/fixtures/out/tjaq/'
     var config = 'test/fixtures/config.json'
 
-    // Default options (from src/installer.js)
+    // Default options (partly from src/installer.js)
     var defaults = {
-      depends: ['gvfs-bin',
-        'libgconf2-4',
-        'libgtk2.0-0',
-        'libnotify4',
-        'libnss3',
-        'libxtst6',
-        'xdg-utils'],
+      depends: dependencies.getDepends('gvfs-bin'),
       recommends: ['pulseaudio | libasound2'],
       suggests: ['gir1.2-gnomekeyring-1.0',
         'libgnome-keyring0',

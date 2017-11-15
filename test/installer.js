@@ -1,5 +1,6 @@
 'use strict'
 
+var dependencies = require('../src/dependencies')
 var installer = require('..')
 
 var child = require('child_process')
@@ -312,15 +313,7 @@ describe('module', function () {
           if (stderr) return done(new Error(stderr.toString()))
 
           var baseDependencies = {
-            Depends: _.sortBy(_.union([
-              'gvfs-bin',
-              'libgconf2-4',
-              'libgtk2.0-0',
-              'libnotify4',
-              'libnss3',
-              'libxtst6',
-              'xdg-utils'
-            ], depends)),
+            Depends: _.sortBy(_.union(dependencies.getDepends('gvfs-bin'), depends)),
             Recommends: _.sortBy(_.union(['pulseaudio | libasound2'], recommends)),
             Suggests: _.sortBy(_.union([
               'gir1.2-gnomekeyring-1.0',
