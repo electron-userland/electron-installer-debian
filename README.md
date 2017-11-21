@@ -428,6 +428,7 @@ In versions of `electron-installer-debian` prior to 0.5.0, the app was (incorrec
 
 * Code: `git clone git://github.com/unindented/electron-installer-debian.git`
 * Home: <https://github.com/unindented/electron-installer-debian/>
+* [Release Notes](https://github.com/unindented/electron-installer-debian/blob/master/NEWS.md)
 
 
 ## Contributors
