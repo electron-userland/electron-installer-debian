@@ -1,6 +1,8 @@
 # Changes by Version
 
-## Unreleased
+## [Unreleased]
+
+[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v0.7.1...master
 
 ## [0.7.1] - 2017-11-13
 
