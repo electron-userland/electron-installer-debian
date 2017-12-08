@@ -9,7 +9,7 @@ const installer = require('../..')
 
 module.exports = function describeInstaller (description, installerOptions, itDescription, itFunc) {
   describe(description, test => {
-    const outputDir = module.exports.tempOutputDir()
+    const outputDir = installerOptions.dest || module.exports.tempOutputDir()
 
     before(done => {
       const options = module.exports.testInstallerOptions(outputDir, installerOptions)
