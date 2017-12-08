@@ -38,12 +38,11 @@ module.exports.tempOutputDir = function tempOutputDir (customDir) {
 
 module.exports.testInstallerOptions = function testInstallerOptions (outputDir, installerOptions) {
   return _.merge({
-    dest: outputDir,
     rename: debFile => {
       return path.join(debFile, '<%= name %>_<%= arch %>.deb')
     },
     options: {
       arch: 'amd64'
     }
-  }, installerOptions)
+  }, installerOptions, {dest: outputDir})
 }
