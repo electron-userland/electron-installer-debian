@@ -1,10 +1,9 @@
 'use strict'
 
 const _ = require('lodash')
-const crypto = require('crypto')
 const fs = require('fs-extra')
-const os = require('os')
 const path = require('path')
+const temp = require('temp')
 
 const installer = require('../..')
 
@@ -33,12 +32,7 @@ module.exports.cleanupOutputDir = function cleanupOutputDir (outputDir) {
 }
 
 module.exports.tempOutputDir = function tempOutputDir () {
-  const hash = crypto.createHash('sha256')
-  const now = new Date()
-  hash.update(now.toISOString())
-
-  const folderName = `electron-installer-debian-${hash.digest('hex')}`
-  return path.join(os.tmpdir(), folderName)
+  return temp.path({prefix: 'electron-installer-debian-'})
 }
 
 module.exports.testInstallerOptions = function testInstallerOptions (outputDir, installerOptions) {
