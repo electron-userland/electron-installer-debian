@@ -1,10 +1,10 @@
 'use strict'
 
-var fs = require('fs')
-var retry = require('retry')
+const fs = require('fs')
+const retry = require('retry')
 
 module.exports = function (path, callback) {
-  var operation = retry.operation({
+  const operation = retry.operation({
     retries: 3,
     minTimeout: 500
   })

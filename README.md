@@ -149,10 +149,10 @@ $ npm install --save-dev electron-installer-debian
 
 And write something like this:
 
-```js
-var installer = require('electron-installer-debian')
+```javascript
+const installer = require('electron-installer-debian')
 
-var options = {
+const options = {
   src: 'dist/app-linux-x64/',
   dest: 'dist/installers/',
   arch: 'amd64'
@@ -160,7 +160,7 @@ var options = {
 
 console.log('Creating package (this may take a while)')
 
-installer(options, function (err) {
+installer(options, err => {
   if (err) {
     console.error(err, err.stack)
     process.exit(1)
@@ -176,7 +176,7 @@ You'll end up with the package at `dist/installers/app_0.0.1_amd64.deb`.
 
 Even though you can pass most of these options through the command-line interface, it may be easier to create a configuration file:
 
-```js
+```javascript
 {
   "dest": "dist/installers/",
   "icon": "resources/Icon.png",
@@ -321,7 +321,7 @@ The generated package will contain a symlink `/usr/bin/<%= options.name %>` poin
 
 For example, providing this configuration:
 
-```js
+```javascript
 {
   src: '...',
   dest: '...',
@@ -348,7 +348,7 @@ Default: [`resources/icon.png`](https://github.com/unindented/electron-installer
 
 Path to a single image that will act as icon for the application:
 
-```js
+```javascript
 {
   icon: 'resources/Icon.png'
 }
@@ -356,7 +356,7 @@ Path to a single image that will act as icon for the application:
 
 Or multiple images with their corresponding resolutions:
 
-```js
+```javascript
 {
   icon: {
     '48x48': 'resources/Icon48.png',
@@ -395,7 +395,7 @@ Default: `undefined`
 
 Path to package maintainer scripts with their corresponding name, used in the [installation procedure](https://www.debian.org/doc/debian-policy/#introduction-to-package-maintainer-scripts):
 
-```js
+```javascript
 {
   scripts: {
     'preinst': 'resources/preinst_script',
