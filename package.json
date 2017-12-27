@@ -29,6 +29,9 @@
     "spec": "mocha",
     "test": "npm run lint && npm run spec"
   },
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "dependencies": {
     "asar": "^0.14.0",
     "async": "^2.5.0",

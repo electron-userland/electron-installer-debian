@@ -1,12 +1,12 @@
 'use strict'
 
-var child = require('child_process')
+const child = require('child_process')
 
 module.exports = function (cmd, args, callback) {
-  var cmds = cmd.split(' ')
-  var spawnedProcess = null
-  var error = null
-  var stderr = ''
+  const cmds = cmd.split(' ')
+  let spawnedProcess = null
+  let error = null
+  let stderr = ''
 
   try {
     spawnedProcess = child.spawn(cmds[0], cmds.slice(1).concat(args))

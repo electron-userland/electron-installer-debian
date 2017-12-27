@@ -1,8 +1,8 @@
 'use strict'
 
-var fs = require('fs-extra')
-var path = require('path')
-var semver = require('semver')
+const fs = require('fs-extra')
+const path = require('path')
+const semver = require('semver')
 
 module.exports = {
   /**
@@ -14,7 +14,7 @@ module.exports = {
       if (err) return callback(err)
 
       // The content of the version file is the tag name, e.g. "v1.8.1"
-      var version = tag.toString().slice(1).trim()
+      const version = tag.toString().slice(1).trim()
       if (semver.lt(version, '1.4.1')) {
         return callback(null, 'gvfs-bin')
       } else if (semver.lt(version, '1.7.2')) {
