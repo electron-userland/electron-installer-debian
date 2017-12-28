@@ -3,7 +3,6 @@
 const _ = require('lodash')
 const asar = require('asar')
 const async = require('async')
-const child = require('child_process')
 const debug = require('debug')
 const fs = require('fs-extra')
 const fsize = require('get-folder-size')
@@ -14,59 +13,12 @@ const temp = require('temp').track()
 const wrap = require('word-wrap')
 
 const dependencies = require('./dependencies')
+const spawn = require('./spawn')
 
 const defaultLogger = debug('electron-installer-debian')
 
 const defaultRename = (dest, src) => {
   return path.join(dest, '<%= name %>_<%= version %>_<%= arch %>.deb')
-}
-
-/**
- * Spawn a child process.
- */
-function spawn (options, command, args, callback) {
-  let spawnedProcess = null
-  let error = null
-  let stderr = ''
-
-  options.logger(`Executing command ${command} ${args.join(' ')}`)
-
-  try {
-    spawnedProcess = child.spawn(command, args)
-  } catch (err) {
-    process.nextTick(() => {
-      callback(err, stderr)
-    })
-    return
-  }
-
-  spawnedProcess.stderr.on('data', data => {
-    stderr += data
-  })
-
-  spawnedProcess.on('error', err => {
-    if (err.name === 'ENOENT') {
-      const isFakeroot = err.syscall === 'spawn fakeroot'
-      const isDpkg = !isFakeroot && err.syscall === 'spawn dpkg'
-
-      if (isFakeroot || isDpkg) {
-        const installer = process.platform === 'darwin' ? 'brew' : 'apt-get'
-        const pkg = isFakeroot ? 'fakeroot' : 'dpkg'
-
-        err.message = `Your system is missing the fakeroot package. Try, e.g. '${installer} install ${pkg}'`
-      }
-    }
-
-    error = error || err
-  })
-
-  spawnedProcess.on('close', (code, signal) => {
-    if (code !== 0) {
-      error = error || signal || code
-    }
-
-    callback(error && new Error(`Error executing command (${error.message || error}):\n${command} ${args.join(' ')}\n${stderr}`))
-  })
 }
 
 /**
@@ -468,7 +420,7 @@ function createContents (options, dir, callback) {
 function createPackage (options, dir, callback) {
   options.logger(`Creating package at ${dir}`)
 
-  spawn(options, 'fakeroot', ['dpkg-deb', '--build', dir], err => {
+  spawn('fakeroot', ['dpkg-deb', '--build', dir], options.logger, err => {
     callback(err, dir)
   })
 }

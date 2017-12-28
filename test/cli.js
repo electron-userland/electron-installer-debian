@@ -6,7 +6,7 @@ const path = require('path')
 const access = require('./helpers/access')
 const dependencies = require('./helpers/dependencies')
 const describeInstaller = require('./helpers/describe_installer')
-const spawn = require('./helpers/spawn')
+const spawn = require('../src/spawn')
 
 const cleanupOutputDir = describeInstaller.cleanupOutputDir
 const tempOutputDir = describeInstaller.tempOutputDir
@@ -19,7 +19,7 @@ function runCLI (options) {
   ]
   if (options.config) args.push('--config', options.config)
 
-  before(done => spawn('./src/cli.js', args, done))
+  before(done => spawn('./src/cli.js', args, null, done))
 }
 
 describe('cli', function () {
