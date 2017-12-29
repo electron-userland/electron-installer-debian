@@ -33,11 +33,10 @@ const argv = yargs
 console.log('Creating package (this may take a while)')
 
 const options = _.omit(argv, ['$0', '_', 'version'])
-installer(options, err => {
-  if (err) {
+
+installer(options)
+  .then(() => console.log(`Successfully created package at ${argv.dest}`))
+  .catch(err => {
     console.error(err, err.stack)
     process.exit(1)
-  }
-
-  console.log(`Successfully created package at ${argv.dest}`)
-})
+  })

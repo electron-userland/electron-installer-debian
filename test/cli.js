@@ -19,7 +19,7 @@ function runCLI (options) {
   ]
   if (options.config) args.push('--config', options.config)
 
-  before(done => spawn('./src/cli.js', args, null, done))
+  before(() => spawn('./src/cli.js', args))
 }
 
 describe('cli', function () {
