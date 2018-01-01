@@ -1,7 +1,7 @@
 'use strict'
 
 const chai = require('chai')
-const child = require('child_process')
+const exec = require('mz/child_process').exec
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -14,13 +14,11 @@ const cleanupOutputDir = describeInstaller.cleanupOutputDir
 const tempOutputDir = describeInstaller.tempOutputDir
 const testInstallerOptions = describeInstaller.testInstallerOptions
 
-const assertASARDebExists = (outputDir, done) => {
-  access(path.join(outputDir, 'footest_i386.deb'), done)
-}
+const assertASARDebExists = outputDir =>
+  access(path.join(outputDir, 'footest_i386.deb'))
 
-const assertNonASARDebExists = (outputDir, done) => {
-  access(path.join(outputDir, 'bartest_amd64.deb'), done)
-}
+const assertNonASARDebExists = outputDir =>
+  access(path.join(outputDir, 'bartest_amd64.deb'))
 
 describe('module', function () {
   this.timeout(30000)
@@ -108,39 +106,28 @@ describe('module', function () {
       }
     },
     'generates a custom `.desktop` file',
-    (outputDir, done) => {
-      assertNonASARDebExists(outputDir, () => {
-        child.exec('dpkg-deb -x bartest_amd64.deb .', { cwd: outputDir }, (err, stdout, stderr) => {
-          if (err) return done(err)
-          if (stderr) return done(new Error(stderr.toString()))
-
-          const desktopFile = path.join(outputDir, 'usr/share/applications/bartest.desktop')
-          fs.readFile(desktopFile, (err, data) => {
-            if (err) return done(err)
-
-            if (data.toString().indexOf('Comment=Hardcoded comment') === -1) {
-              done(new Error('Did not use custom template'))
-            } else {
-              done()
-            }
-          })
+    outputDir =>
+      assertNonASARDebExists(outputDir)
+        .then(() => exec('dpkg-deb -x bartest_amd64.deb .', { cwd: outputDir }))
+        .then(() => fs.readFile(path.join(outputDir, 'usr/share/applications/bartest.desktop')))
+        .then(data => {
+          if (data.toString().indexOf('Comment=Hardcoded comment') === -1) {
+            throw new Error('Did not use custom template')
+          }
+          return Promise.resolve()
         })
-      })
-    }
   )
 
   describe('with no description or productDescription provided', test => {
     const outputDir = tempOutputDir()
     cleanupOutputDir(outputDir)
 
-    it('throws an error', done => {
+    it('throws an error', () => {
       const installerOptions = testInstallerOptions(outputDir, {
         src: 'test/fixtures/app-without-description-or-product-description/'
       })
-      installer(installerOptions, error => {
-        chai.expect(error.message).to.deep.equal('No Description or ProductDescription provided')
-        done()
-      })
+      return installer(installerOptions)
+        .catch(error => chai.expect(error.message).to.deep.equal('No Description or ProductDescription provided'))
     })
   })
 
@@ -165,20 +152,16 @@ describe('module', function () {
       }
     },
     'passes lintian checks',
-    (outputDir, done) => {
-      assertASARDebExists(outputDir, function () {
-        child.exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`, (err, stdout, stderr) => {
-          if (err) return done(new Error(err + stdout))
-
-          const lineCount = stdout.match(/\n/g).length
+    outputDir =>
+      assertASARDebExists(outputDir)
+        .then(() => exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`))
+        .then(stdout => {
+          const lineCount = stdout.toString().match(/\n/g).length
           if (lineCount > 1) {
-            done(new Error('Warnings not overriding:\n' + stdout))
-          } else {
-            done()
+            throw new Error('Warnings not overriding:\n' + stdout.toString())
           }
+          return Promise.resolve()
         })
-      })
-    }
   )
 
   describe('with duplicate dependencies', test => {
@@ -193,20 +176,19 @@ describe('module', function () {
       preDepends: ['footest', 'footest']
     }
 
-    before(done => {
+    before(() => {
       const installerOptions = testInstallerOptions(outputDir, {
         src: 'test/fixtures/app-with-asar/',
         options: Object.assign({ arch: 'i386' }, userDependencies)
       })
-      installer(installerOptions, done)
+      return installer(installerOptions)
     })
 
     cleanupOutputDir(outputDir)
 
-    it('removes duplicate dependencies', done => {
-      assertASARDebExists(outputDir, () => {
-        dependencies.assertDependenciesEqual(outputDir, 'footest_i386.deb', userDependencies, done)
-      })
-    })
+    it('removes duplicate dependencies', () =>
+      assertASARDebExists(outputDir)
+        .then(() => dependencies.assertDependenciesEqual(outputDir, 'footest_i386.deb', userDependencies))
+    )
   })
 })

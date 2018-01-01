@@ -30,9 +30,7 @@ describe('cli', function () {
 
     runCLI({ src: 'test/fixtures/app-with-asar/', dest: outputDir, arch: 'i386' })
 
-    it('generates a `.deb` package', done => {
-      access(path.join(outputDir, 'footest_0.0.1_i386.deb'), done)
-    })
+    it('generates a `.deb` package', () => access(path.join(outputDir, 'footest_0.0.1_i386.deb')))
 
     cleanupOutputDir(outputDir)
   })
@@ -42,9 +40,7 @@ describe('cli', function () {
 
     runCLI({ src: 'test/fixtures/app-without-asar/', dest: outputDir, arch: 'amd64' })
 
-    it('generates a `.deb` package', done => {
-      access(path.join(outputDir, 'bartest_0.0.1_amd64.deb'), done)
-    })
+    it('generates a `.deb` package', () => access(path.join(outputDir, 'bartest_0.0.1_amd64.deb')))
 
     cleanupOutputDir(outputDir)
   })
@@ -55,15 +51,12 @@ describe('cli', function () {
 
     runCLI({ src: 'test/fixtures/app-with-asar/', dest: outputDir, arch: 'i386', config: config })
 
-    it('removes duplicate dependencies', done => {
-      access(path.join(outputDir, 'footest_0.0.1_i386.deb'), () => {
+    it('removes duplicate dependencies', () =>
+      access(path.join(outputDir, 'footest_0.0.1_i386.deb'))
         // object with both user and default dependencies based on src/installer.js
-        fs.readJson(config, (err, configObj) => {
-          if (err) return done(err)
-          dependencies.assertDependenciesEqual(outputDir, 'footest_0.0.1_i386.deb', configObj, done)
-        })
-      })
-    })
+        .then(() => fs.readJson(config))
+        .then(configObj => dependencies.assertDependenciesEqual(outputDir, 'footest_0.0.1_i386.deb', configObj))
+    )
 
     cleanupOutputDir(outputDir)
   })

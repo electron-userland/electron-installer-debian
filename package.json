@@ -58,6 +58,7 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "mocha": "^4.0.1",
-    "retry": "^0.10.1"
+    "mz": "^2.7.0",
+    "promise-retry": "^1.1.1"
   }
 }

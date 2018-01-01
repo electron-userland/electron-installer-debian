@@ -11,25 +11,18 @@ const installer = require('../..')
 module.exports = function describeInstaller (description, installerOptions, itDescription, itFunc) {
   describe(description, test => {
     const outputDir = module.exports.tempOutputDir(installerOptions.dest)
+    const options = module.exports.testInstallerOptions(outputDir, installerOptions)
 
-    before(done => {
-      const options = module.exports.testInstallerOptions(outputDir, installerOptions)
+    before(() => installer(options))
 
-      installer(options, done)
-    })
-
-    it(itDescription, done => {
-      itFunc(outputDir, done)
-    })
+    it(itDescription, () => itFunc(outputDir))
 
     module.exports.cleanupOutputDir(outputDir)
   })
 }
 
 module.exports.cleanupOutputDir = function cleanupOutputDir (outputDir) {
-  after(done => {
-    fs.remove(outputDir, done)
-  })
+  after(() => fs.remove(outputDir))
 }
 
 module.exports.tempOutputDir = function tempOutputDir (customDir) {
