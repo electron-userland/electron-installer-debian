@@ -2,8 +2,8 @@
 
 const spawn = require('cross-spawn-promise')
 
-function updateExecutableMissingException (err, logger) {
-  if (logger && err.name === 'ENOENT') {
+function updateExecutableMissingException (err, updateError) {
+  if (updateError && err.name === 'ENOENT') {
     const isFakeroot = err.syscall === 'spawn fakeroot'
     const isDpkg = !isFakeroot && err.syscall === 'spawn dpkg'
 
@@ -17,7 +17,7 @@ function updateExecutableMissingException (err, logger) {
 }
 
 /**
- * Spawn a child process.
+ * Spawn a child process and make the error message more human friendly, if possible.
  */
 module.exports = function (cmd, args, logger) {
   if (logger) logger(`Executing command ${cmd} ${args.join(' ')}`)
@@ -25,7 +25,7 @@ module.exports = function (cmd, args, logger) {
   return spawn(cmd, args)
     .then(stdout => stdout.toString())
     .catch(err => {
-      updateExecutableMissingException(err, logger)
+      updateExecutableMissingException(err, !!logger)
 
       throw new Error(`Error executing command (${err.message || err}):\n${cmd} ${args.join(' ')}\n${err.stderr.toString()}`)
     })
