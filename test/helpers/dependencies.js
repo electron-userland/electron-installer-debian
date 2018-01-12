@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const exec = require('child_process').exec
+const exec = require('mz/child_process').exec
 
 const dependencies = require('../../src/dependencies')
 
@@ -19,32 +19,30 @@ const defaults = {
 }
 
 module.exports = {
-  assertDependenciesEqual: function assertDependenciesEqual (outputDir, debFilename, userDependencies, done) {
+  assertDependenciesEqual: function assertDependenciesEqual (outputDir, debFilename, userDependencies) {
     const dpkgDebCmd = `dpkg-deb -f ${debFilename} Depends Recommends Suggests Enhances Pre-Depends`
-    exec(dpkgDebCmd, { cwd: outputDir }, (err, stdout, stderr) => {
-      if (err) return done(err)
-      if (stderr) return done(new Error(stderr.toString()))
+    return exec(dpkgDebCmd, { cwd: outputDir })
+      .then(stdout => {
+        const baseDependencies = {
+          Depends: _.sortBy(_.union(defaults.depends, userDependencies.depends)),
+          Recommends: _.sortBy(_.union(defaults.recommends, userDependencies.recommends)),
+          Suggests: _.sortBy(_.union(defaults.suggests, userDependencies.suggests)),
+          Enhances: _.sortBy(_.union(defaults.enhances, userDependencies.enhances)),
+          'Pre-Depends': _.sortBy(_.union(defaults.preDepends, userDependencies.preDepends))
+        } // object with both user and default dependencies based on src/installer.js
 
-      const baseDependencies = {
-        Depends: _.sortBy(_.union(defaults.depends, userDependencies.depends)),
-        Recommends: _.sortBy(_.union(defaults.recommends, userDependencies.recommends)),
-        Suggests: _.sortBy(_.union(defaults.suggests, userDependencies.suggests)),
-        Enhances: _.sortBy(_.union(defaults.enhances, userDependencies.enhances)),
-        'Pre-Depends': _.sortBy(_.union(defaults.preDepends, userDependencies.preDepends))
-      } // object with both user and default dependencies based on src/installer.js
+        // Creates object based on stdout (values are still strings)
+        let destDependencies = _.fromPairs(_.chunk(_.initial(stdout.toString().split(/\n|:\s/)), 2))
+        // String values are mapped into sorted arrays
+        destDependencies = _.mapValues(destDependencies, function (value) {
+          if (value) return _.sortBy(value.split(', '))
+        })
 
-      // Creates object based on stdout (values are still strings)
-      let destDependencies = _.fromPairs(_.chunk(_.initial(stdout.split(/\n|:\s/)), 2))
-      // String values are mapped into sorted arrays
-      destDependencies = _.mapValues(destDependencies, function (value) {
-        if (value) return _.sortBy(value.split(', '))
+        if (!_.isEqual(baseDependencies, destDependencies)) {
+          throw new Error('There are duplicate dependencies')
+        }
+
+        return Promise.resolve()
       })
-
-      if (_.isEqual(baseDependencies, destDependencies)) {
-        done()
-      } else {
-        done(new Error('There are duplicate dependencies'))
-      }
-    })
   }
 }

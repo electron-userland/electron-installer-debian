@@ -1,21 +1,17 @@
 'use strict'
 
-const fs = require('fs')
-const retry = require('retry')
+const fs = require('fs-extra')
+const retry = require('promise-retry')
 
-module.exports = function (path, callback) {
-  const operation = retry.operation({
+/**
+ * `fs.access` which retries three times.
+ */
+module.exports = function (path) {
+  return retry((retry, number) => {
+    return fs.access(path)
+      .catch(retry)
+  }, {
     retries: 3,
     minTimeout: 500
-  })
-
-  operation.attempt(function () {
-    fs.access(path, function (err) {
-      if (operation.retry(err)) {
-        return
-      }
-
-      callback(err ? operation.mainError() : null)
-    })
   })
 }
