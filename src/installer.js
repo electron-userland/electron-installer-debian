@@ -152,15 +152,18 @@ function getOptions (data, defaults) {
   if (options.description) {
     // Replace all newlines in the description with spaces, since it's supposed
     // to be one line.
-    options.description = options.description.replace(/[\r\n]+/g, ' ')
+    options.description = options.description.replace(/[\n]+/g, ' ')
   }
 
   if (options.productDescription) {
     // Ensure blank lines have the "." that denotes a blank line in the control file.
-    options.productDescription = options.productDescription.replace(/^$/m, '.')
-    // Wrap the extended description to avoid lintian warning about
+    // Wrap any extended description lines to avoid lintian warning about
     // `extended-description-line-too-long`.
-    options.productDescription = wrap(options.productDescription, {width: 80, indent: ' '})
+    options.productDescription = options.productDescription
+      .replace(/^$/mg, '.')
+      .split('\n')
+      .map(line => wrap(line, {width: 80, indent: ' '}))
+      .join('\n')
   }
 
   // Create array with unique values from default & user-supplied dependencies
