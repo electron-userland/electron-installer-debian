@@ -86,6 +86,18 @@ describe('module', function () {
   )
 
   describeInstaller(
+    'with an app with a multi-line productDescription',
+    {
+      src: 'test/fixtures/app-without-asar/',
+      options: {
+        productDescription: 'Line one:\r\n *Line 2\n\nLine3\nLine 4'
+      }
+    },
+    'generates a .deb package',
+    assertNonASARDebExists
+  )
+
+  describeInstaller(
     'with an app with a productDescription containing a blank line',
     {
       src: 'test/fixtures/app-without-asar/',

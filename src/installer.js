@@ -157,10 +157,14 @@ function getOptions (data, defaults) {
 
   if (options.productDescription) {
     // Ensure blank lines have the "." that denotes a blank line in the control file.
-    options.productDescription = options.productDescription.replace(/^$/m, '.')
-    // Wrap the extended description to avoid lintian warning about
+    // Wrap any extended description lines to avoid lintian warning about
     // `extended-description-line-too-long`.
-    options.productDescription = wrap(options.productDescription, {width: 80, indent: ' '})
+    options.productDescription = options.productDescription
+      .replace(/\r\n/g, '\n') // Fixes errors when finding blank lines in Windows
+      .replace(/^$/mg, '.')
+      .split('\n')
+      .map(line => wrap(line, {width: 80, indent: ' '}))
+      .join('\n')
   }
 
   // Create array with unique values from default & user-supplied dependencies
