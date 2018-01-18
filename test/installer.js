@@ -78,7 +78,7 @@ describe('module', function () {
     {
       src: 'test/fixtures/app-without-asar/',
       options: {
-        description: 'Line one\nLine 2\nLine3\nLine 4'
+        description: 'Line one\nLine 2\rLine3\r\nLine 4'
       }
     },
     'generates a .deb package',
@@ -90,7 +90,7 @@ describe('module', function () {
     {
       src: 'test/fixtures/app-without-asar/',
       options: {
-        productDescription: 'Line one\nLine 2\n\nLine3\nLine 4'
+        productDescription: 'Line one:\r\n *Line 2\n\nLine3\nLine 4'
       }
     },
     'generates a .deb package',

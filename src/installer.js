@@ -152,7 +152,7 @@ function getOptions (data, defaults) {
   if (options.description) {
     // Replace all newlines in the description with spaces, since it's supposed
     // to be one line.
-    options.description = options.description.replace(/[\n]+/g, ' ')
+    options.description = options.description.replace(/[\r\n]+/g, ' ')
   }
 
   if (options.productDescription) {
@@ -160,6 +160,7 @@ function getOptions (data, defaults) {
     // Wrap any extended description lines to avoid lintian warning about
     // `extended-description-line-too-long`.
     options.productDescription = options.productDescription
+      .replace(/\r\n/g, '\n') // Fixes errors when finding blank lines in Windows
       .replace(/^$/mg, '.')
       .split('\n')
       .map(line => wrap(line, {width: 80, indent: ' '}))
