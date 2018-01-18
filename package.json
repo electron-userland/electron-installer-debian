@@ -1,7 +1,7 @@
 {
   "name": "electron-installer-debian",
   "description": "Create a Debian package for your Electron app.",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "license": "MIT",
   "author": {
     "name": "Daniel Perez Alvarez",
