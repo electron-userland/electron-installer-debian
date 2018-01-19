@@ -160,13 +160,24 @@ const options = {
 
 console.log('Creating package (this may take a while)')
 
+installer(options)
+  .then(() => console.log(`Successfully created package at ${options.dest}`))
+  .catch(err => {
+    console.error(err, err.stack)
+    process.exit(1)
+  })
+```
+
+Alternatively, it is possible to use the callback pattern:
+
+```javascript
 installer(options, err => {
   if (err) {
     console.error(err, err.stack)
     process.exit(1)
   }
 
-  console.log('Successfully created package at ' + options.dest)
+  console.log(`Successfully created package at ${options.dest}`)
 })
 ```
 
