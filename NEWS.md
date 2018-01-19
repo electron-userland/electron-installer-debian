@@ -2,7 +2,23 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v0.7.1...master
+[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v0.8.0...master
+
+## [0.8.0] - 2018-01-18
+
+[0.8.0]: https://github.com/unindented/electron-installer-debian/compare/v0.7.2...v0.8.0
+
+### Added
+
+* Promise support (#124)
+
+## [0.7.2] - 2018-01-18
+
+[0.7.2]: https://github.com/unindented/electron-installer-debian/compare/v0.7.1...v0.7.2
+
+### Fixed
+
+* Multiple-line `productDescription`s with lines beginning with spaces (#125)
 
 ## [0.7.1] - 2017-11-13
 
