@@ -2,7 +2,15 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v0.8.0...master
+[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v0.8.1...master
+
+## [0.8.1] - 2018-02-20
+
+[0.8.1]: https://github.com/unindented/electron-installer-debian/compare/v0.8.0...v0.8.1
+
+### Fixed
+
+* Handling executables trying to spawn that don't exist (#130)
 
 ## [0.8.0] - 2018-01-18
 
