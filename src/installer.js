@@ -75,11 +75,11 @@ function getSize (options) {
  */
 function getDefaults (data) {
   const src = {src: data.src}
-  return Promise.all([readMeta(data), getSize(src), dependencies.getTrashDepends(src)])
+  return Promise.all([readMeta(data), getSize(src), dependencies.getElectronVersion(src)])
     .then(results => {
       const pkg = results[0] || {}
       const size = results[1] || 0
-      const trashDependencies = results[2] || 'gvfs-bin'
+      const electronVersion = results[2]
 
       return {
         name: pkg.name || 'electron',
@@ -97,7 +97,7 @@ function getDefaults (data) {
         arch: undefined,
         size: Math.ceil(size / 1024),
 
-        depends: dependencies.getDepends(trashDependencies),
+        depends: dependencies.getDepends(electronVersion),
         recommends: [
           'pulseaudio | libasound2'
         ],

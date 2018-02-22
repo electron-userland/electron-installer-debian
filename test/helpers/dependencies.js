@@ -7,7 +7,7 @@ const dependencies = require('../../src/dependencies')
 
 // Default options (partly from src/installer.js)
 const defaults = {
-  depends: dependencies.getDepends('gvfs-bin'),
+  depends: dependencies.getDepends('1.0.0'),
   recommends: ['pulseaudio | libasound2'],
   suggests: [
     'gir1.2-gnomekeyring-1.0',
