@@ -203,7 +203,8 @@ function createControl (options, dir) {
   const controlDest = path.join(dir, 'DEBIAN/control')
   options.logger(`Creating control file at ${controlDest}`)
 
-  return generateTemplate(options, controlSrc)
+  return pify(mkdirp)(path.dirname(controlDest), '0755')
+    .then(() => generateTemplate(options, controlSrc))
     .then(data => fs.outputFile(controlDest, data))
     .catch(wrapError('creating control file'))
 }
@@ -413,6 +414,10 @@ module.exports = (data, callback) => {
   data.logger = data.logger || defaultLogger
 
   let options
+
+  const defaultMask = 0o002
+  const oldMask = process.umask(defaultMask)
+  data.logger(`Setting umask for the process to ${defaultMask.toString(8)}, old umask was ${oldMask.toString(8)}`)
 
   const promise = getDefaults(data)
     .then(defaults => getOptions(data, defaults))
