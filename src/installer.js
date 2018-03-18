@@ -415,9 +415,9 @@ module.exports = (data, callback) => {
 
   let options
 
-  const defaultMask = 0o002
-  const oldMask = process.umask(defaultMask)
-  data.logger(`Setting umask for the process to ${defaultMask.toString(8)}, old umask was ${oldMask.toString(8)}`)
+  if (process.umask() !== 0o0022 && process.umask() !== 0o0002) {
+    console.warn(`\x1b[1mThe current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002\x1b[0m`)
+  }
 
   const promise = getDefaults(data)
     .then(defaults => getOptions(data, defaults))

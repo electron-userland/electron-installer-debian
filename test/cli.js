@@ -1,5 +1,6 @@
 'use strict'
 
+const chai = require('chai')
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -67,9 +68,15 @@ describe('cli', function () {
 
     before(() => (defaultMask = process.umask(0o777)))
 
-    runCLI({ src: 'test/fixtures/app-with-asar/', dest: outputDir, arch: 'i386' })
-
-    it('generates a `.deb` package', () => access(path.join(outputDir, 'footest_0.0.1_i386.deb')))
+    it(`warns the user about umaks`, () => {
+      const args = [
+        '--src', 'test/fixtures/app-with-asar/',
+        '--dest', outputDir,
+        '--arch', 'i386'
+      ]
+      return spawn('./src/cli.js', args)
+        .catch(error => chai.expect(error.message).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
+    })
 
     cleanupOutputDir(outputDir)
 
