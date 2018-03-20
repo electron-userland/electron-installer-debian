@@ -203,4 +203,35 @@ describe('module', function () {
         .then(() => dependencies.assertDependenciesEqual(outputDir, 'footest_i386.deb', userDependencies))
     )
   })
+
+  describe('with restrictive umask', test => {
+    const outputDir = tempOutputDir()
+    let defaultMask
+    let consoleWarn
+    let warning = ''
+
+    before(() => {
+      defaultMask = process.umask(0o777)
+      consoleWarn = console.warn
+      console.warn = msg => {
+        warning += msg
+      }
+    })
+
+    it(`warns the user about umasks`, () => {
+      const installerOptions = testInstallerOptions(outputDir, {
+        src: 'test/fixtures/app-with-asar/',
+        options: { arch: 'i386' }
+      })
+      return installer(installerOptions)
+        .catch(() => chai.expect(warning).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
+    })
+
+    cleanupOutputDir(outputDir)
+
+    after(() => {
+      console.warn = consoleWarn
+      process.umask(defaultMask)
+    })
+  })
 })
