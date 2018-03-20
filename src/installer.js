@@ -416,7 +416,7 @@ module.exports = (data, callback) => {
   let options
 
   if (process.umask() !== 0o0022 && process.umask() !== 0o0002) {
-    console.warn(`\x1b[1mThe current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002\x1b[0m`)
+    console.warn(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`)
   }
 
   const promise = getDefaults(data)
