@@ -28,6 +28,7 @@ function errorMessage (message, err) {
 
 function wrapError (message) {
   return err => {
+    /* istanbul ignore next */
     throw new Error(errorMessage(message, err))
   }
 }

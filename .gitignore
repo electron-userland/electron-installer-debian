@@ -1,4 +1,4 @@
+.nyc_output
+node_modules
 /example/dist/
-/example/node_modules/
-/node_modules/
 /test/fixtures/out/
