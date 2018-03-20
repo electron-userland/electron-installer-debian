@@ -203,7 +203,8 @@ function createControl (options, dir) {
   const controlDest = path.join(dir, 'DEBIAN/control')
   options.logger(`Creating control file at ${controlDest}`)
 
-  return generateTemplate(options, controlSrc)
+  return pify(mkdirp)(path.dirname(controlDest), '0755')
+    .then(() => generateTemplate(options, controlSrc))
     .then(data => fs.outputFile(controlDest, data))
     .catch(wrapError('creating control file'))
 }
@@ -413,6 +414,10 @@ module.exports = (data, callback) => {
   data.logger = data.logger || defaultLogger
 
   let options
+
+  if (process.umask() !== 0o0022 && process.umask() !== 0o0002) {
+    console.warn(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`)
+  }
 
   const promise = getDefaults(data)
     .then(defaults => getOptions(data, defaults))

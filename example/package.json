@@ -20,9 +20,9 @@
     "build": "npm run clean && npm run exe32 && npm run deb32 && npm run exe64 && npm run deb64"
   },
   "devDependencies": {
-    "electron-installer-debian": "^0.6.0",
-    "electron-packager": "^9.0.0",
     "electron": "~1.7.0",
+    "electron-installer-debian": "*",
+    "electron-packager": "^9.0.0",
     "rimraf": "^2.6.2"
   }
 }
