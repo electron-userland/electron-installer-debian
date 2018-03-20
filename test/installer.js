@@ -176,6 +176,22 @@ describe('module', function () {
         })
   )
 
+  describe('unknown script name', test => {
+    const outputDir = tempOutputDir()
+    cleanupOutputDir(outputDir)
+
+    it('throws an error', () => {
+      const installerOptions = testInstallerOptions(outputDir, {
+        src: 'test/fixtures/app-with-asar/',
+        scripts: {
+          invalid: 'test/fixtures/debian-scripts/preinst.sh'
+        }
+      })
+      return installer(installerOptions)
+        .catch(error => chai.expect(error.message).to.deep.equal('Wrong executable script name: invalid'))
+    })
+  })
+
   describe('with duplicate dependencies', test => {
     const outputDir = tempOutputDir()
 
