@@ -4,6 +4,11 @@
 
 [Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v0.8.1...master
 
+### Removed
+
+* Node-style callback support (use [`nodeify`](https://npm.im/nodeify) if you need that
+  functionality)
+
 ## [0.8.1] - 2018-02-20
 
 [0.8.1]: https://github.com/unindented/electron-installer-debian/compare/v0.8.0...v0.8.1
