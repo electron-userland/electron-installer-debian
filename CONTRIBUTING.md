@@ -77,7 +77,11 @@ However, rebasing is encouraged when practical, particularly when there's a merg
 If you are continuing the work of another person's PR and need to rebase/squash, please retain the
 attribution of the original author(s) and continue the work in subsequent commits.
 
-## For Collaborators
+## Running tests
+
+A few of the tests require `lintian` to be installed.
+
+## For collaborators
 
 Make sure to get an approval from another collaborator before merging a PR.
 
