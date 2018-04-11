@@ -7,7 +7,6 @@ const fs = require('fs-extra')
 const fsize = require('get-folder-size')
 const glob = require('glob')
 const mkdirp = require('mkdirp')
-const nodeify = require('nodeify')
 const path = require('path')
 const pify = require('pify')
 const temp = require('temp').track()
@@ -410,7 +409,7 @@ function movePackage (options, dir) {
 
 /* ************************************************************************** */
 
-module.exports = (data, callback) => {
+module.exports = data => {
   data.rename = data.rename || defaultRename
   data.logger = data.logger || defaultLogger
 
@@ -420,7 +419,7 @@ module.exports = (data, callback) => {
     console.warn(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`)
   }
 
-  const promise = getDefaults(data)
+  return getDefaults(data)
     .then(defaults => getOptions(data, defaults))
     .then(generatedOptions => {
       options = generatedOptions
@@ -436,6 +435,4 @@ module.exports = (data, callback) => {
       data.logger(errorMessage('creating package', err))
       throw err
     })
-
-  return nodeify(promise, callback)
 }
