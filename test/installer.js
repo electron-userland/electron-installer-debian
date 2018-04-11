@@ -176,6 +176,22 @@ describe('module', function () {
         })
   )
 
+  describe('unknown script name', test => {
+    const outputDir = tempOutputDir()
+    cleanupOutputDir(outputDir)
+
+    it('throws an error', () => {
+      const installerOptions = testInstallerOptions(outputDir, {
+        src: 'test/fixtures/app-with-asar/',
+        scripts: {
+          invalid: 'test/fixtures/debian-scripts/preinst.sh'
+        }
+      })
+      return installer(installerOptions)
+        .catch(error => chai.expect(error.message).to.deep.equal('Wrong executable script name: invalid'))
+    })
+  })
+
   describe('with duplicate dependencies', test => {
     const outputDir = tempOutputDir()
 
@@ -202,5 +218,36 @@ describe('module', function () {
       assertASARDebExists(outputDir)
         .then(() => dependencies.assertDependenciesEqual(outputDir, 'footest_i386.deb', userDependencies))
     )
+  })
+
+  describe('with restrictive umask', test => {
+    const outputDir = tempOutputDir()
+    let defaultMask
+    let consoleWarn
+    let warning = ''
+
+    before(() => {
+      defaultMask = process.umask(0o777)
+      consoleWarn = console.warn
+      console.warn = msg => {
+        warning += msg
+      }
+    })
+
+    it(`warns the user about umasks`, () => {
+      const installerOptions = testInstallerOptions(outputDir, {
+        src: 'test/fixtures/app-with-asar/',
+        options: { arch: 'i386' }
+      })
+      return installer(installerOptions)
+        .catch(() => chai.expect(warning).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
+    })
+
+    cleanupOutputDir(outputDir)
+
+    after(() => {
+      console.warn = consoleWarn
+      process.umask(defaultMask)
+    })
   })
 })

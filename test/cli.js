@@ -1,6 +1,5 @@
 'use strict'
 
-const chai = require('chai')
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -60,26 +59,5 @@ describe('cli', function () {
     )
 
     cleanupOutputDir(outputDir)
-  })
-
-  describe('with restrictive umask', test => {
-    const outputDir = tempOutputDir()
-    let defaultMask
-
-    before(() => (defaultMask = process.umask(0o777)))
-
-    it(`warns the user about umaks`, () => {
-      const args = [
-        '--src', 'test/fixtures/app-with-asar/',
-        '--dest', outputDir,
-        '--arch', 'i386'
-      ]
-      return spawn('./src/cli.js', args)
-        .catch(error => chai.expect(error.message).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
-    })
-
-    cleanupOutputDir(outputDir)
-
-    after(() => process.umask(defaultMask))
   })
 })

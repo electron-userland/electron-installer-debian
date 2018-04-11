@@ -36,7 +36,7 @@ const options = _.omit(argv, ['$0', '_', 'version'])
 
 installer(options)
   .then(() => console.log(`Successfully created package at ${argv.dest}`))
-  .catch(err => {
+  .catch(/* istanbul ignore next */ err => {
     console.error(err, err.stack)
     process.exit(1)
   })
