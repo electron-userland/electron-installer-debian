@@ -13,6 +13,16 @@ addons:
       - fakeroot
       - lintian
 
+before_install:
+  - npm install -g npm@5.8.0
+
+install:
+  - npm ci
+
+cache:
+  directories:
+  - "$HOME/.npm"
+
 deploy:
   provider: npm
   email: unindented@gmail.com
