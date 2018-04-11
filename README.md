@@ -168,20 +168,10 @@ installer(options)
   })
 ```
 
-Alternatively, it is possible to use the callback pattern:
-
-```javascript
-installer(options, err => {
-  if (err) {
-    console.error(err, err.stack)
-    process.exit(1)
-  }
-
-  console.log(`Successfully created package at ${options.dest}`)
-})
-```
-
 You'll end up with the package at `dist/installers/app_0.0.1_amd64.deb`.
+
+_Note: As of 1.0.0, the Node-style callback pattern is no longer available. You can use
+[`nodeify`](https://npm.im/nodeify) if this is required for your use case._
 
 ### Options
 
