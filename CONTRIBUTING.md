@@ -10,8 +10,8 @@ sorts of contributions. They include, but are not limited to:
 - Feature requests
 - [Pull requests](#filing-pull-requests)
 
-We strongly suggest that before filing an issue, you search through the existing issues to see
-if it has already been filed by someone else.
+We strongly suggest that before filing an issue, you search through the existing issues (both open
+and closed) to see if it has already been filed by someone else.
 
 This project is a part of the Electron ecosystem. As such, all contributions to this project follow
 [Electron's code of conduct](https://github.com/electron/electron/blob/master/CODE_OF_CONDUCT.md)
