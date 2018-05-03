@@ -4,6 +4,14 @@
 
 > Create a Debian package for your Electron app.
 
+----
+
+[Usage](#usage) |
+[Options](#options) |
+[Release Notes](https://github.com/unindented/electron-installer-debian/blob/master/NEWS.md) |
+[License](https://github.com/unindented/electron-installer-debian/blob/master/LICENSE) |
+[Code of Conduct](https://github.com/unindented/electron-installer-debian/blob/master/CODE_OF_CONDUCT.md) |
+[Support](https://github.com/unindented/electron-installer-debian/blob/master/SUPPORT.md)
 
 ## Requirements
 
@@ -429,7 +437,6 @@ In versions of `electron-installer-debian` prior to 0.5.0, the app was (incorrec
 
 * Code: `git clone git://github.com/unindented/electron-installer-debian.git`
 * Home: <https://github.com/unindented/electron-installer-debian/>
-* [Release Notes](https://github.com/unindented/electron-installer-debian/blob/master/NEWS.md)
 
 
 ## Contributors
