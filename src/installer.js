@@ -6,7 +6,6 @@ const debug = require('debug')
 const fs = require('fs-extra')
 const fsize = require('get-folder-size')
 const glob = require('glob')
-const mkdirp = require('mkdirp')
 const path = require('path')
 const pify = require('pify')
 const temp = require('temp').track()
@@ -211,7 +210,7 @@ function createControl (options, dir) {
   const controlDest = path.join(dir, 'DEBIAN/control')
   options.logger(`Creating control file at ${controlDest}`)
 
-  return pify(mkdirp)(path.dirname(controlDest), '0755')
+  return fs.ensureDir(path.dirname(controlDest), '0755')
     .then(() => generateTemplate(options, controlSrc))
     .then(data => fs.outputFile(controlDest, data))
     .catch(wrapError('creating control file'))
@@ -244,7 +243,7 @@ function createBinary (options, dir) {
   const binDest = path.join(binDir, options.name)
   options.logger(`Symlinking binary from ${binSrc} to ${binDest}`)
 
-  return pify(mkdirp)(binDir, '0755')
+  return fs.ensureDir(binDir, '0755')
     .catch(wrapError('creating binary path'))
     .then(() => fs.symlink(binSrc, binDest, 'file'))
     .catch(wrapError('creating binary file'))
@@ -260,7 +259,7 @@ function createDesktop (options, dir) {
   const desktopDest = path.join(dir, 'usr/share/applications', `${options.name}.desktop`)
   options.logger(`Creating desktop file at ${desktopDest}`)
 
-  return pify(mkdirp)(path.dirname(desktopDest), '0755')
+  return fs.ensureDir(path.dirname(desktopDest), '0755')
     .catch(wrapError('creating desktop path'))
     .then(() => generateTemplate(options, desktopSrc))
     .then(data => fs.outputFile(desktopDest, data))
@@ -275,7 +274,7 @@ function createPixmapIcon (options, dir) {
   const iconFile = path.join(dir, 'usr/share/pixmaps', `${options.name}.png`)
   options.logger(`Creating icon file at ${iconFile}`)
 
-  return pify(mkdirp)(path.dirname(iconFile), '0755')
+  return fs.ensureDir(path.dirname(iconFile), '0755')
     .catch(wrapError('creating icon path'))
     .then(() => fs.copy(options.icon, iconFile))
     .then(() => fs.chmod(iconFile, '0644'))
@@ -291,7 +290,7 @@ function createHicolorIcon (options, dir) {
     const iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', `${options.name}.${iconExt}`)
     options.logger(`Creating icon file at ${iconFile}`)
 
-    return pify(mkdirp)(path.dirname(iconFile), '0755')
+    return fs.ensureDir(path.dirname(iconFile), '0755')
       .then(() => fs.copy(icon, iconFile))
       .then(() => fs.chmod(iconFile, '0644'))
       .catch(wrapError('creating icon file'))
@@ -316,7 +315,7 @@ function createCopyright (options, dir) {
   const copyrightFile = path.join(dir, 'usr/share/doc', options.name, 'copyright')
   options.logger(`Creating copyright file at ${copyrightFile}`)
 
-  return pify(mkdirp)(path.dirname(copyrightFile), '0755')
+  return fs.ensureDir(path.dirname(copyrightFile), '0755')
     .then(() => copyLicense(options, copyrightFile))
     .then(() => fs.chmod(copyrightFile, '0644'))
     .catch(wrapError('creating copyright file'))
@@ -330,7 +329,7 @@ function createOverrides (options, dir) {
   const overridesDest = path.join(dir, 'usr/share/lintian/overrides', options.name)
   options.logger(`Creating lintian overrides at ${overridesDest}`)
 
-  return pify(mkdirp)(path.dirname(overridesDest), '0755')
+  return fs.ensureDir(path.dirname(overridesDest), '0755')
     .then(() => generateTemplate(options, overridesSrc))
     .then(data => fs.outputFile(overridesDest, data))
     .then(() => fs.chmod(overridesDest, '0644'))
@@ -345,7 +344,7 @@ function createApplication (options, dir) {
   const licenseFile = path.join(applicationDir, 'LICENSE')
   options.logger(`Copying application to ${applicationDir}`)
 
-  return pify(mkdirp)(applicationDir, '0755')
+  return fs.ensureDir(applicationDir, '0755')
     .then(() => fs.copy(options.src, applicationDir))
     .then(() => fs.unlink(licenseFile))
     .catch(wrapError('copying application directory'))
@@ -361,7 +360,7 @@ function createDir (options) {
   return pify(temp.mkdir)('electron-')
     .then(dir => {
       tempDir = path.join(dir, `${options.name}_${options.version}_${options.arch}`)
-      return pify(mkdirp)(tempDir, '0755')
+      return fs.ensureDir(tempDir, '0755')
     })
     .catch(wrapError('creating temporary directory'))
 }
