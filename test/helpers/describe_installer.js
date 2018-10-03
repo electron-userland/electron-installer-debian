@@ -26,7 +26,7 @@ module.exports.cleanupOutputDir = function cleanupOutputDir (outputDir) {
 }
 
 module.exports.tempOutputDir = function tempOutputDir (customDir) {
-  return customDir ? path.join(os.tmpdir(), customDir) : temp.path({prefix: 'electron-installer-debian-'})
+  return customDir ? path.join(os.tmpdir(), customDir) : temp.path({ prefix: 'electron-installer-debian-' })
 }
 
 module.exports.testInstallerOptions = function testInstallerOptions (outputDir, installerOptions) {
@@ -37,5 +37,5 @@ module.exports.testInstallerOptions = function testInstallerOptions (outputDir, 
     options: {
       arch: 'amd64'
     }
-  }, installerOptions, {dest: outputDir})
+  }, installerOptions, { dest: outputDir })
 }

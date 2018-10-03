@@ -84,7 +84,7 @@ function transformVersion (version) {
  * read from `package.json`, and some are hardcoded.
  */
 function getDefaults (data) {
-  const src = {src: data.src}
+  const src = { src: data.src }
   return Promise.all([readMeta(data), getSize(src), dependencies.getElectronVersion(src)])
     .then(results => {
       const pkg = results[0] || {}
@@ -171,7 +171,7 @@ function getOptions (data, defaults) {
       .replace(/\r\n/g, '\n') // Fixes errors when finding blank lines in Windows
       .replace(/^$/mg, '.')
       .split('\n')
-      .map(line => wrap(line, {width: 80, indent: ' '}))
+      .map(line => wrap(line, { width: 80, indent: ' ' }))
       .join('\n')
   }
 
@@ -411,7 +411,7 @@ function movePackage (options, dir) {
       const template = options.rename(options.dest, path.basename(file))
       const dest = _.template(template)(options)
       options.logger(`Moving file ${file} to ${dest}`)
-      return fs.move(file, dest, {clobber: true})
+      return fs.move(file, dest, { clobber: true })
     }))).catch(wrapError('moving package files'))
 }
 

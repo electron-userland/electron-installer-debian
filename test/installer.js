@@ -1,7 +1,7 @@
 'use strict'
 
 const chai = require('chai')
-const exec = require('mz/child_process').exec
+const { exec } = require('mz/child_process')
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -123,7 +123,7 @@ describe('module', function () {
         .then(() => exec('dpkg-deb -x bartest_amd64.deb .', { cwd: outputDir }))
         .then(() => fs.readFile(path.join(outputDir, 'usr/share/applications/bartest.desktop')))
         .then(data => {
-          if (data.toString().indexOf('Comment=Hardcoded comment') === -1) {
+          if (!data.toString().includes('Comment=Hardcoded comment')) {
             throw new Error('Did not use custom template')
           }
           return Promise.resolve()
