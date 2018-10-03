@@ -70,6 +70,16 @@ function getSize (options) {
 }
 
 /**
+ * Transforms a SemVer version into a Debian-style version.
+ *
+ * Use '~' on pre-releases for proper Debian version ordering.
+ * See https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Version
+ */
+function transformVersion (version) {
+  return version.replace(/(\d)[_.+-]?((RC|rc|pre|dev|beta|alpha)[_.+-]?\d*)$/, '$1~$2')
+}
+
+/**
  * Get the hash of default options for the installer. Some come from the info
  * read from `package.json`, and some are hardcoded.
  */
@@ -87,9 +97,7 @@ function getDefaults (data) {
         genericName: pkg.genericName || pkg.productName || pkg.name,
         description: pkg.description,
         productDescription: pkg.productDescription || pkg.description,
-        // Use '~' on pre-releases for proper Debian version ordering.
-        // See https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Version
-        version: (pkg.version || '0.0.0').replace(/(\d)[_.+-]?((RC|rc|pre|dev|beta|alpha)[_.+-]?\d*)$/, '$1~$2'),
+        version: transformVersion(pkg.version || '0.0.0'),
         revision: pkg.revision || '1',
 
         section: 'utils',
@@ -436,3 +444,5 @@ module.exports = data => {
       throw err
     })
 }
+
+module.exports.transformVersion = transformVersion
