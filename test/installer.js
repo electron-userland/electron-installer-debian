@@ -250,4 +250,11 @@ describe('module', function () {
       process.umask(defaultMask)
     })
   })
+
+  describe('transformVersion', () => {
+    it('uses tildes for pre-release versions', () => {
+      chai.expect(installer.transformVersion('1.2.3')).to.equal('1.2.3')
+      chai.expect(installer.transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
+    })
+  })
 })

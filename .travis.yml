@@ -13,6 +13,8 @@ addons:
       - fakeroot
       - lintian
 
+before_script: chmod -R g-w test/fixtures
+
 deploy:
   provider: npm
   email: unindented@gmail.com
