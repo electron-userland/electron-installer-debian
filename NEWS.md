@@ -2,12 +2,26 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v0.8.1...master
+[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v1.0.0...master
+
+## [1.0.0] - 2018-10-05
+
+[1.0.0]: https://github.com/unindented/electron-installer-debian/compare/v0.8.1...v1.0.0
+
+### Added
+
+* Support for Electron >= 2.0 (#132)
+* `transformVersion` as an exportable function (#144)
+
+### Fixed
+
+* Warn when directory umask may not work with dpkg (#134)
 
 ### Removed
 
 * Node-style callback support (use [`nodeify`](https://npm.im/nodeify) if you need that
   functionality)
+* Node < 6 support (#145)
 
 ## [0.8.1] - 2018-02-20
 
