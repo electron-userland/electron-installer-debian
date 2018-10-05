@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const exec = require('mz/child_process').exec
+const { exec } = require('mz/child_process')
 
 const dependencies = require('../../src/dependencies')
 
