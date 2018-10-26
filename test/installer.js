@@ -139,7 +139,7 @@ describe('module', function () {
         src: 'test/fixtures/app-without-description-or-product-description/'
       })
       return installer(installerOptions)
-        .catch(error => chai.expect(error.message).to.deep.equal('No Description or ProductDescription provided'))
+        .catch(error => chai.expect(error.message).to.match(/^No Description or ProductDescription provided/))
     })
   })
 
