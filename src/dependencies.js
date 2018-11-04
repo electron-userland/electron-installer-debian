@@ -28,8 +28,9 @@ function getTrashDepends (version) {
 module.exports = {
   getElectronVersion: function getElectronVersion (options) {
     return fs.readFile(path.resolve(options.src, 'version'))
-      // The content of the version file is the tag name, e.g. "v1.8.1"
-      .then(tag => tag.toString().slice(1).trim())
+      // The content of the version file pre-4.0 is the tag name, e.g. "v1.8.1"
+      // The content of the version file post-4.0 is just the version
+      .then(tag => tag.toString().trim())
   },
   getGTKDepends: getGTKDepends,
   getTrashDepends: getTrashDepends,
