@@ -75,7 +75,7 @@ describe('cli', function () {
       '--options.preDepends', 'testPreDepends',
       '--options.categories', 'testCategory', 'testCategory2', 'testCategory3',
       '--options.mimeType', 'testMimeType',
-      '--options.lintianOverrides', 'testLitianOverride'
+      '--options.lintianOverrides', 'testLintianOverride'
     ]
 
     before(() => spawn('./src/cli.js', args))
