@@ -2,11 +2,11 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/unindented/electron-installer-debian/compare/v1.0.0...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.0.0...master
 
 ## [1.0.0] - 2018-10-05
 
-[1.0.0]: https://github.com/unindented/electron-installer-debian/compare/v0.8.1...v1.0.0
+[1.0.0]: https://github.com/electron-userland/electron-installer-debian/compare/v0.8.1...v1.0.0
 
 ### Added
 
@@ -25,7 +25,7 @@
 
 ## [0.8.1] - 2018-02-20
 
-[0.8.1]: https://github.com/unindented/electron-installer-debian/compare/v0.8.0...v0.8.1
+[0.8.1]: https://github.com/electron-userland/electron-installer-debian/compare/v0.8.0...v0.8.1
 
 ### Fixed
 
@@ -33,7 +33,7 @@
 
 ## [0.8.0] - 2018-01-18
 
-[0.8.0]: https://github.com/unindented/electron-installer-debian/compare/v0.7.2...v0.8.0
+[0.8.0]: https://github.com/electron-userland/electron-installer-debian/compare/v0.7.2...v0.8.0
 
 ### Added
 
@@ -41,7 +41,7 @@
 
 ## [0.7.2] - 2018-01-18
 
-[0.7.2]: https://github.com/unindented/electron-installer-debian/compare/v0.7.1...v0.7.2
+[0.7.2]: https://github.com/electron-userland/electron-installer-debian/compare/v0.7.1...v0.7.2
 
 ### Fixed
 
@@ -49,7 +49,7 @@
 
 ## [0.7.1] - 2017-11-13
 
-[0.7.1]: https://github.com/unindented/electron-installer-debian/compare/v0.7.0...v0.7.1
+[0.7.1]: https://github.com/electron-userland/electron-installer-debian/compare/v0.7.0...v0.7.1
 
 ### Fixed
 
@@ -57,7 +57,7 @@
 
 ## [0.7.0] - 2017-11-09
 
-[0.7.0]: https://github.com/unindented/electron-installer-debian/compare/v0.6.0...v0.7.0
+[0.7.0]: https://github.com/electron-userland/electron-installer-debian/compare/v0.6.0...v0.7.0
 
 ### Added
 
@@ -71,7 +71,7 @@
 
 ## [0.6.0] - 2017-09-27
 
-[0.6.0]: https://github.com/unindented/electron-installer-debian/compare/v0.5.2...v0.6.0
+[0.6.0]: https://github.com/electron-userland/electron-installer-debian/compare/v0.5.2...v0.6.0
 
 ### Added
 

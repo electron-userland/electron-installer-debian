@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/unindented/electron-installer-debian.git"
+    "url": "git://github.com/electron-userland/electron-installer-debian.git"
   },
   "keywords": [
     "electron",
