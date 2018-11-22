@@ -1,6 +1,6 @@
 ![Electron Installer for Debian](resources/logo.png)
 
-# electron-installer-debian [![Version](https://img.shields.io/npm/v/electron-installer-debian.svg)](https://www.npmjs.com/package/electron-installer-debian) [![Build Status](https://img.shields.io/travis/unindented/electron-installer-debian.svg)](http://travis-ci.org/unindented/electron-installer-debian) [![Dependency Status](https://img.shields.io/gemnasium/unindented/electron-installer-debian.svg)](https://gemnasium.com/unindented/electron-installer-debian)
+# electron-installer-debian [![Version](https://img.shields.io/npm/v/electron-installer-debian.svg)](https://www.npmjs.com/package/electron-installer-debian) [![Build Status](https://img.shields.io/travis/electron-userland/electron-installer-debian.svg)](http://travis-ci.org/electron-userland/electron-installer-debian)
 
 > Create a Debian package for your Electron app.
 
@@ -8,10 +8,10 @@
 
 [Usage](#usage) |
 [Options](#options) |
-[Release Notes](https://github.com/unindented/electron-installer-debian/blob/master/NEWS.md) |
-[License](https://github.com/unindented/electron-installer-debian/blob/master/LICENSE) |
-[Code of Conduct](https://github.com/unindented/electron-installer-debian/blob/master/CODE_OF_CONDUCT.md) |
-[Support](https://github.com/unindented/electron-installer-debian/blob/master/SUPPORT.md)
+[Release Notes](https://github.com/electron-userland/electron-installer-debian/blob/master/NEWS.md) |
+[License](https://github.com/electron-userland/electron-installer-debian/blob/master/LICENSE) |
+[Code of Conduct](https://github.com/electron-userland/electron-installer-debian/blob/master/CODE_OF_CONDUCT.md) |
+[Support](https://github.com/electron-userland/electron-installer-debian/blob/master/SUPPORT.md)
 
 ## Requirements
 
@@ -302,7 +302,7 @@ Estimate of the total amount of disk space required to install the named package
 
 #### options.depends, recommends, suggests, enhances, preDepends
 Type: `Array[String]`
-Default: see `src/installer.js` for [`depends`](https://github.com/unindented/electron-installer-debian/blob/4191067/src/dependencies.js#L8-L41), [`recommends`, `suggests`, `enhances`, and `preDepends`](https://github.com/unindented/electron-installer-debian/blob/53fb5c5/src/installer.js#L146-L157)
+Default: see `src/installer.js` for [`depends`](https://github.com/electron-userland/electron-installer-debian/blob/4191067/src/dependencies.js#L8-L41), [`recommends`, `suggests`, `enhances`, and `preDepends`](https://github.com/electron-userland/electron-installer-debian/blob/53fb5c5/src/installer.js#L146-L157)
 
 Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests`, `Enhances` and `Pre-Depends` fields of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
 
@@ -353,7 +353,7 @@ Exec=foo %U
 
 #### options.icon
 Type: `String` or `Object[String:String]`
-Default: [`resources/icon.png`](https://github.com/unindented/electron-installer-debian/blob/master/resources/icon.png)
+Default: [`resources/icon.png`](https://github.com/electron-userland/electron-installer-debian/blob/master/resources/icon.png)
 
 Path to a single image that will act as icon for the application:
 
@@ -418,7 +418,7 @@ You can read more about [package maintainer scripts](https://www.debian.org/doc/
 
 #### options.desktopTemplate
 Type: `String`
-Default: [`resources/desktop.ejs`](https://github.com/unindented/electron-installer-debian/blob/master/resources/desktop.ejs)
+Default: [`resources/desktop.ejs`](https://github.com/electron-userland/electron-installer-debian/blob/master/resources/desktop.ejs)
 
 The absolute path to a custom template for the generated [FreeDesktop.org desktop
 entry](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html) file.
@@ -427,7 +427,7 @@ entry](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-la
 
 The package installs the Electron application into `/usr/lib`, since there are
 architecture-specific files in the package. There was a [discussion in the issue
-tracker](https://github.com/unindented/electron-installer-debian/issues/46) about the
+tracker](https://github.com/electron-userland/electron-installer-debian/issues/46) about the
 installation directory.
 
 In versions of `electron-installer-debian` prior to 0.5.0, the app was (incorrectly) installed in
@@ -435,8 +435,8 @@ In versions of `electron-installer-debian` prior to 0.5.0, the app was (incorrec
 
 ## Meta
 
-* Code: `git clone git://github.com/unindented/electron-installer-debian.git`
-* Home: <https://github.com/unindented/electron-installer-debian/>
+* Code: `git clone git://github.com/electron-userland/electron-installer-debian.git`
+* Home: <https://github.com/electron-userland/electron-installer-debian/>
 
 
 ## Contributors
