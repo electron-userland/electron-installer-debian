@@ -60,28 +60,4 @@ describe('cli', function () {
 
     cleanupOutputDir(outputDir)
   })
-
-  describe('with cli options as arrays', test => {
-    const outputDir = tempOutputDir()
-
-    const args = [
-      '--src', 'test/fixtures/app-without-asar/',
-      '--dest', outputDir,
-      '--arch', 'amd64',
-      '--options.depends', 'testDepend', 'testDepend2',
-      '--options.recommends', 'testRecommends',
-      '--options.suggests', 'testSuggests',
-      '--options.enhances', 'testEnhances',
-      '--options.preDepends', 'testPreDepends',
-      '--options.categories', 'testCategory', 'testCategory2', 'testCategory3',
-      '--options.mimeType', 'testMimeType',
-      '--options.lintianOverrides', 'testLintianOverride'
-    ]
-
-    before(() => spawn('./src/cli.js', args))
-
-    it('generates a `.deb` package', () => access(path.join(outputDir, 'bartest_0.0.1_amd64.deb')))
-
-    cleanupOutputDir(outputDir)
-  })
 })
