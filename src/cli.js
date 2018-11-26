@@ -25,6 +25,14 @@ const argv = yargs
     describe: 'JSON file that contains the metadata for your application',
     config: true
   })
+  .options('options.depends', { array: true, hidden: true })
+  .options('options.recommends', { array: true, hidden: true })
+  .options('options.suggests', { array: true, hidden: true })
+  .options('options.enhances', { array: true, hidden: true })
+  .options('options.preDepends', { array: true, hidden: true })
+  .options('options.categories', { array: true, hidden: true })
+  .options('options.mimeType', { array: true, hidden: true })
+  .options('options.lintianOverrides', { array: true, hidden: true })
   .example('$0 --src dist/app/ --dest dist/installer/ --arch i386', 'use metadata from `dist/app/`')
   .example('$0 --src dist/app/ --dest dist/installer/ --config config.json', 'use metadata from `config.json`')
   .wrap(null)
