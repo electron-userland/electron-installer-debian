@@ -14,6 +14,17 @@ describe('dependencies', () => {
     })
   })
 
+  describe('getGConfDepends', () => {
+    it('returns gconf pre-3.0', () => {
+      chai.expect(dependencies.getGConfDepends('v2.0.0')).to.deep.equal(['libgconf2-4'])
+    })
+
+    it('returns nothing as of 3.0', () => {
+      // eslint-disable-next-line no-unused-expressions
+      chai.expect(dependencies.getGConfDepends('4.0.0')).to.be.an('array').that.is.empty
+    })
+  })
+
   describe('getTrashDepends', () => {
     it('only depends on gvfs-bin before 1.4.1', () => {
       const trashDepends = dependencies.getTrashDepends('v1.3.0')

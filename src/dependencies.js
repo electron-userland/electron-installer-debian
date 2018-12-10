@@ -12,6 +12,13 @@ function getGTKDepends (version) {
 }
 
 /**
+ * Determine whether GConf is a necessary dependency, given the Electron version.
+ */
+function getGConfDepends (version) {
+  return semver.lt(version, '3.0.0-beta.1') ? ['libgconf2-4'] : []
+}
+
+/**
  * Determine the dependencies for the `shell.moveItemToTrash` API, based on the
  * Electron version in use.
  */
@@ -32,6 +39,7 @@ module.exports = {
       // The content of the version file post-4.0 is just the version
       .then(tag => tag.toString().trim())
   },
+  getGConfDepends: getGConfDepends,
   getGTKDepends: getGTKDepends,
   getTrashDepends: getTrashDepends,
 
@@ -41,12 +49,11 @@ module.exports = {
   getDepends: function getDepends (version) {
     return [
       getTrashDepends(version),
-      'libgconf2-4',
       getGTKDepends(version),
       'libnotify4',
       'libnss3',
       'libxtst6',
       'xdg-utils'
-    ]
+    ].concat(getGConfDepends(version))
   }
 }
