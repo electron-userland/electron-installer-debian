@@ -60,6 +60,7 @@ module.exports = {
       getGTKDepends(version),
       'libnotify4',
       'libnss3',
+      'libxss1',
       'libxtst6',
       'xdg-utils'
     ].concat(getGConfDepends(version))
