@@ -14,6 +14,17 @@ describe('dependencies', () => {
     })
   })
 
+  describe('getGConfDepends', () => {
+    it('returns gconf pre-3.0', () => {
+      chai.expect(dependencies.getGConfDepends('v2.0.0')).to.deep.equal(['libgconf2-4'])
+    })
+
+    it('returns nothing as of 3.0', () => {
+      // eslint-disable-next-line no-unused-expressions
+      chai.expect(dependencies.getGConfDepends('4.0.0')).to.be.an('array').that.is.empty
+    })
+  })
+
   describe('getTrashDepends', () => {
     it('only depends on gvfs-bin before 1.4.1', () => {
       const trashDepends = dependencies.getTrashDepends('v1.3.0')
@@ -34,6 +45,17 @@ describe('dependencies', () => {
       chai.expect(trashDepends).to.match(/gvfs-bin/)
       chai.expect(trashDepends).to.match(/kde-cli-tools/)
       chai.expect(trashDepends).to.match(/libglib2\.0-bin/)
+    })
+  })
+
+  describe('getUUIDDepends', () => {
+    it('returns nothing pre-4.0', () => {
+      // eslint-disable-next-line no-unused-expressions
+      chai.expect(dependencies.getUUIDDepends('v3.0.0')).to.be.an('array').that.is.empty
+    })
+
+    it('returns uuid as of 4.0', () => {
+      chai.expect(dependencies.getUUIDDepends('4.0.0')).to.deep.equal(['libuuid1'])
     })
   })
 })

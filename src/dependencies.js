@@ -5,6 +5,13 @@ const path = require('path')
 const semver = require('semver')
 
 /**
+ * Determine whether GConf is a necessary dependency, given the Electron version.
+ */
+function getGConfDepends (version) {
+  return semver.lt(version, '3.0.0-beta.1') ? ['libgconf2-4'] : []
+}
+
+/**
  * Determine the GTK dependency based on the Electron version in use.
  */
 function getGTKDepends (version) {
@@ -25,6 +32,13 @@ function getTrashDepends (version) {
   }
 }
 
+/**
+ * Determine whether libuuid1 is necessary, given the Electron version.
+ */
+function getUUIDDepends (version) {
+  return semver.gte(version, '4.0.0-beta.1') ? ['libuuid1'] : []
+}
+
 module.exports = {
   getElectronVersion: function getElectronVersion (options) {
     return fs.readFile(path.resolve(options.src, 'version'))
@@ -32,8 +46,10 @@ module.exports = {
       // The content of the version file post-4.0 is just the version
       .then(tag => tag.toString().trim())
   },
+  getGConfDepends: getGConfDepends,
   getGTKDepends: getGTKDepends,
   getTrashDepends: getTrashDepends,
+  getUUIDDepends: getUUIDDepends,
 
   /**
    * Determine the default dependencies for an Electron application.
@@ -41,12 +57,13 @@ module.exports = {
   getDepends: function getDepends (version) {
     return [
       getTrashDepends(version),
-      'libgconf2-4',
       getGTKDepends(version),
       'libnotify4',
       'libnss3',
+      'libxss1',
       'libxtst6',
       'xdg-utils'
-    ]
+    ].concat(getGConfDepends(version))
+      .concat(getUUIDDepends(version))
   }
 }
