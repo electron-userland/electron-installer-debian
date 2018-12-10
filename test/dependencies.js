@@ -47,4 +47,15 @@ describe('dependencies', () => {
       chai.expect(trashDepends).to.match(/libglib2\.0-bin/)
     })
   })
+
+  describe('getUUIDDepends', () => {
+    it('returns nothing pre-4.0', () => {
+      // eslint-disable-next-line no-unused-expressions
+      chai.expect(dependencies.getUUIDDepends('v3.0.0')).to.be.an('array').that.is.empty
+    })
+
+    it('returns uuid as of 4.0', () => {
+      chai.expect(dependencies.getUUIDDepends('4.0.0')).to.deep.equal(['libuuid1'])
+    })
+  })
 })

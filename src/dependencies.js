@@ -5,17 +5,17 @@ const path = require('path')
 const semver = require('semver')
 
 /**
- * Determine the GTK dependency based on the Electron version in use.
- */
-function getGTKDepends (version) {
-  return semver.gte(version, '2.0.0-beta.1') ? 'libgtk-3-0' : 'libgtk2.0-0'
-}
-
-/**
  * Determine whether GConf is a necessary dependency, given the Electron version.
  */
 function getGConfDepends (version) {
   return semver.lt(version, '3.0.0-beta.1') ? ['libgconf2-4'] : []
+}
+
+/**
+ * Determine the GTK dependency based on the Electron version in use.
+ */
+function getGTKDepends (version) {
+  return semver.gte(version, '2.0.0-beta.1') ? 'libgtk-3-0' : 'libgtk2.0-0'
 }
 
 /**
@@ -32,6 +32,13 @@ function getTrashDepends (version) {
   }
 }
 
+/**
+ * Determine whether libuuid1 is necessary, given the Electron version.
+ */
+function getUUIDDepends (version) {
+  return semver.gte(version, '4.0.0-beta.1') ? ['libuuid1'] : []
+}
+
 module.exports = {
   getElectronVersion: function getElectronVersion (options) {
     return fs.readFile(path.resolve(options.src, 'version'))
@@ -42,6 +49,7 @@ module.exports = {
   getGConfDepends: getGConfDepends,
   getGTKDepends: getGTKDepends,
   getTrashDepends: getTrashDepends,
+  getUUIDDepends: getUUIDDepends,
 
   /**
    * Determine the default dependencies for an Electron application.
@@ -55,5 +63,6 @@ module.exports = {
       'libxtst6',
       'xdg-utils'
     ].concat(getGConfDepends(version))
+      .concat(getUUIDDepends(version))
   }
 }
