@@ -2,7 +2,18 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.0.0...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.0.1...master
+
+## [1.0.1] - 2018-12-12
+
+[1.0.1]: https://github.com/electron-userland/electron-installer-debian/compare/v1.0.0...v1.0.1
+
+### Fixed
+
+* Provide a suggestion for how to resolve the description error (#149)
+* Don't trim the leading v from the Electron version (#153)
+* Ensure that certain CLI options are always parsed as arrays (#155)
+* Update Electron dependencies for 3.x/4.x (#159)
 
 ## [1.0.0] - 2018-10-05
 
