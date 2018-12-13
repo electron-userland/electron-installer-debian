@@ -130,6 +130,29 @@ describe('module', function () {
         })
   )
 
+  describeInstaller(
+    'move LICENSE to Debian-specific location',
+    {
+      src: 'test/fixtures/app-without-asar/'
+    },
+    'moves the LICENSE file to the appropriate location',
+    outputDir =>
+      assertNonASARDebExists(outputDir)
+        .then(() => exec('dpkg-deb -x bartest_amd64.deb .', { cwd: outputDir }))
+        .then(() => fs.pathExists(path.join(outputDir, 'usr/lib/bartest/LICENSE')))
+        .then(exists => {
+          if (exists) {
+            throw new Error('LICENSE was copied over erronenously')
+          }
+          return fs.pathExists(path.join(outputDir, 'usr/share/doc/bartest/copyright'))
+        }).then(exists => {
+          if (!exists) {
+            throw new Error('copyright file does not exist')
+          }
+          return Promise.resolve()
+        })
+  )
+
   describe('with no description or productDescription provided', test => {
     const outputDir = tempOutputDir()
     cleanupOutputDir(outputDir)
