@@ -1,4 +1,6 @@
 .nyc_output
 node_modules
+package-lock.json
+yarn.lock
 /example/dist/
 /test/fixtures/out/
