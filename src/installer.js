@@ -9,6 +9,7 @@ const fsize = require('get-folder-size')
 const path = require('path')
 const pify = require('pify')
 const readElectronVersion = require('electron-installer-common/src/readelectronversion')
+const replaceScopeName = require('electron-installer-common/src/replacescopename')
 const wrap = require('word-wrap')
 
 const debianDependencies = require('./dependencies')
@@ -74,6 +75,8 @@ function getDefaults (data) {
 function getOptions (data, defaults) {
   // Flatten everything for ease of use.
   const options = _.defaults({}, data, data.options, defaults)
+
+  options.name = replaceScopeName(options.name, '-')
 
   if (!options.description && !options.productDescription) {
     throw new Error(`No Description or ProductDescription provided. Please set either a description in the app's package.json or provide it in the options.`)
