@@ -5,18 +5,7 @@ const { exec } = require('mz/child_process')
 
 const dependencies = require('../../src/dependencies')
 
-// Default options (partly from src/installer.js)
-const defaults = {
-  depends: dependencies.getDepends('1.0.0'),
-  recommends: ['pulseaudio | libasound2'],
-  suggests: [
-    'gir1.2-gnomekeyring-1.0',
-    'libgnome-keyring0',
-    'lsb-release'
-  ],
-  enhances: [],
-  preDepends: []
-}
+const defaults = dependencies.forElectron('v1.0.0')
 
 module.exports = {
   assertDependenciesEqual: function assertDependenciesEqual (outputDir, debFilename, userDependencies) {
@@ -39,7 +28,7 @@ module.exports = {
         })
 
         if (!_.isEqual(baseDependencies, destDependencies)) {
-          throw new Error('There are duplicate dependencies')
+          throw new Error(`There are duplicate dependencies\nExpected: ${JSON.stringify(baseDependencies)}\nActual:   ${JSON.stringify(destDependencies)}`)
         }
 
         return Promise.resolve()

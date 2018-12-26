@@ -2,14 +2,16 @@
 
 const _ = require('lodash')
 const common = require('electron-installer-common')
+const dependencies = require('electron-installer-common/src/dependencies')
 const debug = require('debug')
 const fs = require('fs-extra')
 const fsize = require('get-folder-size')
 const path = require('path')
 const pify = require('pify')
+const readElectronVersion = require('electron-installer-common/src/readelectronversion')
 const wrap = require('word-wrap')
 
-const dependencies = require('./dependencies')
+const debianDependencies = require('./dependencies')
 const spawn = require('./spawn')
 
 const defaultLogger = debug('electron-installer-debian')
@@ -41,7 +43,7 @@ function transformVersion (version) {
  */
 function getDefaults (data) {
   const src = { src: data.src }
-  return Promise.all([common.readMeta(data), getSize(src), dependencies.getElectronVersion(src)])
+  return Promise.all([common.readMeta(data), getSize(src), readElectronVersion(src)])
     .then(results => {
       const pkg = results[0] || {}
       const size = results[1] || 0
@@ -54,20 +56,6 @@ function getDefaults (data) {
         priority: 'optional',
         size: Math.ceil(size / 1024),
 
-        depends: dependencies.getDepends(electronVersion),
-        recommends: [
-          'pulseaudio | libasound2'
-        ],
-        suggests: [
-          'gir1.2-gnomekeyring-1.0',
-          'libgnome-keyring0',
-          'lsb-release'
-        ],
-        enhances: [
-        ],
-        preDepends: [
-        ],
-
         maintainer: pkg.author && (typeof pkg.author === 'string'
           ? pkg.author.replace(/\s+\([^)]+\)/, '')
           : pkg.author.name +
@@ -76,7 +64,7 @@ function getDefaults (data) {
 
         icon: path.resolve(__dirname, '../resources/icon.png'),
         lintianOverrides: []
-      })
+      }, debianDependencies.forElectron(electronVersion))
     })
 }
 
@@ -111,11 +99,7 @@ function getOptions (data, defaults) {
 
   // Create array with unique values from default & user-supplied dependencies
   for (const prop of ['depends', 'recommends', 'suggests', 'enhances', 'preDepends']) {
-    if (data.options) { // options passed programmatically
-      options[prop] = _.union(defaults[prop], data.options[prop])
-    } else { // options passed via command-line
-      options[prop] = _.union(defaults[prop], data[prop])
-    }
+    options[prop] = dependencies.mergeUserSpecified(data, prop, defaults)
   }
 
   return options
