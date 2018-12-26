@@ -24,8 +24,8 @@ const defaultRename = (dest, src) => {
 /**
  * Get the size of the app.
  */
-function getSize (options) {
-  return pify(fsize)(options.src)
+function getSize (appDir) {
+  return pify(fsize)(appDir)
 }
 
 /**
@@ -43,8 +43,7 @@ function transformVersion (version) {
  * read from `package.json`, and some are hardcoded.
  */
 function getDefaults (data) {
-  const src = { src: data.src }
-  return Promise.all([common.readMeta(data), getSize(src), readElectronVersion(src)])
+  return Promise.all([common.readMeta(data), getSize(data.src), readElectronVersion(data.src)])
     .then(results => {
       const pkg = results[0] || {}
       const size = results[1] || 0
