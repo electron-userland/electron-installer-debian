@@ -3,7 +3,8 @@
 <% } %><% if (description) { %>Comment=<%= description %>
 <% } %><% if (genericName) { %>GenericName=<%= genericName %>
 <% } %><% if (name) { %>Exec=<%= name %> %U
-<% } %><% if (name) { %>Icon=<%= name %>
+<% } %><% if (name && !iconName ) { %>Icon=<%= name %>
+<% } %><% if (iconName) { %>Icon=<%= iconName %>
 <% } %>Type=Application
 StartupNotify=true
 <% if (categories && categories.length) { %>Categories=<%= categories.join(';') %>;

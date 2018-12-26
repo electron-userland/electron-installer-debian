@@ -264,7 +264,10 @@ function createDesktop (options, dir) {
  * Create pixmap icon for the package.
  */
 function createPixmapIcon (options, dir) {
-  const iconFile = path.join(dir, 'usr/share/pixmaps', `${options.name}.png`)
+
+  let iconName = options.iconName || options.name;
+
+  const iconFile = path.join(dir, 'usr/share/pixmaps', `${iconName}.png`)
   options.logger(`Creating icon file at ${iconFile}`)
 
   return pify(mkdirp)(path.dirname(iconFile), '0755')
@@ -279,8 +282,11 @@ function createPixmapIcon (options, dir) {
  */
 function createHicolorIcon (options, dir) {
   return Promise.all(_.map(options.icon, (icon, resolution) => {
+
+    const iconName = options.iconName || options.name;
+
     const iconExt = resolution === 'scalable' ? 'svg' : 'png'
-    const iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', `${options.name}.${iconExt}`)
+    const iconFile = path.join(dir, 'usr/share/icons/hicolor', resolution, 'apps', `${iconName}.${iconExt}`)
     options.logger(`Creating icon file at ${iconFile}`)
 
     return pify(mkdirp)(path.dirname(iconFile), '0755')
