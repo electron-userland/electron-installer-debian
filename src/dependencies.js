@@ -27,7 +27,6 @@ function trashRequiresAsBoolean (electronVersion, dependencyMap) {
 }
 
 module.exports = {
-  dependencyMap: dependencyMap,
   /**
    * The dependencies for Electron itself, given an Electron version.
    */
