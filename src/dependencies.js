@@ -19,6 +19,13 @@ const dependencyMap = {
   xtst: 'libxtst6'
 }
 
+/**
+ * Transforms the list of trash requires into an OR'd string.
+ */
+function trashRequiresAsBoolean (electronVersion, dependencyMap) {
+  return [dependencies.getTrashDepends(electronVersion, dependencyMap).join(' | ')]
+}
+
 module.exports = {
   dependencyMap: dependencyMap,
   /**
@@ -26,7 +33,8 @@ module.exports = {
    */
   forElectron: function dependenciesForElectron (electronVersion) {
     return {
-      depends: dependencies.getDepends(electronVersion, dependencyMap),
+      depends: dependencies.getDepends(electronVersion, dependencyMap)
+        .concat(trashRequiresAsBoolean(electronVersion, dependencyMap)),
       recommends: [
         'pulseaudio | libasound2'
       ],
