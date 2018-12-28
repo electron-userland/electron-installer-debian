@@ -302,7 +302,7 @@ Estimate of the total amount of disk space required to install the named package
 
 #### options.depends, recommends, suggests, enhances, preDepends
 Type: `Array[String]`
-Default: For `depends`, the minimum set of packages necessary for Electron to run; See [source code](https://github.com/electron-userland/electron-installer-debian/blob/53fb5c5/src/installer.js#L146-L157) `recommends`, `suggests`, `enhances`, and `preDepends`
+Default: For `depends`, the minimum set of packages necessary for Electron to run; See [source code](https://github.com/electron-userland/electron-installer-debian/blob/53fb5c5/src/installer.js#L146-L157) for `recommends`, `suggests`, `enhances`, and `preDepends` default values
 
 Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests`, `Enhances` and `Pre-Depends` fields of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
 
