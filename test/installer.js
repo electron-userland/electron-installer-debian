@@ -74,6 +74,16 @@ describe('module', function () {
   )
 
   describeInstaller(
+    'with an app with a scoped name',
+    {
+      src: 'test/fixtures/app-with-asar/',
+      options: { name: '@scoped/myapp' }
+    },
+    'generates a .deb package',
+    outputDir => access(path.join(outputDir, 'scoped-myapp_amd64.deb'))
+  )
+
+  describeInstaller(
     'with an app with a multi-line description',
     {
       src: 'test/fixtures/app-without-asar/',
