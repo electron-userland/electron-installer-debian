@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const { expect } = require('chai')
 const fs = require('fs-extra')
 const os = require('os')
 const path = require('path')
@@ -18,6 +19,19 @@ module.exports = function describeInstaller (description, installerOptions, itDe
     it(itDescription, () => itFunc(outputDir))
 
     module.exports.cleanupOutputDir(outputDir)
+  })
+}
+
+module.exports.describeInstallerWithException = function describeInstallerWithException (description, installerOptions, errorRegex) {
+  describe(description, () => {
+    const outputDir = module.exports.tempOutputDir()
+    module.exports.cleanupOutputDir(outputDir)
+
+    it('throws an error', () => {
+      const options = module.exports.testInstallerOptions(outputDir, installerOptions)
+      return installer(options)
+        .catch(error => expect(error.message).to.match(errorRegex))
+    })
   })
 }
 
