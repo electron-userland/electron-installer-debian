@@ -1,6 +1,6 @@
 'use strict'
 
-const dependencies = require('electron-installer-common/src/dependencies')
+const common = require('electron-installer-common')
 
 const dependencyMap = {
   gconf: 'libgconf2-4',
@@ -23,7 +23,7 @@ const dependencyMap = {
  * Transforms the list of trash requires into an OR'd string.
  */
 function trashRequiresAsBoolean (electronVersion, dependencyMap) {
-  return [dependencies.getTrashDepends(electronVersion, dependencyMap).join(' | ')]
+  return [common.getTrashDepends(electronVersion, dependencyMap).join(' | ')]
 }
 
 module.exports = {
@@ -32,7 +32,7 @@ module.exports = {
    */
   forElectron: function dependenciesForElectron (electronVersion) {
     return {
-      depends: dependencies.getDepends(electronVersion, dependencyMap)
+      depends: common.getDepends(electronVersion, dependencyMap)
         .concat(trashRequiresAsBoolean(electronVersion, dependencyMap)),
       recommends: [
         'pulseaudio | libasound2'

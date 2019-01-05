@@ -2,14 +2,11 @@
 
 const _ = require('lodash')
 const common = require('electron-installer-common')
-const dependencies = require('electron-installer-common/src/dependencies')
 const debug = require('debug')
 const fs = require('fs-extra')
 const fsize = require('get-folder-size')
 const path = require('path')
 const pify = require('pify')
-const readElectronVersion = require('electron-installer-common/src/readelectronversion')
-const replaceScopeName = require('electron-installer-common/src/replacescopename')
 const wrap = require('word-wrap')
 
 const debianDependencies = require('./dependencies')
@@ -43,7 +40,7 @@ function transformVersion (version) {
  * read from `package.json`, and some are hardcoded.
  */
 function getDefaults (data) {
-  return Promise.all([common.readMeta(data), getSize(data.src), readElectronVersion(data.src)])
+  return Promise.all([common.readMeta(data), getSize(data.src), common.readElectronVersion(data.src)])
     .then(results => {
       const pkg = results[0] || {}
       const size = results[1] || 0
@@ -75,7 +72,7 @@ function getOptions (data, defaults) {
   // Flatten everything for ease of use.
   const options = _.defaults({}, data, data.options, defaults)
 
-  options.name = replaceScopeName(options.name, '-')
+  options.name = common.replaceScopeName(options.name, '-')
 
   if (!options.description && !options.productDescription) {
     throw new Error(`No Description or ProductDescription provided. Please set either a description in the app's package.json or provide it in the options.`)
@@ -101,7 +98,7 @@ function getOptions (data, defaults) {
 
   // Create array with unique values from default & user-supplied dependencies
   for (const prop of ['depends', 'recommends', 'suggests', 'enhances', 'preDepends']) {
-    options[prop] = dependencies.mergeUserSpecified(data, prop, defaults)
+    options[prop] = common.mergeUserSpecified(data, prop, defaults)
   }
 
   return options
