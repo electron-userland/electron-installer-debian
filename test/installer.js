@@ -10,9 +10,7 @@ const installer = require('..')
 const access = require('./helpers/access')
 const dependencies = require('./helpers/dependencies')
 const describeInstaller = require('./helpers/describe_installer')
-const cleanupOutputDir = describeInstaller.cleanupOutputDir
-const tempOutputDir = describeInstaller.tempOutputDir
-const testInstallerOptions = describeInstaller.testInstallerOptions
+const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
 
 const assertASARDebExists = outputDir =>
   access(path.join(outputDir, 'footest_i386.deb'))
@@ -83,6 +81,24 @@ describe('module', function () {
     outputDir => access(path.join(outputDir, 'scoped-myapp_amd64.deb'))
   )
 
+  describeInstallerWithException(
+    'with a too-short name',
+    {
+      name: 'a',
+      src: 'test/fixtures/app-with-asar'
+    },
+    /^Package name must be at least two characters$/
+  )
+
+  describeInstallerWithException(
+    'with a name that does not start with an alphanumeric character',
+    {
+      name: '-package',
+      src: 'test/fixtures/app-with-asar'
+    },
+    /^Package name must start with an ASCII number or letter$/
+  )
+
   describeInstaller(
     'with an app with a multi-line description',
     {
@@ -117,6 +133,12 @@ describe('module', function () {
     },
     'generates a .deb package',
     assertNonASARDebExists
+  )
+
+  describeInstallerWithException(
+    'with no description or productDescription provided',
+    { src: 'test/fixtures/app-without-description-or-product-description/' },
+    /^No Description or ProductDescription provided/
   )
 
   describeInstaller(
@@ -163,19 +185,6 @@ describe('module', function () {
         })
   )
 
-  describe('with no description or productDescription provided', test => {
-    const outputDir = tempOutputDir()
-    cleanupOutputDir(outputDir)
-
-    it('throws an error', () => {
-      const installerOptions = testInstallerOptions(outputDir, {
-        src: 'test/fixtures/app-without-description-or-product-description/'
-      })
-      return installer(installerOptions)
-        .catch(error => chai.expect(error.message).to.match(/^No Description or ProductDescription provided/))
-    })
-  })
-
   describeInstaller(
     'with debian scripts and lintian overrides',
     {
@@ -209,21 +218,16 @@ describe('module', function () {
         })
   )
 
-  describe('unknown script name', test => {
-    const outputDir = tempOutputDir()
-    cleanupOutputDir(outputDir)
-
-    it('throws an error', () => {
-      const installerOptions = testInstallerOptions(outputDir, {
-        src: 'test/fixtures/app-with-asar/',
-        scripts: {
-          invalid: 'test/fixtures/debian-scripts/preinst.sh'
-        }
-      })
-      return installer(installerOptions)
-        .catch(error => chai.expect(error.message).to.deep.equal('Wrong executable script name: invalid'))
-    })
-  })
+  describeInstallerWithException(
+    'unknown script name',
+    {
+      src: 'test/fixtures/app-with-asar/',
+      scripts: {
+        invalid: 'test/fixtures/debian-scripts/preinst.sh'
+      }
+    },
+    /^Wrong executable script name: invalid$/
+  )
 
   describe('with duplicate dependencies', test => {
     const outputDir = tempOutputDir()
