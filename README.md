@@ -234,6 +234,9 @@ According to the *Debian Policy Manual*:
 
 > Package names [...] must consist only of lower case letters (a-z), digits (0-9), plus (+) and minus (-) signs, and periods (.). They must be at least two characters long and must start with an alphanumeric character.
 
+`electron-installer-debian` will try to help conform to these requirements by lowercasing the name
+provided and replacing any invalid characters with `-`s.
+
 #### options.productName
 Type: `String`
 Default: `package.productName || package.name`

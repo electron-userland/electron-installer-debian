@@ -81,6 +81,24 @@ describe('module', function () {
     outputDir => access(path.join(outputDir, 'scoped-myapp_amd64.deb'))
   )
 
+  describeInstallerWithException(
+    'with a too-short name',
+    {
+      name: 'a',
+      src: 'test/fixtures/app-with-asar'
+    },
+    /^Package name must be at least two characters$/
+  )
+
+  describeInstallerWithException(
+    'with a name that does not start with an alphanumeric character',
+    {
+      name: '-package',
+      src: 'test/fixtures/app-with-asar'
+    },
+    /^Package name must start with an ASCII number or letter$/
+  )
+
   describeInstaller(
     'with an app with a multi-line description',
     {
@@ -115,6 +133,12 @@ describe('module', function () {
     },
     'generates a .deb package',
     assertNonASARDebExists
+  )
+
+  describeInstallerWithException(
+    'with no description or productDescription provided',
+    { src: 'test/fixtures/app-without-description-or-product-description/' },
+    /^No Description or ProductDescription provided/
   )
 
   describeInstaller(
@@ -159,12 +183,6 @@ describe('module', function () {
           }
           return Promise.resolve()
         })
-  )
-
-  describeInstallerWithException(
-    'with no description or productDescription provided',
-    { src: 'test/fixtures/app-without-description-or-product-description/' },
-    /^No Description or ProductDescription provided/
   )
 
   describeInstaller(

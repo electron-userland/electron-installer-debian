@@ -66,13 +66,29 @@ function getDefaults (data) {
 }
 
 /**
+ * Sanitize package name per Debian docs:
+ * https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-source
+ */
+function sanitizeName (name) {
+  const sanitized = common.sanitizeName(name.toLowerCase(), '-+.a-z0-9')
+  if (sanitized.length < 2) {
+    throw new Error('Package name must be at least two characters')
+  }
+  if (/^[^a-z0-9]/.test(sanitized)) {
+    throw new Error('Package name must start with an ASCII number or letter')
+  }
+
+  return sanitized
+}
+
+/**
  * Get the hash of options for the installer.
  */
 function getOptions (data, defaults) {
   // Flatten everything for ease of use.
   const options = _.defaults({}, data, data.options, defaults)
 
-  options.name = common.replaceScopeName(options.name, '-')
+  options.name = sanitizeName(options.name)
 
   if (!options.description && !options.productDescription) {
     throw new Error(`No Description or ProductDescription provided. Please set either a description in the app's package.json or provide it in the options.`)
