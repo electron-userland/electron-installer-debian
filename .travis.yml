@@ -1,20 +1,24 @@
 language: node_js
 node_js:
-  - '10'
-  - '8'
-  - '6'
-
+- '10'
+- '8'
+- '6'
+dist: xenial
+cache:
+  directories:
+  - node_modules
+branches:
+  only:
+  - master
+  - /^v\d+\.\d+\.\d+/
 env:
-  - DEBUG="electron-installer-debian"
-
+- DEBUG="electron-installer-debian"
 addons:
   apt:
     packages:
-      - fakeroot
-      - lintian
-
+    - fakeroot
+    - lintian
 before_script: chmod -R g-w test/fixtures
-
 deploy:
   provider: npm
   email: unindented@gmail.com
