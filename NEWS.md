@@ -2,7 +2,20 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.0.1...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.1.0...master
+
+## [1.1.0] - 2019-01-06
+
+[1.1.0]: https://github.com/electron-userland/electron-installer-debian/compare/v1.0.1...v1.1.0
+
+### Added
+
+* Package names are normalized to conform to Debian policy (#170)
+
+### Fixed
+
+* Make sure that binary symlinks actually point to a valid file
+  (electron-userland/electron-installer-common#6)
 
 ## [1.0.1] - 2018-12-12
 
