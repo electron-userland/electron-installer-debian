@@ -117,7 +117,7 @@ class DebianInstaller extends common.ElectronInstaller {
    * read from `package.json`, and some are hardcoded.
    */
   generateDefaults () {
-    return Promise.all([common.readMeta(this.userSupplied), this.getSize(this.userSupplied.src), common.readElectronVersion(this.userSupplied.src)])
+    return Promise.all([common.readMetadata(this.userSupplied), this.getSize(this.userSupplied.src), common.readElectronVersion(this.userSupplied.src)])
       .then(([pkg, size, electronVersion]) => {
         pkg = pkg || {}
 
