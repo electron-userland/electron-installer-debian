@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "electron-installer-common": "github:electron-userland/electron-installer-common",
+    "electron-installer-common": "^0.6.0",
     "fs-extra": "^7.0.1",
     "get-folder-size": "^2.0.1",
     "lodash": "^4.17.4",
