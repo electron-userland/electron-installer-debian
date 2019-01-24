@@ -2,13 +2,11 @@
 
 const chai = require('chai')
 const { exec } = require('mz/child_process')
-const fs = require('fs-extra')
 const path = require('path')
 
 const installer = require('..')
 
 const access = require('./helpers/access')
-const dependencies = require('./helpers/dependencies')
 const describeInstaller = require('./helpers/describe_installer')
 const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
 
@@ -69,16 +67,6 @@ describe('module', function () {
     },
     'generates a .deb package',
     assertNonASARDebExists
-  )
-
-  describeInstaller(
-    'with an app with a scoped name',
-    {
-      src: 'test/fixtures/app-with-asar/',
-      options: { name: '@scoped/myapp' }
-    },
-    'generates a .deb package',
-    outputDir => access(path.join(outputDir, 'scoped-myapp_amd64.deb'))
   )
 
   describeInstallerWithException(
@@ -142,50 +130,6 @@ describe('module', function () {
   )
 
   describeInstaller(
-    'with a custom desktop template',
-    {
-      src: 'test/fixtures/app-without-asar/',
-      options: {
-        desktopTemplate: 'test/fixtures/custom.desktop.ejs'
-      }
-    },
-    'generates a custom `.desktop` file',
-    outputDir =>
-      assertNonASARDebExists(outputDir)
-        .then(() => exec('dpkg-deb -x bartest_amd64.deb .', { cwd: outputDir }))
-        .then(() => fs.readFile(path.join(outputDir, 'usr/share/applications/bartest.desktop')))
-        .then(data => {
-          if (!data.toString().includes('Comment=Hardcoded comment')) {
-            throw new Error('Did not use custom template')
-          }
-          return Promise.resolve()
-        })
-  )
-
-  describeInstaller(
-    'move LICENSE to Debian-specific location',
-    {
-      src: 'test/fixtures/app-without-asar/'
-    },
-    'moves the LICENSE file to the appropriate location',
-    outputDir =>
-      assertNonASARDebExists(outputDir)
-        .then(() => exec('dpkg-deb -x bartest_amd64.deb .', { cwd: outputDir }))
-        .then(() => fs.pathExists(path.join(outputDir, 'usr/lib/bartest/LICENSE')))
-        .then(exists => {
-          if (exists) {
-            throw new Error('LICENSE was copied over erronenously')
-          }
-          return fs.pathExists(path.join(outputDir, 'usr/share/doc/bartest/copyright'))
-        }).then(exists => {
-          if (!exists) {
-            throw new Error('copyright file does not exist')
-          }
-          return Promise.resolve()
-        })
-  )
-
-  describeInstaller(
     'with debian scripts and lintian overrides',
     {
       src: 'test/fixtures/app-with-asar/',
@@ -228,34 +172,6 @@ describe('module', function () {
     },
     /^Wrong executable script name: invalid$/
   )
-
-  describe('with duplicate dependencies', test => {
-    const outputDir = tempOutputDir()
-
-    // User options with duplicates (including default duplicates)
-    const userDependencies = {
-      depends: ['libnss3', 'libxtst6', 'dbus', 'dbus'],
-      recommends: ['pulseaudio | libasound2', 'bzip2', 'bzip2'],
-      suggests: ['lsb-release', 'gvfs', 'gvfs'],
-      enhances: ['libc6', 'libc6'],
-      preDepends: ['footest', 'footest']
-    }
-
-    before(() => {
-      const installerOptions = testInstallerOptions(outputDir, {
-        src: 'test/fixtures/app-with-asar/',
-        options: Object.assign({ arch: 'i386' }, userDependencies)
-      })
-      return installer(installerOptions)
-    })
-
-    cleanupOutputDir(outputDir)
-
-    it('removes duplicate dependencies', () =>
-      assertASARDebExists(outputDir)
-        .then(() => dependencies.assertDependenciesEqual(outputDir, 'footest_i386.deb', userDependencies))
-    )
-  })
 
   describe('with restrictive umask', test => {
     const outputDir = tempOutputDir()

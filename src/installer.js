@@ -5,6 +5,7 @@ const common = require('electron-installer-common')
 const debug = require('debug')
 const fs = require('fs-extra')
 const fsize = require('get-folder-size')
+const parseAuthor = require('parse-author')
 const path = require('path')
 const pify = require('pify')
 const wrap = require('word-wrap')
@@ -19,13 +20,6 @@ const defaultRename = (dest, src) => {
 }
 
 /**
- * Get the size of the app.
- */
-function getSize (appDir) {
-  return pify(fsize)(appDir)
-}
-
-/**
  * Transforms a SemVer version into a Debian-style version.
  *
  * Use '~' on pre-releases for proper Debian version ordering.
@@ -35,76 +29,185 @@ function transformVersion (version) {
   return version.replace(/(\d)[_.+-]?((RC|rc|pre|dev|beta|alpha)[_.+-]?\d*)$/, '$1~$2')
 }
 
-/**
- * Get the hash of default options for the installer. Some come from the info
- * read from `package.json`, and some are hardcoded.
- */
-function getDefaults (data) {
-  return Promise.all([common.readMeta(data), getSize(data.src), common.readElectronVersion(data.src)])
-    .then(results => {
-      const pkg = results[0] || {}
-      const size = results[1] || 0
-      const electronVersion = results[2]
+class DebianInstaller extends common.ElectronInstaller {
+  get contentFunctions () {
+    return [
+      'copyApplication',
+      'copyLinuxIcons',
+      'copyScripts',
+      'createBinarySymlink',
+      'createControl',
+      'createCopyright',
+      'createDesktopFile',
+      'createOverrides'
+    ]
+  }
 
-      return Object.assign(common.getDefaultsFromPackageJSON(pkg), {
+  get defaultDesktopTemplatePath () {
+    return path.resolve(__dirname, '../resources/desktop.ejs')
+  }
+
+  get packagePattern () {
+    return path.join(this.stagingDir, '../*.deb')
+  }
+
+  /**
+   * Copy the application into the package.
+   */
+  copyApplication () {
+    return super.copyApplication(src => src !== path.join(this.options.src, 'LICENSE'))
+  }
+
+  /**
+   * Copy debian scripts.
+   */
+  copyScripts () {
+    const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
+
+    return Promise.all(_.map(this.options.scripts, (item, key) => {
+      if (_.includes(scriptNames, key)) {
+        const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
+        this.options.logger(`Creating script file at ${scriptFile}`)
+
+        return fs.copy(item, scriptFile)
+      } else {
+        throw new Error(`Wrong executable script name: ${key}`)
+      }
+    })).catch(common.wrapError('creating script files'))
+  }
+
+  /**
+   * Creates the control file for the package.
+   *
+   * See: https://www.debian.org/doc/debian-policy/ch-controlfields.html
+   */
+  createControl () {
+    const src = path.resolve(__dirname, '../resources/control.ejs')
+    const dest = path.join(this.stagingDir, 'DEBIAN', 'control')
+    this.options.logger(`Creating control file at ${dest}`)
+
+    return this.createTemplatedFile(src, dest)
+      .catch(common.wrapError('creating control file'))
+  }
+
+  /**
+   * Create lintian overrides for the package.
+   */
+  createOverrides () {
+    const src = path.resolve(__dirname, '../resources/overrides.ejs')
+    const dest = path.join(this.stagingDir, this.baseAppDir, 'share/lintian/overrides', this.options.name)
+    this.options.logger(`Creating lintian overrides at ${dest}`)
+
+    return this.createTemplatedFile(src, dest, '0644')
+      .catch(common.wrapError('creating lintian overrides file'))
+  }
+
+  /**
+   * Package everything using `dpkg` and `fakeroot`.
+   */
+  createPackage () {
+    this.options.logger(`Creating package at ${this.stagingDir}`)
+
+    return spawn('fakeroot', ['dpkg-deb', '--build', this.stagingDir], this.options.logger)
+      .then(output => this.options.logger(`dpkg-deb output: ${output}`))
+  }
+
+  /**
+   * Get the hash of default options for the installer. Some come from the info
+   * read from `package.json`, and some are hardcoded.
+   */
+  generateDefaults () {
+    return Promise.all([
+      common.readMetadata(this.userSupplied),
+      this.getSize(this.userSupplied.src),
+      common.readElectronVersion(this.userSupplied.src)
+    ]).then(([pkg, size, electronVersion]) => {
+      pkg = pkg || {}
+
+      this.defaults = Object.assign(common.getDefaultsFromPackageJSON(pkg), {
         version: transformVersion(pkg.version || '0.0.0'),
 
         section: 'utils',
         priority: 'optional',
-        size: Math.ceil(size / 1024),
+        size: Math.ceil((size || 0) / 1024),
 
-        maintainer: pkg.author && (typeof pkg.author === 'string'
-          ? pkg.author.replace(/\s+\([^)]+\)/, '')
-          : pkg.author.name +
-          (pkg.author.email != null ? ` <${pkg.author.email}>` : '')
-        ),
+        maintainer: this.getMaintainer(pkg.author),
 
         icon: path.resolve(__dirname, '../resources/icon.png'),
         lintianOverrides: []
       }, debianDependencies.forElectron(electronVersion))
+
+      return this.defaults
     })
-}
-
-/**
- * Sanitize package name per Debian docs:
- * https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-source
- */
-function sanitizeName (name) {
-  const sanitized = common.sanitizeName(name.toLowerCase(), '-+.a-z0-9')
-  if (sanitized.length < 2) {
-    throw new Error('Package name must be at least two characters')
-  }
-  if (/^[^a-z0-9]/.test(sanitized)) {
-    throw new Error('Package name must start with an ASCII number or letter')
   }
 
-  return sanitized
-}
+  /**
+   * Flattens and merges default values, CLI-supplied options, and API-supplied options.
+   */
+  generateOptions () {
+    super.generateOptions()
 
-/**
- * Get the hash of options for the installer.
- */
-function getOptions (data, defaults) {
-  // Flatten everything for ease of use.
-  const options = _.defaults({}, data, data.options, defaults)
+    this.options.name = this.sanitizeName(this.options.name)
 
-  options.name = sanitizeName(options.name)
+    if (!this.options.description && !this.options.productDescription) {
+      throw new Error(`No Description or ProductDescription provided. Please set either a description in the app's package.json or provide it in the this.options.`)
+    }
 
-  if (!options.description && !options.productDescription) {
-    throw new Error(`No Description or ProductDescription provided. Please set either a description in the app's package.json or provide it in the options.`)
+    if (this.options.description) {
+      this.options.description = this.normalizeDescription(this.options.description)
+    }
+
+    if (this.options.productDescription) {
+      this.options.productDescription = this.normalizeExtendedDescription(this.options.productDescription)
+    }
+
+    // Create array with unique values from default & user-supplied dependencies
+    for (const prop of ['depends', 'recommends', 'suggests', 'enhances', 'preDepends']) {
+      this.options[prop] = common.mergeUserSpecified(this.userSupplied, prop, this.defaults)
+    }
+
+    return this.options
   }
 
-  if (options.description) {
-    // Replace all newlines in the description with spaces, since it's supposed
-    // to be one line.
-    options.description = options.description.replace(/[\r\n]+/g, ' ')
+  /**
+   * Generates a Debian-compliant maintainer value from a package.json author field.
+   */
+  getMaintainer (author) {
+    if (author) {
+      if (typeof author === 'string') {
+        author = parseAuthor(author)
+      }
+      const maintainer = [author.name]
+      if (author.email) {
+        maintainer.push(`<${author.email}>`)
+      }
+
+      return maintainer.join(' ')
+    }
   }
 
-  if (options.productDescription) {
-    // Ensure blank lines have the "." that denotes a blank line in the control file.
-    // Wrap any extended description lines to avoid lintian warning about
-    // `extended-description-line-too-long`.
-    options.productDescription = options.productDescription
+  /**
+   * Get the size of the app.
+   */
+  getSize (appDir) {
+    return pify(fsize)(appDir)
+  }
+
+  /**
+   * Normalize the description by replacing all newlines in the description with spaces, since it's
+   * supposed to be one line.
+   */
+  normalizeDescription (description) {
+    return description.replace(/[\r\n]+/g, ' ')
+  }
+
+  /**
+   * Ensure blank lines have the "." that denotes a blank line in the control file. Wrap any
+   * extended description lines to avoid lintian warnings about
+   * `extended-description-line-too-long`.
+   */
+  normalizeExtendedDescription (extendedDescription) {
+    return extendedDescription
       .replace(/\r\n/g, '\n') // Fixes errors when finding blank lines in Windows
       .replace(/^$/mg, '.')
       .split('\n')
@@ -112,110 +215,21 @@ function getOptions (data, defaults) {
       .join('\n')
   }
 
-  // Create array with unique values from default & user-supplied dependencies
-  for (const prop of ['depends', 'recommends', 'suggests', 'enhances', 'preDepends']) {
-    options[prop] = common.mergeUserSpecified(data, prop, defaults)
-  }
-
-  return options
-}
-
-/**
- * Create the control file for the package.
- *
- * See: https://www.debian.org/doc/debian-policy/ch-controlfields.html
- */
-function createControl (options, dir) {
-  const controlSrc = path.resolve(__dirname, '../resources/control.ejs')
-  const controlDest = path.join(dir, 'DEBIAN/control')
-  options.logger(`Creating control file at ${controlDest}`)
-
-  return fs.ensureDir(path.dirname(controlDest), '0755')
-    .then(() => common.generateTemplate(options, controlSrc))
-    .then(data => fs.outputFile(controlDest, data))
-    .catch(common.wrapError('creating control file'))
-}
-
-/**
- * Copy debian scripts.
- */
-function copyScripts (options, dir) {
-  const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
-
-  return Promise.all(_.map(options.scripts, (item, key) => {
-    if (_.includes(scriptNames, key)) {
-      const scriptFile = path.join(dir, 'DEBIAN', key)
-      options.logger(`Creating script file at ${scriptFile}`)
-
-      return fs.copy(item, scriptFile)
-    } else {
-      throw new Error(`Wrong executable script name: ${key}`)
+  /**
+   * Sanitize package name per Debian docs:
+   * https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-source
+   */
+  sanitizeName (name) {
+    const sanitized = common.sanitizeName(name.toLowerCase(), '-+.a-z0-9')
+    if (sanitized.length < 2) {
+      throw new Error('Package name must be at least two characters')
     }
-  })).catch(common.wrapError('creating script files'))
-}
+    if (/^[^a-z0-9]/.test(sanitized)) {
+      throw new Error('Package name must start with an ASCII number or letter')
+    }
 
-function createDesktop (options, dir) {
-  const desktopSrc = options.desktopTemplate || path.resolve(__dirname, '../resources/desktop.ejs')
-  return common.createDesktop(options, dir, desktopSrc)
-}
-
-/**
- * Create lintian overrides for the package.
- */
-function createOverrides (options, dir) {
-  const overridesSrc = path.resolve(__dirname, '../resources/overrides.ejs')
-  const overridesDest = path.join(dir, 'usr/share/lintian/overrides', options.name)
-  options.logger(`Creating lintian overrides at ${overridesDest}`)
-
-  return fs.ensureDir(path.dirname(overridesDest), '0755')
-    .then(() => common.generateTemplate(options, overridesSrc))
-    .then(data => fs.outputFile(overridesDest, data))
-    .then(() => fs.chmod(overridesDest, '0644'))
-    .catch(common.wrapError('creating lintian overrides file'))
-}
-
-/**
- * Copy the application into the package.
- */
-function createApplication (options, dir) {
-  return common.copyApplication(options, dir, null, src => src !== path.join(options.src, 'LICENSE'))
-}
-
-/**
- * Create the contents of the package.
- */
-function createContents (options, dir) {
-  return common.createContents(options, dir, [
-    createControl,
-    copyScripts,
-    common.createBinary,
-    createDesktop,
-    common.createIcon,
-    common.createCopyright,
-    createOverrides,
-    createApplication
-  ])
-}
-
-/**
- * Package everything using `dpkg` and `fakeroot`.
- */
-function createPackage (options, dir) {
-  options.logger(`Creating package at ${dir}`)
-
-  return spawn('fakeroot', ['dpkg-deb', '--build', dir], options.logger)
-    .then(output => {
-      options.logger(`dpkg-deb output: ${output}`)
-      return dir
-    })
-}
-
-/**
- * Move the package to the specified destination.
- */
-function movePackage (options, dir) {
-  const packagePattern = path.join(dir, '../*.deb')
-  return common.movePackage(packagePattern, options, dir)
+    return sanitized
+  }
 }
 
 /* ************************************************************************** */
@@ -224,28 +238,27 @@ module.exports = data => {
   data.rename = data.rename || defaultRename
   data.logger = data.logger || defaultLogger
 
-  let options
-
   if (process.umask() !== 0o0022 && process.umask() !== 0o0002) {
     console.warn(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`)
   }
 
-  return getDefaults(data)
-    .then(defaults => getOptions(data, defaults))
-    .then(generatedOptions => {
-      options = generatedOptions
-      return data.logger(`Creating package with options\n${JSON.stringify(options, null, 2)}`)
-    }).then(() => common.createDir(options))
-    .then(dir => createContents(options, dir))
-    .then(dir => createPackage(options, dir))
-    .then(dir => movePackage(options, dir))
+  const installer = new DebianInstaller(data)
+
+  return installer.generateDefaults()
+    .then(() => installer.generateOptions())
+    .then(() => data.logger(`Creating package with options\n${JSON.stringify(installer.options, null, 2)}`))
+    .then(() => installer.createStagingDir())
+    .then(() => installer.createContents())
+    .then(() => installer.createPackage())
+    .then(() => installer.movePackage())
     .then(() => {
-      data.logger(`Successfully created package at ${options.dest}`)
-      return options
+      data.logger(`Successfully created package at ${installer.options.dest}`)
+      return installer.options
     }).catch(err => {
       data.logger(common.errorMessage('creating package', err))
       throw err
     })
 }
 
+module.exports.Installer = DebianInstaller
 module.exports.transformVersion = transformVersion
