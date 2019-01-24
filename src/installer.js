@@ -117,25 +117,28 @@ class DebianInstaller extends common.ElectronInstaller {
    * read from `package.json`, and some are hardcoded.
    */
   generateDefaults () {
-    return Promise.all([common.readMetadata(this.userSupplied), this.getSize(this.userSupplied.src), common.readElectronVersion(this.userSupplied.src)])
-      .then(([pkg, size, electronVersion]) => {
-        pkg = pkg || {}
+    return Promise.all([
+      common.readMetadata(this.userSupplied),
+      this.getSize(this.userSupplied.src),
+      common.readElectronVersion(this.userSupplied.src)
+    ]).then(([pkg, size, electronVersion]) => {
+      pkg = pkg || {}
 
-        this.defaults = Object.assign(common.getDefaultsFromPackageJSON(pkg), {
-          version: transformVersion(pkg.version || '0.0.0'),
+      this.defaults = Object.assign(common.getDefaultsFromPackageJSON(pkg), {
+        version: transformVersion(pkg.version || '0.0.0'),
 
-          section: 'utils',
-          priority: 'optional',
-          size: Math.ceil((size || 0) / 1024),
+        section: 'utils',
+        priority: 'optional',
+        size: Math.ceil((size || 0) / 1024),
 
-          maintainer: this.getMaintainer(pkg.author),
+        maintainer: this.getMaintainer(pkg.author),
 
-          icon: path.resolve(__dirname, '../resources/icon.png'),
-          lintianOverrides: []
-        }, debianDependencies.forElectron(electronVersion))
+        icon: path.resolve(__dirname, '../resources/icon.png'),
+        lintianOverrides: []
+      }, debianDependencies.forElectron(electronVersion))
 
-        return this.defaults
-      })
+      return this.defaults
+    })
   }
 
   /**
