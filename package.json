@@ -41,7 +41,7 @@
     "pify": "^4.0.1",
     "semver": "^5.6.0",
     "word-wrap": "^1.2.3",
-    "yargs": "^12.0.5"
+    "yargs": "^13.1.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
