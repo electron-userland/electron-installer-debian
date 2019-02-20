@@ -2,7 +2,15 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.1.0...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.1.1...master
+
+## [1.1.1] - 2019-02-20
+
+[1.1.1]: https://github.com/electron-userland/electron-installer-debian/compare/v1.1.0...v1.1.1
+
+### Changed
+
+* Upgrade to `electron-installer-common@^0.6.1` (#174)
 
 ## [1.1.0] - 2019-01-06
 
