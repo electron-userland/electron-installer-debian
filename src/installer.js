@@ -54,8 +54,11 @@ class DebianInstaller extends common.ElectronInstaller {
   /**
    * Copy the application into the package.
    */
-  copyApplication () {
-    return super.copyApplication(src => src !== path.join(this.options.src, 'LICENSE'))
+  async copyApplication () {
+    await super.copyApplication(src => src !== path.join(this.options.src, 'LICENSE'))
+    const sandboxHelperPath = path.join(this.stagingAppDir, 'chrome-sandbox')
+    if (await fs.exists(sandboxHelperPath))
+      await fs.chmod(sandboxHelperPath, 0o4755)
   }
 
   /**
