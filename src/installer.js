@@ -58,8 +58,10 @@ class DebianInstaller extends common.ElectronInstaller {
     return super.copyApplication(src => src !== path.join(this.options.src, 'LICENSE')).then(() => {
       // The sandbox helper executable must have the setuid (+s / 0o4000) bit set.
       const sandboxHelperPath = path.join(this.stagingDir, 'chrome-sandbox')
-      if (fs.accessSync(sandboxHelperPath))
+      if (fs.accessSync(sandboxHelperPath)) {
         fs.chmodSync(sandboxHelperPath, 0o4755)
+      }
+      return
     })
   }
 
