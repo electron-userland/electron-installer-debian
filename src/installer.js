@@ -33,6 +33,7 @@ class DebianInstaller extends common.ElectronInstaller {
   get contentFunctions () {
     return [
       'copyApplication',
+      'updateSandboxHelperPermissions',
       'copyLinuxIcons',
       'copyScripts',
       'createBinarySymlink',
@@ -56,7 +57,6 @@ class DebianInstaller extends common.ElectronInstaller {
    */
   copyApplication () {
     return super.copyApplication(src => src !== path.join(this.options.src, 'LICENSE'))
-      .then(() => this.updateSandboxHelperPermissions())
   }
 
   /**
