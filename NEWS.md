@@ -2,7 +2,19 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.1.1...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.2.0...master
+
+## [1.2.0] - 2019-05-01
+
+[1.2.0]: https://github.com/electron-userland/electron-installer-debian/compare/v1.1.1...v1.2.0
+
+### Added
+
+* Support for SUID sandbox helper in Electron >= 5 (#184)
+
+### Fixed
+
+* Allow GConf dependency with non-deprecated package name (#185)
 
 ## [1.1.1] - 2019-02-20
 
