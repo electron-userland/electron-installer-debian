@@ -1,14 +1,17 @@
 'use strict'
 
 const chai = require('chai')
-const { exec } = require('mz/child_process')
+const childProcess = require('child_process')
 const path = require('path')
+const { promisify } = require('util')
 
 const installer = require('..')
 
 const access = require('./helpers/access')
 const describeInstaller = require('./helpers/describe_installer')
 const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
+
+const exec = promisify(childProcess.exec)
 
 const assertASARDebExists = outputDir =>
   access(path.join(outputDir, 'footest_i386.deb'))
@@ -153,7 +156,7 @@ describe('module', function () {
     outputDir =>
       assertASARDebExists(outputDir)
         .then(() => exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`))
-        .then(stdout => {
+        .then(({stdout}) => {
           const lineCount = stdout.toString().match(/\n/g).length
           if (lineCount > 1) {
             throw new Error('Warnings not overriding:\n' + stdout.toString())

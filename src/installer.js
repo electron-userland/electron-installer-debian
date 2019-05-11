@@ -1,13 +1,14 @@
 'use strict'
 
+const { promisify } = require('util')
+
 const _ = require('lodash')
 const common = require('electron-installer-common')
 const debug = require('debug')
 const fs = require('fs-extra')
-const fsize = require('get-folder-size')
+const fsize = promisify(require('get-folder-size'))
 const parseAuthor = require('parse-author')
 const path = require('path')
-const pify = require('pify')
 const wrap = require('word-wrap')
 
 const debianDependencies = require('./dependencies')
@@ -120,7 +121,7 @@ class DebianInstaller extends common.ElectronInstaller {
   generateDefaults () {
     return Promise.all([
       common.readMetadata(this.userSupplied),
-      this.getSize(this.userSupplied.src),
+      fsize(this.userSupplied.src),
       common.readElectronVersion(this.userSupplied.src)
     ]).then(([pkg, size, electronVersion]) => {
       pkg = pkg || {}
@@ -185,13 +186,6 @@ class DebianInstaller extends common.ElectronInstaller {
 
       return maintainer.join(' ')
     }
-  }
-
-  /**
-   * Get the size of the app.
-   */
-  getSize (appDir) {
-    return pify(fsize)(appDir)
   }
 
   /**
