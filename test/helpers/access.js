@@ -6,7 +6,7 @@ const retry = require('promise-retry')
 /**
  * `fs.access` which retries three times.
  */
-module.exports = function (path) {
+module.exports = async function (path) {
   return retry((retry, number) => {
     return fs.access(path)
       .catch(retry)

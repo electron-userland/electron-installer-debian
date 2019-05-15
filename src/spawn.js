@@ -16,6 +16,6 @@ function updateExecutableMissingException (err, updateError) {
   }
 }
 
-module.exports = function (cmd, args, logger) {
+module.exports = async function (cmd, args, logger) {
   return spawn(cmd, args, logger, updateExecutableMissingException)
 }

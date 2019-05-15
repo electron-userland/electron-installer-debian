@@ -153,16 +153,14 @@ describe('module', function () {
       }
     },
     'passes lintian checks',
-    outputDir =>
-      assertASARDebExists(outputDir)
-        .then(() => exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`))
-        .then(({stdout}) => {
-          const lineCount = stdout.toString().match(/\n/g).length
-          if (lineCount > 1) {
-            throw new Error('Warnings not overriding:\n' + stdout.toString())
-          }
-          return Promise.resolve()
-        })
+    async outputDir => {
+      await assertASARDebExists(outputDir)
+      const { stdout } = await exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`)
+      const lineCount = stdout.toString().match(/\n/g).length
+      if (lineCount > 1) {
+        throw new Error(`Warnings not overriding:\n${stdout.toString()}`)
+      }
+    }
   )
 
   describeInstallerWithException(

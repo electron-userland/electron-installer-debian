@@ -2,11 +2,8 @@ language: node_js
 node_js:
 - '10'
 - '8'
-- '6'
 dist: xenial
-cache:
-  directories:
-  - node_modules
+cache: npm
 branches:
   only:
   - master
