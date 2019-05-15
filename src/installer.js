@@ -237,20 +237,15 @@ module.exports = async data => {
 
   const installer = new DebianInstaller(data)
 
-  // try {
-    await installer.generateDefaults()
-    await installer.generateOptions()
-    data.logger(`Creating package with options\n${JSON.stringify(installer.options, null, 2)}`)
-    await installer.createStagingDir()
-    await installer.createContents()
-    await installer.createPackage()
-    await installer.movePackage()
-    data.logger(`Successfully created package at ${installer.options.dest}`)
-    return installer.options
-  // } catch (err) {
-  //   data.logger(common.errorMessage('creating package', err))
-  //   throw err
-  // }
+  await installer.generateDefaults()
+  await installer.generateOptions()
+  data.logger(`Creating package with options\n${JSON.stringify(installer.options, null, 2)}`)
+  await installer.createStagingDir()
+  await installer.createContents()
+  await installer.createPackage()
+  await installer.movePackage()
+  data.logger(`Successfully created package at ${installer.options.dest}`)
+  return installer.options
 }
 
 module.exports.Installer = DebianInstaller
