@@ -148,7 +148,6 @@ describe('module', function () {
         lintianOverrides: [
           'binary-without-manpage',
           'changelog-file-missing-in-native-package',
-          'debian-changelog-file-missing',
           'executable-not-elf-or-script'
         ]
       }
