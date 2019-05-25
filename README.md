@@ -118,7 +118,7 @@ $ npm install --save-dev electron-installer-debian
 
 Edit the `scripts` section of your `package.json`:
 
-```js
+```json
 {
   "name": "app",
   "description": "An awesome app!",
@@ -166,15 +166,17 @@ const options = {
   arch: 'amd64'
 }
 
-console.log('Creating package (this may take a while)')
-
-try {
-  await installer(options)
-  console.log(`Successfully created package at ${options.dest}`)
-} catch (err) {
-  console.error(err, err.stack)
-  process.exit(1)
+async function main (options) {
+  console.log('Creating package (this may take a while)')
+  try {
+    await installer(options)
+    console.log(`Successfully created package at ${options.dest}`)
+  } catch (err) {
+    console.error(err, err.stack)
+    process.exit(1)
+  }
 }
+main(options)
 ```
 
 You'll end up with the package at `dist/installers/app_0.0.1_amd64.deb`.
