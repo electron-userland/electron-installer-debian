@@ -147,6 +147,7 @@ describe('module', function () {
         },
         lintianOverrides: [
           'binary-without-manpage',
+          'changelog-file-missing-in-native-package',
           'debian-changelog-file-missing',
           'executable-not-elf-or-script'
         ]
@@ -155,10 +156,14 @@ describe('module', function () {
     'passes lintian checks',
     async outputDir => {
       await assertASARDebExists(outputDir)
-      const { stdout } = await exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`)
-      const lineCount = stdout.toString().match(/\n/g).length
-      if (lineCount > 1) {
-        throw new Error(`Warnings not overriding:\n${stdout.toString()}`)
+      try {
+        await exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`)
+      } catch (err) {
+        const stdout = err.stdout.toString()
+        const lineCount = stdout.match(/\n/g).length
+        if (lineCount > 1) {
+          throw new Error(`Warnings not overriding:\n${stdout}`)
+        }
       }
     }
   )
