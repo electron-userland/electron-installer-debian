@@ -1,14 +1,17 @@
 'use strict'
 
 const chai = require('chai')
-const { exec } = require('mz/child_process')
+const childProcess = require('child_process')
 const path = require('path')
+const { promisify } = require('util')
 
 const installer = require('..')
 
 const access = require('./helpers/access')
 const describeInstaller = require('./helpers/describe_installer')
 const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
+
+const exec = promisify(childProcess.exec)
 
 const assertASARDebExists = outputDir =>
   access(path.join(outputDir, 'footest_i386.deb'))
@@ -144,22 +147,24 @@ describe('module', function () {
         },
         lintianOverrides: [
           'binary-without-manpage',
-          'debian-changelog-file-missing',
+          'changelog-file-missing-in-native-package',
           'executable-not-elf-or-script'
         ]
       }
     },
     'passes lintian checks',
-    outputDir =>
-      assertASARDebExists(outputDir)
-        .then(() => exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`))
-        .then(stdout => {
-          const lineCount = stdout.toString().match(/\n/g).length
-          if (lineCount > 1) {
-            throw new Error('Warnings not overriding:\n' + stdout.toString())
-          }
-          return Promise.resolve()
-        })
+    async outputDir => {
+      await assertASARDebExists(outputDir)
+      try {
+        await exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`)
+      } catch (err) {
+        const stdout = err.stdout.toString()
+        const lineCount = stdout.match(/\n/g).length
+        if (lineCount > 1) {
+          throw new Error(`Warnings not overriding:\n${stdout}`)
+        }
+      }
+    }
   )
 
   describeInstallerWithException(

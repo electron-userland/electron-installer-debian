@@ -1,13 +1,14 @@
 'use strict'
 
+const { promisify } = require('util')
+
 const _ = require('lodash')
 const common = require('electron-installer-common')
 const debug = require('debug')
 const fs = require('fs-extra')
-const fsize = require('get-folder-size')
+const fsize = promisify(require('get-folder-size'))
 const parseAuthor = require('parse-author')
 const path = require('path')
-const pify = require('pify')
 const wrap = require('word-wrap')
 
 const debianDependencies = require('./dependencies')
@@ -54,9 +55,9 @@ class DebianInstaller extends common.ElectronInstaller {
   /**
    * Copy the application into the package.
    */
-  copyApplication () {
-    return super.copyApplication(src => src !== path.join(this.options.src, 'LICENSE'))
-      .then(() => this.updateSandboxHelperPermissions())
+  async copyApplication () {
+    await super.copyApplication(src => src !== path.join(this.options.src, 'LICENSE'))
+    return this.updateSandboxHelperPermissions()
   }
 
   /**
@@ -65,16 +66,18 @@ class DebianInstaller extends common.ElectronInstaller {
   copyScripts () {
     const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
 
-    return Promise.all(_.map(this.options.scripts, (item, key) => {
-      if (_.includes(scriptNames, key)) {
-        const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
-        this.options.logger(`Creating script file at ${scriptFile}`)
+    return common.wrapError('creating script files', async () =>
+      Promise.all(_.map(this.options.scripts, (item, key) => {
+        if (scriptNames.includes(key)) {
+          const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
+          this.options.logger(`Creating script file at ${scriptFile}`)
 
-        return fs.copy(item, scriptFile)
-      } else {
-        throw new Error(`Wrong executable script name: ${key}`)
-      }
-    })).catch(common.wrapError('creating script files'))
+          return fs.copy(item, scriptFile)
+        } else {
+          throw new Error(`Wrong executable script name: ${key}`)
+        }
+      }))
+    )
   }
 
   /**
@@ -87,59 +90,55 @@ class DebianInstaller extends common.ElectronInstaller {
     const dest = path.join(this.stagingDir, 'DEBIAN', 'control')
     this.options.logger(`Creating control file at ${dest}`)
 
-    return this.createTemplatedFile(src, dest)
-      .catch(common.wrapError('creating control file'))
+    return common.wrapError('creating control file', async () => this.createTemplatedFile(src, dest))
   }
 
   /**
    * Create lintian overrides for the package.
    */
-  createOverrides () {
+  async createOverrides () {
     const src = path.resolve(__dirname, '../resources/overrides.ejs')
     const dest = path.join(this.stagingDir, this.baseAppDir, 'share/lintian/overrides', this.options.name)
     this.options.logger(`Creating lintian overrides at ${dest}`)
 
-    return this.createTemplatedFile(src, dest, '0644')
-      .catch(common.wrapError('creating lintian overrides file'))
+    return common.wrapError('creating lintian overrides file', async () => this.createTemplatedFile(src, dest, '0644'))
   }
 
   /**
    * Package everything using `dpkg` and `fakeroot`.
    */
-  createPackage () {
+  async createPackage () {
     this.options.logger(`Creating package at ${this.stagingDir}`)
 
-    return spawn('fakeroot', ['dpkg-deb', '--build', this.stagingDir], this.options.logger)
-      .then(output => this.options.logger(`dpkg-deb output: ${output}`))
+    const output = await spawn('fakeroot', ['dpkg-deb', '--build', this.stagingDir], this.options.logger)
+    this.options.logger(`dpkg-deb output: ${output}`)
   }
 
   /**
    * Get the hash of default options for the installer. Some come from the info
    * read from `package.json`, and some are hardcoded.
    */
-  generateDefaults () {
-    return Promise.all([
-      common.readMetadata(this.userSupplied),
-      this.getSize(this.userSupplied.src),
+  async generateDefaults () {
+    const [pkg, size, electronVersion] = await Promise.all([
+      (async () => (await common.readMetadata(this.userSupplied)) || {})(),
+      fsize(this.userSupplied.src),
       common.readElectronVersion(this.userSupplied.src)
-    ]).then(([pkg, size, electronVersion]) => {
-      pkg = pkg || {}
+    ])
 
-      this.defaults = Object.assign(common.getDefaultsFromPackageJSON(pkg), {
-        version: transformVersion(pkg.version || '0.0.0'),
+    this.defaults = Object.assign(common.getDefaultsFromPackageJSON(pkg), {
+      version: transformVersion(pkg.version || '0.0.0'),
 
-        section: 'utils',
-        priority: 'optional',
-        size: Math.ceil((size || 0) / 1024),
+      section: 'utils',
+      priority: 'optional',
+      size: Math.ceil((size || 0) / 1024),
 
-        maintainer: this.getMaintainer(pkg.author),
+      maintainer: this.getMaintainer(pkg.author),
 
-        icon: path.resolve(__dirname, '../resources/icon.png'),
-        lintianOverrides: []
-      }, debianDependencies.forElectron(electronVersion))
+      icon: path.resolve(__dirname, '../resources/icon.png'),
+      lintianOverrides: []
+    }, debianDependencies.forElectron(electronVersion))
 
-      return this.defaults
-    })
+    return this.defaults
   }
 
   /**
@@ -188,13 +187,6 @@ class DebianInstaller extends common.ElectronInstaller {
   }
 
   /**
-   * Get the size of the app.
-   */
-  getSize (appDir) {
-    return pify(fsize)(appDir)
-  }
-
-  /**
    * Normalize the description by replacing all newlines in the description with spaces, since it's
    * supposed to be one line.
    */
@@ -235,7 +227,7 @@ class DebianInstaller extends common.ElectronInstaller {
 
 /* ************************************************************************** */
 
-module.exports = data => {
+module.exports = async data => {
   data.rename = data.rename || defaultRename
   data.logger = data.logger || defaultLogger
 
@@ -245,20 +237,15 @@ module.exports = data => {
 
   const installer = new DebianInstaller(data)
 
-  return installer.generateDefaults()
-    .then(() => installer.generateOptions())
-    .then(() => data.logger(`Creating package with options\n${JSON.stringify(installer.options, null, 2)}`))
-    .then(() => installer.createStagingDir())
-    .then(() => installer.createContents())
-    .then(() => installer.createPackage())
-    .then(() => installer.movePackage())
-    .then(() => {
-      data.logger(`Successfully created package at ${installer.options.dest}`)
-      return installer.options
-    }).catch(err => {
-      data.logger(common.errorMessage('creating package', err))
-      throw err
-    })
+  await installer.generateDefaults()
+  await installer.generateOptions()
+  data.logger(`Creating package with options\n${JSON.stringify(installer.options, null, 2)}`)
+  await installer.createStagingDir()
+  await installer.createContents()
+  await installer.createPackage()
+  await installer.movePackage()
+  data.logger(`Successfully created package at ${installer.options.dest}`)
+  return installer.options
 }
 
 module.exports.Installer = DebianInstaller

@@ -15,7 +15,7 @@
 
 ## Requirements
 
-This tool requires Node 6 or greater, `fakeroot`, and `dpkg` to build the `.deb` package.
+This tool requires Node 8 or greater, `fakeroot`, and `dpkg` to build the `.deb` package.
 
 I'd recommend building your packages on your target platform, but if you insist on using Mac OS X, you can install these tools through [Homebrew](http://brew.sh/):
 
@@ -118,7 +118,7 @@ $ npm install --save-dev electron-installer-debian
 
 Edit the `scripts` section of your `package.json`:
 
-```js
+```json
 {
   "name": "app",
   "description": "An awesome app!",
@@ -166,20 +166,24 @@ const options = {
   arch: 'amd64'
 }
 
-console.log('Creating package (this may take a while)')
-
-installer(options)
-  .then(() => console.log(`Successfully created package at ${options.dest}`))
-  .catch(err => {
+async function main (options) {
+  console.log('Creating package (this may take a while)')
+  try {
+    await installer(options)
+    console.log(`Successfully created package at ${options.dest}`)
+  } catch (err) {
     console.error(err, err.stack)
     process.exit(1)
-  })
+  }
+}
+main(options)
 ```
 
 You'll end up with the package at `dist/installers/app_0.0.1_amd64.deb`.
 
 _Note: As of 1.0.0, the Node-style callback pattern is no longer available. You can use
-[`nodeify`](https://npm.im/nodeify) if this is required for your use case._
+[`util.callbackify`](https://nodejs.org/api/util.html#util_util_callbackify_original) if this is
+required for your use case._
 
 ### Options
 
