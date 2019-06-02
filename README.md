@@ -275,7 +275,7 @@ Version number of the package, used in the [`Version` field of the `control` spe
 Type: `String`
 Default: `undefined`
 
-Revision number of the package, used in the [`Version` field of the `control` specification](https://www.debian.org/doc/debian-policy/#version).
+Revision number of the package, used in the [`Version` field of the `control` specification](https://www.debian.org/doc/debian-policy/#version) and, by default, the filename of the generated `.deb` file.
 
 #### options.section
 Type: `String`
