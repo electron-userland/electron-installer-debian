@@ -17,7 +17,7 @@ const spawn = require('./spawn')
 const defaultLogger = debug('electron-installer-debian')
 
 const defaultRename = (dest, src) => {
-  return path.join(dest, '<%= name %>_<%= version %>_<%= arch %>.deb')
+  return path.join(dest, '<%= name %>_<%= version %><% if (revision) { %>-<%= revision %><% } %>_<%= arch %>.deb')
 }
 
 /**
@@ -127,6 +127,7 @@ class DebianInstaller extends common.ElectronInstaller {
 
     this.defaults = Object.assign(common.getDefaultsFromPackageJSON(pkg), {
       version: transformVersion(pkg.version || '0.0.0'),
+      revision: undefined,
 
       section: 'utils',
       priority: 'optional',
