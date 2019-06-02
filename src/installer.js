@@ -127,7 +127,6 @@ class DebianInstaller extends common.ElectronInstaller {
 
     this.defaults = Object.assign(common.getDefaultsFromPackageJSON(pkg), {
       version: transformVersion(pkg.version || '0.0.0'),
-      revision: undefined,
 
       section: 'utils',
       priority: 'optional',
