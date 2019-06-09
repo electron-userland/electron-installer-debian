@@ -3,6 +3,7 @@
 const common = require('electron-installer-common')
 
 const dependencyMap = {
+  atspi: 'libatspi2.0-0',
   gconf: 'libgconf-2-4 | libgconf2-4',
   glib2: 'libglib2.0-bin',
   gtk2: 'libgtk2.0-0',
