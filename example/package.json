@@ -1,5 +1,5 @@
 {
-  "name": "poopie",
+  "name": "example-electron-app",
   "description": "An example app, built with Electron.",
   "version": "0.0.1",
   "license": "MIT",
@@ -13,14 +13,12 @@
   "scripts": {
     "clean": "rimraf dist",
     "start": "electron .",
-    "exe32": "electron-packager . poopie --platform linux --arch ia32 --out dist/",
-    "exe64": "electron-packager . poopie --platform linux --arch x64 --out dist/",
-    "deb32": "electron-installer-debian --src dist/poopie-linux-ia32/ --arch i386 --config config.json",
-    "deb64": "electron-installer-debian --src dist/poopie-linux-x64/ --arch amd64 --config config.json",
-    "build": "npm run clean && npm run exe32 && npm run deb32 && npm run exe64 && npm run deb64"
+    "bundle:x64": "electron-packager . --platform linux --arch x64 --out dist/",
+    "deb:x64": "electron-installer-debian --src dist/example-electron-app-linux-x64/ --arch amd64 --config config.json",
+    "build": "npm run clean && npm run bundle:x64 && npm run deb:x64"
   },
   "devDependencies": {
-    "electron": "^3.0.0",
+    "electron": "^5.0.0",
     "electron-installer-debian": "*",
     "electron-packager": "^13.0.0",
     "rimraf": "^2.6.2"
