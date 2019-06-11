@@ -1,8 +1,24 @@
-# Changes by Version
+# `electron-installer-debian` - Changes by Version
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v1.2.0...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v2.0.0...master
+
+## [2.0.0] - 2019-06-11
+
+[2.0.0]: https://github.com/electron-userland/electron-installer-debian/compare/v1.2.0...v2.0.0
+
+### Added
+
+* ATSPI dependency for Electron >= 5 (#200)
+
+### Fixed
+
+* Add revision, when present, to the default output filename (#199)
+
+### Removed
+
+* Node &lt; 8 support (#194)
 
 ## [1.2.0] - 2019-05-01
 
