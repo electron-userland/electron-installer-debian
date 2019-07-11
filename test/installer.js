@@ -47,7 +47,7 @@ describe('module', function () {
       options: {
         icon: {
           '1024x1024': 'test/fixtures/icon.png',
-          'scalable': 'test/fixtures/icon.svg'
+          scalable: 'test/fixtures/icon.svg'
         },
         bin: 'resources/cli/bar.sh',
         productDescription: 'Just a test.',
