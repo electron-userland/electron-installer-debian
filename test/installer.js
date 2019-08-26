@@ -192,7 +192,7 @@ describe('module', function () {
       }
     })
 
-    it(`warns the user about umasks`, () => {
+    it('warns the user about umasks', () => {
       const installerOptions = testInstallerOptions(outputDir, {
         src: 'test/fixtures/app-with-asar/',
         options: { arch: 'i386' }
