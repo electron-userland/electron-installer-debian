@@ -150,7 +150,7 @@ class DebianInstaller extends common.ElectronInstaller {
     this.options.name = this.sanitizeName(this.options.name)
 
     if (!this.options.description && !this.options.productDescription) {
-      throw new Error(`No Description or ProductDescription provided. Please set either a description in the app's package.json or provide it in the this.options.`)
+      throw new Error("No Description or ProductDescription provided. Please set either a description in the app's package.json or provide it in the this.options.")
     }
 
     if (this.options.description) {
