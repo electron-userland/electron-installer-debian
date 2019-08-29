@@ -67,12 +67,13 @@ class DebianInstaller extends common.ElectronInstaller {
     const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
 
     return common.wrapError('creating script files', async () =>
-      Promise.all(_.map(this.options.scripts, (item, key) => {
+      Promise.all(_.map(this.options.scripts, async (item, key) => {
         if (scriptNames.includes(key)) {
           const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
           this.options.logger(`Creating script file at ${scriptFile}`)
 
-          return fs.copy(item, scriptFile)
+          await fs.copy(item, scriptFile)
+          return fs.chmod(scriptFile, 0o755)
         } else {
           throw new Error(`Wrong executable script name: ${key}`)
         }
