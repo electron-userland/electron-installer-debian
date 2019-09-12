@@ -2,7 +2,15 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v2.0.0...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v2.0.1...master
+
+## [2.0.1] - 2019-09-12
+
+[2.0.1]: https://github.com/electron-userland/electron-installer-debian/compare/v2.0.0...v2.0.1
+
+### Fixed
+
+* Ensure scripts have the executable bit set (#211)
 
 ## [2.0.0] - 2019-06-11
 
