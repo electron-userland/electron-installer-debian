@@ -1,17 +1,14 @@
 'use strict'
 
 const chai = require('chai')
-const childProcess = require('child_process')
 const path = require('path')
-const { promisify } = require('util')
+const { spawn } = require('@malept/cross-spawn-promise')
 
 const installer = require('..')
 
 const access = require('./helpers/access')
 const describeInstaller = require('./helpers/describe_installer')
 const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
-
-const exec = promisify(childProcess.exec)
 
 const assertASARDebExists = outputDir =>
   access(path.join(outputDir, 'footest_i386.deb'))
@@ -156,8 +153,17 @@ describe('module', function () {
     async outputDir => {
       await assertASARDebExists(outputDir)
       try {
-        await exec(`lintian ${path.join(outputDir, 'footest_i386.deb')}`)
+        await spawn('lintian', [path.join(outputDir, 'footest_i386.deb')], {
+          updateErrorCallback: (err) => {
+            if (err.code === 'ENOENT' && err.syscall === 'spawn lintian') {
+              err.message = 'Your system is missing the lintian package'
+            }
+          }
+        })
       } catch (err) {
+        if (!err.stdout) {
+          throw err
+        }
         const stdout = err.stdout.toString()
         const lineCount = stdout.match(/\n/g).length
         if (lineCount > 1) {

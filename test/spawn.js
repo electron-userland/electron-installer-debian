@@ -16,7 +16,7 @@ describe('spawn', () => {
       await spawn('dpkg', ['--version'], msg => {})
       throw new Error('dpkg should not have been executed')
     } catch (error) {
-      chai.expect(error.message).to.match(/Error executing command \(Your system is missing the dpkg package/)
+      chai.expect(error.message).to.match(/Error executing command \(dpkg --version\):\nYour system is missing the dpkg package/)
     }
   })
 
