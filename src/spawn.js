@@ -1,9 +1,9 @@
 'use strict'
 
-const { spawn } = require('electron-installer-common')
+const { spawn } = require('@malept/cross-spawn-promise')
 
-function updateExecutableMissingException (err, updateError) {
-  if (updateError && err.code === 'ENOENT') {
+function updateExecutableMissingException (err, hasLogger) {
+  if (hasLogger && err.code === 'ENOENT') {
     const isFakeroot = err.syscall === 'spawn fakeroot'
     const isDpkg = !isFakeroot && err.syscall === 'spawn dpkg'
 
