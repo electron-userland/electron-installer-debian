@@ -53,6 +53,6 @@
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",
     "promise-retry": "^1.1.1",
-    "tmp-promise": "^2.0.1"
+    "tmp-promise": "^3.0.2"
   }
 }
