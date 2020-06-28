@@ -2,7 +2,15 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.0.0...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.1.0...master
+
+## [3.1.0] - 2020-06-28
+
+[3.1.0]: https://github.com/electron-userland/electron-installer-debian/compare/v3.0.0...v3.1.0
+
+### Added
+
+* Electron 9 dependency compatibility (#224)
 
 ## [3.0.0] - 2020-01-22
 
