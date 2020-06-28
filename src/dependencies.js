@@ -4,6 +4,8 @@ const common = require('electron-installer-common')
 
 const dependencyMap = {
   atspi: 'libatspi2.0-0',
+  drm: 'libdrm2',
+  gbm: 'libgbm1',
   gconf: 'libgconf-2-4 | libgconf2-4',
   glib2: 'libglib2.0-bin',
   gtk2: 'libgtk2.0-0',
@@ -15,6 +17,7 @@ const dependencyMap = {
   nss: 'libnss3',
   trashCli: 'trash-cli',
   uuid: 'libuuid1',
+  xcbDri3: 'libxcb-dri3-0',
   xdgUtils: 'xdg-utils',
   xss: 'libxss1',
   xtst: 'libxtst6'
