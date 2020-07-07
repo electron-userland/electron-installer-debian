@@ -18,7 +18,7 @@
     "build": "npm run clean && npm run bundle:x64 && npm run deb:x64"
   },
   "devDependencies": {
-    "electron": "^5.0.0",
+    "electron": "^9.1.0",
     "electron-installer-debian": "*",
     "electron-packager": "^13.0.0",
     "rimraf": "^2.6.2"
