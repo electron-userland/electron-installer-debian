@@ -15,14 +15,14 @@
 
 ## Requirements
 
-This tool requires Node 10 or greater, `fakeroot`, and `dpkg` to build the `.deb` package.
+This tool requires Node 10 or greater, `fakeroot`, `dpkg` to build the `.deb` package and node module `electron-packager`
 
 I'd recommend building your packages on your target platform, but if you insist on using Mac OS X, you can install these tools through [Homebrew](http://brew.sh/):
 
 ```
 $ brew install fakeroot dpkg
+$ npm install -g electron-packager
 ```
-
 
 ## Installation
 
