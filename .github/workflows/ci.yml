@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: sudo apt -y -qq install lintian
+        run: sudo apt-get --yes --quiet install lintian
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -33,7 +33,7 @@ jobs:
           npm install --engine-strict
           npm update
       - name: Fix permission for test fixtures
-        run: chmod -R g-w test/fixtures
+        run: chmod --recursive g-w test/fixtures
       - name: Test
         run: npm test
         env:
