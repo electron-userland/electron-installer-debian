@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.1.0...master
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.1.0...main
 
 ## [3.1.0] - 2020-06-28
 

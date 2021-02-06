@@ -4,7 +4,7 @@
 sorts of contributions. They include, but are not limited to:
 
 - Constructive feedback
-- [Questions about usage](https://github.com/electron-userland/electron-installer-debian/blob/master/SUPPORT.md)
+- [Questions about usage](https://github.com/electron-userland/electron-installer-debian/blob/main/SUPPORT.md)
 - [Bug reports / technical issues](#before-opening-bug-reportstechnical-issues)
 - Documentation changes
 - Feature requests
@@ -22,7 +22,7 @@ where appropriate.
 ### Debugging
 
 Troubleshooting suggestions can be found in the [support
-documentation](https://github.com/electron-userland/electron-installer-debian/blob/master/SUPPORT.md#troubleshooting).
+documentation](https://github.com/electron-userland/electron-installer-debian/blob/main/SUPPORT.md#troubleshooting).
 
 ## Contribution suggestions
 
@@ -49,7 +49,7 @@ Here are some things to keep in mind as you file pull requests to fix bugs, add 
   Feel free to indicate whether the changes require a major, minor, or patch version bump, as
   prescribed by the [semantic versioning specification](http://semver.org/).
 * Once your pull request is approved, please make sure your commits are rebased onto the latest
-  commit in the master branch, and that you limit/squash the number of commits created to a
+  commit in the main branch, and that you limit/squash the number of commits created to a
   "feature"-level. For instance:
 
 bad:
@@ -94,7 +94,7 @@ Make sure to get an approval from another collaborator before merging a PR.
 - increment the version number appropriately, but not via `npm version` (we'll need to create the
   tag ourselves)
 - push the release branch and create a PR
-- once the PR's merged, `git checkout master && git pull && git tag $VERSION && git push --tags`
+- once the PR's merged, `git checkout main && git pull && git tag $VERSION && git push --tags`
 - create a new GitHub release from the pushed tag with the contents of `NEWS.md` for that version
 - close the milestone associated with the version if one is open
 - `npm publish`

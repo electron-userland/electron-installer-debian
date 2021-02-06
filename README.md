@@ -8,10 +8,10 @@
 
 [Usage](#usage) |
 [Options](#options) |
-[Release Notes](https://github.com/electron-userland/electron-installer-debian/blob/master/NEWS.md) |
-[License](https://github.com/electron-userland/electron-installer-debian/blob/master/LICENSE) |
-[Code of Conduct](https://github.com/electron-userland/electron-installer-debian/blob/master/CODE_OF_CONDUCT.md) |
-[Support](https://github.com/electron-userland/electron-installer-debian/blob/master/SUPPORT.md)
+[Release Notes](https://github.com/electron-userland/electron-installer-debian/blob/main/NEWS.md) |
+[License](https://github.com/electron-userland/electron-installer-debian/blob/main/LICENSE) |
+[Code of Conduct](https://github.com/electron-userland/electron-installer-debian/blob/main/CODE_OF_CONDUCT.md) |
+[Support](https://github.com/electron-userland/electron-installer-debian/blob/main/SUPPORT.md)
 
 ## Requirements
 
@@ -360,7 +360,7 @@ Exec=foo %U
 
 #### options.icon
 Type: `String` or `Object[String:String]`
-Default: [`resources/icon.png`](https://github.com/electron-userland/electron-installer-debian/blob/master/resources/icon.png)
+Default: [`resources/icon.png`](https://github.com/electron-userland/electron-installer-debian/blob/main/resources/icon.png)
 
 Path to a single image that will act as icon for the application:
 
@@ -425,7 +425,7 @@ You can read more about [package maintainer scripts](https://www.debian.org/doc/
 
 #### options.desktopTemplate
 Type: `String`
-Default: [`resources/desktop.ejs`](https://github.com/electron-userland/electron-installer-debian/blob/master/resources/desktop.ejs)
+Default: [`resources/desktop.ejs`](https://github.com/electron-userland/electron-installer-debian/blob/main/resources/desktop.ejs)
 
 The absolute path to a custom template for the generated [FreeDesktop.org desktop
 entry](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html) file.
