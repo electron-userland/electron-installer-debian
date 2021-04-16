@@ -37,7 +37,7 @@
     "debug": "^4.1.1",
     "electron-installer-common": "^0.10.2",
     "fs-extra": "^9.0.0",
-    "get-folder-size": "^2.0.1",
+    "get-folder-size": "^3.0.0",
     "lodash": "^4.17.4",
     "word-wrap": "^1.2.3",
     "yargs": "^16.0.2"
