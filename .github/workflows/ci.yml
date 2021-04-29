@@ -34,6 +34,7 @@ jobs:
           npm install --engine-strict
           npm update
       - name: Fix permission for test fixtures
+        if: runner.os == 'ubuntu-latest'
         run: chmod --recursive g-w test/fixtures
       - name: Test
         run: npm test
