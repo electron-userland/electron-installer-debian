@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Install dependencies
-        run: sudo apt-get --yes --quiet install lintian
+        run: ci/install-os-dependencies.sh
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -29,8 +29,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install OS Dependencies
-        run: ci/install-os-dependencies.sh
       - name: Install
         run: |
           npm install --engine-strict
