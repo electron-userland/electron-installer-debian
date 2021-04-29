@@ -10,10 +10,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         node-version: [10.x, 12.x, 14.x]
+        os: [macOS-latest, ubuntu-latest]
 
     steps:
       - name: Install dependencies
@@ -28,6 +29,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Install OS Dependencies
+        run: ci/install-os-dependencies.sh
       - name: Install
         run: |
           npm install --engine-strict

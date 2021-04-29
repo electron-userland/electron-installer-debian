@@ -129,49 +129,51 @@ describe('module', function () {
     /^No Description or ProductDescription provided/
   )
 
-  describeInstaller(
-    'with debian scripts and lintian overrides',
-    {
-      src: 'test/fixtures/app-with-asar/',
-      options: {
-        productDescription: 'Just a test.',
-        arch: 'i386',
-        scripts: {
-          preinst: 'test/fixtures/debian-scripts/preinst.sh',
-          postinst: 'test/fixtures/debian-scripts/postinst.sh',
-          prerm: 'test/fixtures/debian-scripts/prerm.sh',
-          postrm: 'test/fixtures/debian-scripts/postrm.sh'
-        },
-        lintianOverrides: [
-          'binary-without-manpage',
-          'changelog-file-missing-in-native-package',
-          'executable-not-elf-or-script'
-        ]
-      }
-    },
-    'passes lintian checks',
-    async outputDir => {
-      await assertASARDebExists(outputDir)
-      try {
-        await spawn('lintian', [path.join(outputDir, 'footest_i386.deb')], {
-          updateErrorCallback: (err) => {
-            if (err.code === 'ENOENT' && err.syscall === 'spawn lintian') {
-              err.message = 'Your system is missing the lintian package'
+  if (process.platform !== 'darwin') {
+    describeInstaller(
+      'with debian scripts and lintian overrides',
+      {
+        src: 'test/fixtures/app-with-asar/',
+        options: {
+          productDescription: 'Just a test.',
+          arch: 'i386',
+          scripts: {
+            preinst: 'test/fixtures/debian-scripts/preinst.sh',
+            postinst: 'test/fixtures/debian-scripts/postinst.sh',
+            prerm: 'test/fixtures/debian-scripts/prerm.sh',
+            postrm: 'test/fixtures/debian-scripts/postrm.sh'
+          },
+          lintianOverrides: [
+            'binary-without-manpage',
+            'changelog-file-missing-in-native-package',
+            'executable-not-elf-or-script'
+          ]
+        }
+      },
+      'passes lintian checks',
+      async outputDir => {
+        await assertASARDebExists(outputDir)
+        try {
+          await spawn('lintian', [path.join(outputDir, 'footest_i386.deb')], {
+            updateErrorCallback: (err) => {
+              if (err.code === 'ENOENT' && err.syscall === 'spawn lintian') {
+                err.message = 'Your system is missing the lintian package'
+              }
             }
+          })
+        } catch (err) {
+          if (!err.stdout) {
+            throw err
           }
-        })
-      } catch (err) {
-        if (!err.stdout) {
-          throw err
-        }
-        const stdout = err.stdout.toString()
-        const lineCount = stdout.match(/\n/g).length
-        if (lineCount > 1) {
-          throw new Error(`Warnings not overriding:\n${stdout}`)
+          const stdout = err.stdout.toString()
+          const lineCount = stdout.match(/\n/g).length
+          if (lineCount > 1) {
+            throw new Error(`Warnings not overriding:\n${stdout}`)
+          }
         }
       }
-    }
-  )
+    )
+  }
 
   describeInstallerWithException(
     'unknown script name',
