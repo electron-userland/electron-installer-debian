@@ -175,6 +175,34 @@ describe('module', function () {
     )
   }
 
+  describeInstaller(
+    'correct owner and permissions for chrome-sandbox',
+    {
+      src: 'test/fixtures/app-with-asar/',
+      options: {
+        arch: 'i386'
+      }
+    },
+    'chrome-sandbox is owned by root and has the suid bit',
+    async outputDir => {
+      await assertASARDebExists(outputDir)
+
+      const output = await spawn('dpkg-deb', ['--contents', path.join(outputDir, 'footest_i386.deb')])
+      const entries = output.split('\n').map(line => line.split(/\s+/))
+
+      const chromeSandbox = entries.find(entry => entry[5].endsWith('/chrome-sandbox'))
+      if (chromeSandbox === undefined) {
+        throw new Error('Could not find chrome-sandbox')
+      }
+
+      const permissions = chromeSandbox[0]
+      chai.expect(permissions).to.equal('-rwsr-xr-x')
+
+      const owner = chromeSandbox[1]
+      chai.expect(owner).to.equal('root/root')
+    }
+  )
+
   describeInstallerWithException(
     'unknown script name',
     {
