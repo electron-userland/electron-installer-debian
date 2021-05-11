@@ -111,10 +111,11 @@ class DebianInstaller extends common.ElectronInstaller {
   async createPackage () {
     this.options.logger(`Creating package at ${this.stagingDir}`)
 
-    const command = ['dpkg-deb', '--build', this.stagingDir]
+    const command = ['--build', this.stagingDir]
     if (process.platform === 'darwin') {
-      command.push('--root-owner-group')
+      command.unshift('--root-owner-group')
     }
+    command.unshift('dpkg-deb')
 
     const output = await spawn('fakeroot', command, this.options.logger)
     this.options.logger(`dpkg-deb output: ${output}`)
