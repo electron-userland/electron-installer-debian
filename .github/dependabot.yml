@@ -8,4 +8,4 @@ updates:
   ignore:
   - dependency-name: get-folder-size
     versions:
-    - ">= 3.a, < 4"
+    - ">= 3"
