@@ -129,47 +129,77 @@ describe('module', function () {
     /^No Description or ProductDescription provided/
   )
 
+  if (process.platform !== 'darwin') {
+    describeInstaller(
+      'with debian scripts and lintian overrides',
+      {
+        src: 'test/fixtures/app-with-asar/',
+        options: {
+          productDescription: 'Just a test.',
+          arch: 'i386',
+          scripts: {
+            preinst: 'test/fixtures/debian-scripts/preinst.sh',
+            postinst: 'test/fixtures/debian-scripts/postinst.sh',
+            prerm: 'test/fixtures/debian-scripts/prerm.sh',
+            postrm: 'test/fixtures/debian-scripts/postrm.sh'
+          },
+          lintianOverrides: [
+            'binary-without-manpage',
+            'changelog-file-missing-in-native-package',
+            'executable-not-elf-or-script'
+          ]
+        }
+      },
+      'passes lintian checks',
+      async outputDir => {
+        await assertASARDebExists(outputDir)
+        try {
+          await spawn('lintian', [path.join(outputDir, 'footest_i386.deb')], {
+            updateErrorCallback: (err) => {
+              if (err.code === 'ENOENT' && err.syscall === 'spawn lintian') {
+                err.message = 'Your system is missing the lintian package'
+              }
+            }
+          })
+        } catch (err) {
+          if (!err.stdout) {
+            throw err
+          }
+          const stdout = err.stdout.toString()
+          const lineCount = stdout.match(/\n/g).length
+          if (lineCount > 1) {
+            throw new Error(`Warnings not overriding:\n${stdout}`)
+          }
+        }
+      }
+    )
+  }
+
   describeInstaller(
-    'with debian scripts and lintian overrides',
+    'correct owner and permissions for chrome-sandbox',
     {
       src: 'test/fixtures/app-with-asar/',
       options: {
-        productDescription: 'Just a test.',
-        arch: 'i386',
-        scripts: {
-          preinst: 'test/fixtures/debian-scripts/preinst.sh',
-          postinst: 'test/fixtures/debian-scripts/postinst.sh',
-          prerm: 'test/fixtures/debian-scripts/prerm.sh',
-          postrm: 'test/fixtures/debian-scripts/postrm.sh'
-        },
-        lintianOverrides: [
-          'binary-without-manpage',
-          'changelog-file-missing-in-native-package',
-          'executable-not-elf-or-script'
-        ]
+        arch: 'i386'
       }
     },
-    'passes lintian checks',
+    'chrome-sandbox is owned by root and has the suid bit',
     async outputDir => {
       await assertASARDebExists(outputDir)
-      try {
-        await spawn('lintian', [path.join(outputDir, 'footest_i386.deb')], {
-          updateErrorCallback: (err) => {
-            if (err.code === 'ENOENT' && err.syscall === 'spawn lintian') {
-              err.message = 'Your system is missing the lintian package'
-            }
-          }
-        })
-      } catch (err) {
-        if (!err.stdout) {
-          throw err
-        }
-        const stdout = err.stdout.toString()
-        const lineCount = stdout.match(/\n/g).length
-        if (lineCount > 1) {
-          throw new Error(`Warnings not overriding:\n${stdout}`)
-        }
+
+      const output = await spawn('dpkg-deb', ['--contents', path.join(outputDir, 'footest_i386.deb')])
+      const entries = output.split('\n').map(line => line.split(/\s+/))
+
+      const chromeSandbox = entries.find(entry => entry[5].endsWith('/chrome-sandbox'))
+      if (chromeSandbox === undefined) {
+        throw new Error('Could not find chrome-sandbox')
       }
+
+      const permissions = chromeSandbox[0]
+      chai.expect(permissions).to.equal('-rwsr-xr-x')
+
+      const owner = chromeSandbox[1]
+      chai.expect(owner).to.equal('root/root')
     }
   )
 

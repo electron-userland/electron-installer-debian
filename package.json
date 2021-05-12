@@ -24,6 +24,11 @@
   "bin": {
     "electron-installer-debian": "src/cli.js"
   },
+  "files": [
+    "bin",
+    "src",
+    "resources"
+  ],
   "scripts": {
     "lint": "eslint .",
     "spec": "nyc mocha",

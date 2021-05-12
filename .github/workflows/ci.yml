@@ -10,15 +10,16 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         node-version: [10.x, 12.x, 14.x]
+        os: [macOS-latest, ubuntu-latest]
 
     steps:
-      - name: Install dependencies
-        run: sudo apt-get --yes --quiet install lintian
       - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: ci/install-os-dependencies.sh
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
@@ -33,6 +34,7 @@ jobs:
           npm install --engine-strict
           npm update
       - name: Fix permission for test fixtures
+        if: runner.os == 'ubuntu-latest'
         run: chmod --recursive g-w test/fixtures
       - name: Test
         run: npm test
