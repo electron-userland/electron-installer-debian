@@ -67,7 +67,7 @@ Say your Electron app lives in `path/to/app`, and has a structure like this:
 You now run `electron-packager` to build the app for Debian:
 
 ```
-$ electron-packager . app --platform linux --arch x64 --out dist/
+$ npx electron-packager . app --platform linux --arch x64 --out dist/
 ```
 
 And you end up with something like this in your `dist` folder:
