@@ -251,4 +251,33 @@ describe('module', function () {
       chai.expect(installer.transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
     })
   })
+
+  describeInstaller(
+    'with different compression type',
+    {
+      src: 'test/fixtures/app-with-asar/',
+      options: {
+        arch: 'i386',
+        compressType: 'gzip'
+      }
+    },
+    'generates a .deb package with gzip',
+    async outputDir => {
+      await assertASARDebExists(outputDir)
+
+      const output = await spawn('file', [path.join(outputDir, 'footest_i386.deb')])
+      chai.expect(output).to.contain('compression gz')
+    }
+  )
+
+  describeInstallerWithException(
+    'with wrong compression type',
+    {
+      src: 'test/fixtures/app-with-asar/',
+      options: {
+        compressType: 'invalid'
+      }
+    },
+    /^Wrong compression type. Only 'xz', 'gzip', 'zstd', or 'none' are supported.$/
+  )
 })

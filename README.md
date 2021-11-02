@@ -430,6 +430,12 @@ Default: [`resources/desktop.ejs`](https://github.com/electron-userland/electron
 The absolute path to a custom template for the generated [FreeDesktop.org desktop
 entry](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html) file.
 
+#### options.compressType
+Type: `String`
+Default: Based on your OS
+
+Used by `dpkg-deb` to set the compression type. You can read more about it on the [manual page of `dpkg-deb`](https://man7.org/linux/man-pages/man1/dpkg-deb.1.html)
+
 ### Installed Package
 
 The package installs the Electron application into `/usr/lib`, since there are

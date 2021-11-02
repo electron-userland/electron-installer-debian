@@ -115,6 +115,9 @@ class DebianInstaller extends common.ElectronInstaller {
     if (process.platform === 'darwin') {
       command.unshift('--root-owner-group')
     }
+    if (this.options.compressType) {
+      command.unshift('-Z', this.options.compressType)
+    }
     command.unshift('dpkg-deb')
 
     const output = await spawn('fakeroot', command, this.options.logger)
@@ -166,6 +169,10 @@ class DebianInstaller extends common.ElectronInstaller {
 
     if (this.options.productDescription) {
       this.options.productDescription = this.normalizeExtendedDescription(this.options.productDescription)
+    }
+
+    if (this.options.compressType && !['xz', 'gzip', 'zstd', 'none'].includes(this.options.compressType)) {
+      throw new Error("Wrong compression type. Only 'xz', 'gzip', 'zstd', or 'none' are supported.")
     }
 
     // Create array with unique values from default & user-supplied dependencies
