@@ -265,6 +265,12 @@ Default: `package.productDescription || package.description`
 
 Long description of the application, used in the [`Description` field of the `control` specification](https://www.debian.org/doc/debian-policy/#the-extended-description).
 
+#### options.startupWmClass
+Type: `String`
+Default: `undefined`
+
+Value of the [`StartupWMClass` field of the `desktop` specification](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html).
+
 #### options.version
 Type: `String`
 Default: `package.version || "0.0.0"`

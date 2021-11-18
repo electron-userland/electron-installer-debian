@@ -6,6 +6,7 @@
 Icon=<%= name %>
 <% } %>Type=Application
 StartupNotify=true
-<% if (categories && categories.length) { %>Categories=<%= categories.join(';') %>;
+<% if (startupWmClass) { %>StartupWMClass=<%= startupWmClass %>
+<% } %><% if (categories && categories.length) { %>Categories=<%= categories.join(';') %>;
 <% } %><% if (mimeType && mimeType.length) { %>MimeType=<%= mimeType.join(';') %>;
 <% } %>
