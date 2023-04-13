@@ -10,7 +10,6 @@ const fsize = promisify(require('get-folder-size'))
 const parseAuthor = require('parse-author')
 const path = require('path')
 const wrap = require('word-wrap')
-const os = require('os')
 
 const debianDependencies = require('./dependencies')
 const spawn = require('./spawn')
