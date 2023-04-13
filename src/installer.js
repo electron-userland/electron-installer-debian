@@ -178,7 +178,7 @@ class DebianInstaller extends common.ElectronInstaller {
     // options.compression validation
     const compressionTypes = ['xz', 'gzip', 'bzip2', 'lzma', 'zstd', 'none']
     if (this.options.compression && !compressionTypes.includes(this.options.compression)) {
-      this.options.compression = 'xz' // default
+      throw new Error("Compression option should be one of these values: xz, gzip, bzip2, lzma, zstd or none. Please, verify it")
     }
 
     // Create array with unique values from default & user-supplied dependencies
