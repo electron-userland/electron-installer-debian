@@ -112,6 +112,11 @@ class DebianInstaller extends common.ElectronInstaller {
     this.options.logger(`Creating package at ${this.stagingDir}`)
 
     const command = ['--build', this.stagingDir]
+
+    if(this.options.compression) {
+       command.unshift(`-Z${this.options.compression}`)
+    }
+
     if (process.platform === 'darwin') {
       command.unshift('--root-owner-group')
     }
@@ -141,6 +146,8 @@ class DebianInstaller extends common.ElectronInstaller {
 
       maintainer: this.getMaintainer(pkg.author),
 
+      compression: undefined,
+
       icon: path.resolve(__dirname, '../resources/icon.png'),
       lintianOverrides: []
     }, debianDependencies.forElectron(electronVersion))
@@ -166,6 +173,12 @@ class DebianInstaller extends common.ElectronInstaller {
 
     if (this.options.productDescription) {
       this.options.productDescription = this.normalizeExtendedDescription(this.options.productDescription)
+    }
+
+    // options.compression validation
+    const compressionTypes = ['xz', 'gzip', 'bzip2', 'lzma', 'zstd', 'none']
+    if (this.options.compression && !compressionTypes.includes(this.options.compression)) {
+      throw new Error("Compression option should be one of these values: xz, gzip, bzip2, lzma, zstd or none. Please, verify it")
     }
 
     // Create array with unique values from default & user-supplied dependencies
