@@ -327,7 +327,7 @@ Type: `String`
 Default: `package.homepage || package.author.url`
 
 URL of the homepage for the package, used in the [`Homepage` field of the `control` specification](https://www.debian.org/doc/debian-policy/#homepage).
-
+on error value, default is: `'xz'`
 #### options.bin
 Type: `String`
 Default: `package.name || "electron"`
@@ -437,7 +437,6 @@ Default: `undefined`
 
 Set the compression type used by dpkg-deb when building .deb package
 Allowed values: `'xz', 'gzip', 'bzip2', 'lzma', 'zstd', 'none'`
-on error value, default is: `'xz'`
 
 ### Installed Package
 
