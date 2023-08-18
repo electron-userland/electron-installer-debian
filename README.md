@@ -193,6 +193,7 @@ Even though you can pass most of these options through the command-line interfac
 {
   "dest": "dist/installers/",
   "icon": "resources/Icon.png",
+  "compression": "gzip",
   "categories": [
     "Utility"
   ],
@@ -429,6 +430,15 @@ Default: [`resources/desktop.ejs`](https://github.com/electron-userland/electron
 
 The absolute path to a custom template for the generated [FreeDesktop.org desktop
 entry](http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html) file.
+
+#### options.compression
+Type: `String`
+Default: `xz`
+
+Set the compression type used by dpkg-deb when building .deb package
+Allowed values: `'xz', 'gzip', 'bzip2', 'lzma', 'zstd', 'none'`
+
+Used by `dpkg-deb` to set the compression type. You can read more about it on the [manual page of `dpkg-deb`](https://man7.org/linux/man-pages/man1/dpkg-deb.1.html)
 
 ### Installed Package
 
