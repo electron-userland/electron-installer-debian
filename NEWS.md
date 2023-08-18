@@ -2,7 +2,19 @@
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.1.0...main
+[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.2.0...main
+
+## [3.2.0] - 2023-08-18
+
+[3.2.0]: https://github.com/electron-userland/electron-installer-debian/compare/v3.1.0...v3.2.0
+
+### Added
+
+* Allow passing in compression option (#342)
+
+### Removed
+
+* Node &lt; 12 support (#220)
 
 ## [3.1.0] - 2020-06-28
 
