@@ -35,7 +35,7 @@
     "test": "npm run lint && npm run spec"
   },
   "engines": {
-    "node": ">= 10.0.0"
+    "node": ">= 14.0.0"
   },
   "dependencies": {
     "@malept/cross-spawn-promise": "^1.0.0",
