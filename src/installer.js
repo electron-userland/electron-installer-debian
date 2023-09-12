@@ -111,6 +111,15 @@ class DebianInstaller extends common.ElectronInstaller {
   async createPackage () {
     this.options.logger(`Creating package at ${this.stagingDir}`)
 
+    await fs.chmod(this.stagingDir, 0o755);
+    await fs.readdir(this.stagingDir, { withFileTypes: true }).then(entries => {
+      entries.forEach(entry => {
+        if (entry.isDirectory()) {
+          fs.chmod(path.join(this.stagingDir, entry.name), 0o755);
+        }
+      });
+    });
+
     const command = ['--build', this.stagingDir]
     if (process.platform === 'darwin') {
       command.unshift('--root-owner-group')
