@@ -91,7 +91,12 @@ class DebianInstaller extends common.ElectronInstaller {
     const dest = path.join(this.stagingDir, 'DEBIAN', 'control')
     this.options.logger(`Creating control file at ${dest}`)
 
-    return common.wrapError('creating control file', async () => this.createTemplatedFile(src, dest))
+    return common.wrapError('creating control file', async () => {
+      await this.createTemplatedFile(src, dest)
+
+      const controlDir = path.join(this.stagingDir, 'DEBIAN')
+      return fs.chmod(controlDir, 0o755)
+    })
   }
 
   /**
