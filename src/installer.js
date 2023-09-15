@@ -30,6 +30,19 @@ function transformVersion (version) {
   return version.replace(/(\d)[_.+-]?((RC|rc|pre|dev|beta|alpha)[_.+-]?\d*)$/, '$1~$2')
 }
 
+/**
+ * Recursively set permissions on a directory and its contents.
+ */
+async function setDirectoryPermissions (directoryPath, permissions) {
+  await fs.chmod(directoryPath, permissions)
+  const entries = await fs.readdir(directoryPath, { withFileTypes: true })
+  entries.forEach(entry => {
+    if (entry.isDirectory()) {
+      fs.chmod(path.join(directoryPath, entry.name), permissions)
+    }
+  })
+}
+
 class DebianInstaller extends common.ElectronInstaller {
   get contentFunctions () {
     return [
@@ -111,13 +124,7 @@ class DebianInstaller extends common.ElectronInstaller {
   async createPackage () {
     this.options.logger(`Creating package at ${this.stagingDir}`)
 
-    await fs.chmod(this.stagingDir, 0o755)
-    const entries = await fs.readdir(this.stagingDir, { withFileTypes: true })
-    entries.forEach(entry => {
-      if (entry.isDirectory()) {
-        fs.chmod(path.join(this.stagingDir, entry.name), 0o755)
-      }
-    })
+    await setDirectoryPermissions(this.stagingDir, 0o755)
 
     const command = ['--build', this.stagingDir]
     if (process.platform === 'darwin') {
@@ -275,3 +282,4 @@ module.exports = async data => {
 
 module.exports.Installer = DebianInstaller
 module.exports.transformVersion = transformVersion
+module.exports.setDirectoryPermissions = setDirectoryPermissions

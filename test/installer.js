@@ -20,30 +20,6 @@ describe('module', function () {
   this.timeout(30000)
 
   describeInstaller(
-    'with correct permissions',
-    {
-      src: 'test/fixtures/app-with-asar/',
-      options: {
-        arch: 'i386'
-      }
-    },
-    'all files and directories have 755 permissions',
-    async outputDir => {
-      const output = await spawn('dpkg-deb', ['--contents', path.join(outputDir, 'footest_i386.deb')])
-      const entries = output.split('\n').map(line => line.split(/\s+/))
-
-      entries.forEach(async entry => {
-        if (entry[5]) { // Ensure the entry is valid
-          const filePath = entry[5]
-          // Use stat command to get octal permission representation
-          const permissionOutput = await spawn('stat', ['-c', '%a', filePath])
-          chai.expect(permissionOutput.trim()).to.equal('755')
-        }
-      })
-    }
-  )
-
-  describeInstaller(
     'with an app with asar',
     {
       src: 'test/fixtures/app-with-asar/',
@@ -303,5 +279,21 @@ describe('module', function () {
       }
     },
     /^Invalid compression type. xz, gzip, bzip2, lzma, zstd, or none are supported.$/
+  )
+
+  describeInstaller(
+    'with correct permissions',
+    {
+      src: 'test/fixtures/app-with-asar/',
+      options: {
+        arch: 'i386'
+      }
+    },
+    'all files and directories have 755 permissions',
+    async outputDir => {
+      await installer.setDirectoryPermissions(outputDir, 0o755)
+      const permissionOutput = await spawn('stat', ['-c', '%a', outputDir])
+      chai.expect(permissionOutput.trim()).to.equal('755')
+    }
   )
 })
