@@ -1,7 +1,7 @@
 {
   "name": "electron-installer-debian",
   "description": "Create a Debian package for your Electron app.",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "license": "MIT",
   "author": {
     "name": "Daniel Perez Alvarez",
@@ -35,7 +35,7 @@
     "test": "npm run lint && npm run spec"
   },
   "engines": {
-    "node": ">= 10.0.0"
+    "node": ">= 14.0.0"
   },
   "dependencies": {
     "@malept/cross-spawn-promise": "^1.0.0",
