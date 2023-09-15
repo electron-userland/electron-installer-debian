@@ -2,6 +2,7 @@
 
 const chai = require('chai')
 const path = require('path')
+const fs = require('fs').promises
 const { spawn } = require('@malept/cross-spawn-promise')
 
 const installer = require('..')
@@ -292,8 +293,10 @@ describe('module', function () {
     'all files and directories have 755 permissions',
     async outputDir => {
       await installer.setDirectoryPermissions(outputDir, 0o755)
-      const permissionOutput = await spawn('stat', ['-c', '%a', outputDir])
-      chai.expect(permissionOutput.trim()).to.equal('755')
+      const stats = await fs.stat(outputDir)
+      const mode = stats.mode & 0o777
+      // We use a bitwise AND operation (&) to perform a bitwise AND operation between the file or directory's permission mode (represented by stats.mode) and the octal value 0o777.
+      chai.expect(mode.toString(8)).to.equal('755')
     }
   )
 })
