@@ -4,6 +4,15 @@
 
 [Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.2.0...main
 
+### Removed
+
+* Node < 22 support
+* `fs-extra`, `lodash`, and `get-folder-size` dependencies, in favor of Node builtins
+
+### Changed
+
+* Upgraded to ESLint 9 with flat config, and replaced `nyc` with `c8` for coverage
+
 ## [3.2.0] - 2023-08-18
 
 [3.2.0]: https://github.com/electron-userland/electron-installer-debian/compare/v3.1.0...v3.2.0
