@@ -8,33 +8,34 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+*
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [14.x, 16.x, 18.x]
-        os: [macOS-latest, ubuntu-latest]
+        node-version: [22.x, 24.x]
+        os: [ubuntu-22.04, ubuntu-24.04, macos-latest]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
+      - uses: actions/checkout@v4
+      - name: Install OS dependencies
         run: ci/install-os-dependencies.sh
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: npm
       - name: Install
-        run: |
-          npm install --engine-strict
-          npm update
+        run: npm ci
       - name: Fix permission for test fixtures
-        if: runner.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: chmod --recursive g-w test/fixtures
       - name: Test
         run: npm test

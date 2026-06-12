@@ -9,3 +9,7 @@ updates:
   - dependency-name: get-folder-size
     versions:
     - ">= 3"
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: daily
