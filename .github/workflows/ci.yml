@@ -31,13 +31,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
+          cache: yarn
       - name: Install
-        run: npm ci
+        run: yarn install --immutable
       - name: Fix permission for test fixtures
         if: runner.os == 'Linux'
         run: chmod --recursive g-w test/fixtures
       - name: Test
-        run: npm test
+        run: yarn test
         env:
           DEBUG: 'electron-installer-debian'

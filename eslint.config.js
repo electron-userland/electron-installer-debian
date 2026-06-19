@@ -10,7 +10,7 @@ const promise = require('eslint-plugin-promise')
 // does not support flat config. Swap for neostandard once adopted.
 module.exports = [
   {
-    ignores: ['test/fixtures/', 'coverage/']
+    ignores: ['test/fixtures/', 'coverage/', '.yarn/']
   },
   js.configs.recommended,
   n.configs['flat/recommended'],

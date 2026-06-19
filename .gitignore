@@ -1,5 +1,14 @@
 /coverage/
 node_modules
-yarn.lock
+package-lock.json
 /example/dist/
 /test/fixtures/out/
+
+# yarn v4
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
