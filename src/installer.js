@@ -12,7 +12,7 @@ const spawn = require('./spawn')
 
 const defaultLogger = debug('electron-installer-debian')
 
-const defaultRename = (dest, src) => {
+const defaultRename = dest => {
   return path.join(dest, '<%= name %>_<%= version %><% if (revision) { %>-<%= revision %><% } %>_<%= arch %>.deb')
 }
 

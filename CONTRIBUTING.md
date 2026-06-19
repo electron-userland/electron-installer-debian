@@ -32,14 +32,14 @@ We use the label [`help wanted`](https://github.com/electron-userland/electron-i
 
 Here are some things to keep in mind as you file pull requests to fix bugs, add new features, etc.:
 
-* Travis CI is used to make sure that the project builds packages as expected on the supported
+* GitHub Actions is used to make sure that the project builds packages as expected on the supported
   platforms, using supported Node.js versions.
 * Unless it's impractical, please write tests for your changes. This will help us so that we can
   spot regressions much easier.
 * If your PR changes the behavior of an existing feature, or adds a new feature, please add/edit
   the package's documentation. Files that will likely need to be updated include `README.md`.
-* This project uses the [JavaScript Standard Style](https://standardjs.com/) as a coding convention.
-  CI will fail if the PR does not conform to this standard.
+* This project uses [oxlint](https://oxc.rs/docs/guide/usage/linter) for linting. CI will fail if
+  the PR does not conform; run `yarn lint:fix` to fix most issues automatically.
 * One of the philosophies of the project is to keep the code base as small as possible. If you are
   adding a new feature, think about whether it is appropriate to go into a separate Node module,
   and then be integrated into this project.

@@ -9,7 +9,7 @@ const tmp = require('tmp-promise')
 const installer = require('../..')
 
 module.exports = function describeInstaller (description, installerOptions, itDescription, itFunc) {
-  describe(description, test => {
+  describe(description, () => {
     const outputDir = module.exports.tempOutputDir(installerOptions.dest)
     const options = module.exports.testInstallerOptions(outputDir, installerOptions)
 

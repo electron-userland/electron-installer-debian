@@ -214,7 +214,7 @@ describe('module', function () {
     /^Wrong executable script name: invalid$/
   )
 
-  describe('with restrictive umask', test => {
+  describe('with restrictive umask', () => {
     const outputDir = tempOutputDir()
     let defaultMask
     let consoleWarn
