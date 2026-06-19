@@ -1,16 +1,10 @@
 import { spawn as crossSpawn } from '@malept/cross-spawn-promise'
 
 function updateExecutableMissingException (err, hasLogger) {
-  if (hasLogger && err.code === 'ENOENT') {
-    const isFakeroot = err.syscall === 'spawn fakeroot'
-    const isDpkg = !isFakeroot && err.syscall === 'spawn dpkg'
+  if (hasLogger && err.code === 'ENOENT' && err.syscall === 'spawn dpkg-deb') {
+    const installer = process.platform === 'darwin' ? 'brew' : 'apt-get'
 
-    if (isFakeroot || isDpkg) {
-      const installer = process.platform === 'darwin' ? 'brew' : 'apt-get'
-      const pkg = isFakeroot ? 'fakeroot' : 'dpkg'
-
-      err.message = `Your system is missing the ${pkg} package. Try, e.g. '${installer} install ${pkg}'`
-    }
+    err.message = `Your system is missing the dpkg package. Try, e.g. '${installer} install dpkg'`
   }
 }
 

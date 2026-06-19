@@ -30,8 +30,13 @@ describe('module', () => {
         categories: []
       }
     },
-    'generates a .deb package',
-    assertASARDebExists
+    'generates a .deb package compressed with xz by default',
+    async outputDir => {
+      await assertASARDebExists(outputDir)
+
+      const output = await spawn('file', [path.join(outputDir, 'footest_i386.deb')])
+      expect(output).to.contain('compression xz')
+    }
   )
 
   describeInstaller(

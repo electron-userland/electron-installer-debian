@@ -15,12 +15,12 @@
 
 ## Requirements
 
-This tool requires Node 22.12 or greater, `fakeroot`, and `dpkg` to build the `.deb` package.
+This tool requires Node 22.12 or greater and `dpkg` 1.19.0 or newer to build the `.deb` package.
 
 I'd recommend building your packages on your target platform, but if you insist on using Mac OS X, you can install these tools through [Homebrew](http://brew.sh/):
 
 ```
-$ brew install fakeroot dpkg
+$ brew install dpkg
 ```
 
 
@@ -310,7 +310,7 @@ Estimate of the total amount of disk space required to install the named package
 
 #### options.depends, recommends, suggests, enhances, preDepends
 Type: `Array[String]`
-Default: For `depends`, the minimum set of packages necessary for Electron to run; See [source code](https://github.com/electron-userland/electron-installer-debian/blob/53fb5c5/src/installer.js#L146-L157) for `recommends`, `suggests`, `enhances`, and `preDepends` default values
+Default: For `depends`, the minimum set of packages necessary for Electron to run; See [`src/dependencies.js`](https://github.com/electron-userland/electron-installer-debian/blob/main/src/dependencies.js) for `recommends`, `suggests`, `enhances`, and `preDepends` default values
 
 Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests`, `Enhances` and `Pre-Depends` fields of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
 

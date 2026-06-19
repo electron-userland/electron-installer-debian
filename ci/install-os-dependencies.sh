@@ -4,7 +4,7 @@ set -euo pipefail
 
 case "$(uname -s)" in
   Darwin)
-    brew install dpkg fakeroot
+    brew install dpkg
     ;;
   Linux)
     sudo apt-get --quiet update
