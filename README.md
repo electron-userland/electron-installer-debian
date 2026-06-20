@@ -8,7 +8,7 @@
 
 [Usage](#usage) |
 [Options](#options) |
-[Release Notes](https://github.com/electron-userland/electron-installer-debian/blob/main/NEWS.md) |
+[Release Notes](https://github.com/electron-userland/electron-installer-debian/releases) |
 [License](https://github.com/electron-userland/electron-installer-debian/blob/main/LICENSE) |
 [Code of Conduct](https://github.com/electron-userland/electron-installer-debian/blob/main/CODE_OF_CONDUCT.md) |
 [Support](https://github.com/electron-userland/electron-installer-debian/blob/main/SUPPORT.md)
