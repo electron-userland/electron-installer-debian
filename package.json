@@ -29,7 +29,7 @@
   "scripts": {
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "spec": "c8 mocha",
+    "spec": "nyc mocha",
     "test": "yarn lint && yarn spec"
   },
   "engines": {
@@ -45,9 +45,9 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "c8": "^9.1.0",
     "chai": "^4.5.0",
     "mocha": "^10.8.2",
+    "nyc": "^15.0.0",
     "oxlint": "^1.59.0",
     "promise-retry": "^2.0.1",
     "tmp-promise": "^3.0.2"

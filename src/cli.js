@@ -44,9 +44,7 @@ const { $0, _, version, ...options } = argv
 
 installer(options)
   .then(() => console.log(`Successfully created package at ${argv.dest}`))
-  /* c8 ignore start */
-  .catch(err => {
+  .catch(/* istanbul ignore next */ err => {
     console.error(err, err.stack)
     process.exitCode = 1
   })
-  /* c8 ignore stop */

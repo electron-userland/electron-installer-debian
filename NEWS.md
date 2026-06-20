@@ -12,7 +12,7 @@
 ### Changed
 
 * Switched package management to Yarn 4
-* Replaced ESLint with `oxlint`, and `nyc` with `c8` for coverage
+* Replaced ESLint with `oxlint`
 
 ## [3.2.0] - 2023-08-18
 
