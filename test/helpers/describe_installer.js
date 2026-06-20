@@ -1,8 +1,10 @@
-import { expect } from 'chai'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
+
 import tmp from 'tmp-promise'
+import { after, before, describe, it } from 'node:test'
+import { expect } from 'chai'
 
 import installer from '../../src/installer.js'
 
