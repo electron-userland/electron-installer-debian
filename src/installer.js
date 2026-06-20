@@ -1,14 +1,10 @@
 'use strict'
 
-const { promisify } = require('util')
-
-const _ = require('lodash')
 const common = require('electron-installer-common')
 const debug = require('debug')
-const fs = require('fs-extra')
-const fsize = promisify(require('get-folder-size'))
+const fs = require('node:fs/promises')
 const parseAuthor = require('parse-author')
-const path = require('path')
+const path = require('node:path')
 const wrap = require('word-wrap')
 
 const debianDependencies = require('./dependencies')
@@ -16,8 +12,33 @@ const spawn = require('./spawn')
 
 const defaultLogger = debug('electron-installer-debian')
 
-const defaultRename = (dest, src) => {
+const defaultRename = dest => {
   return path.join(dest, '<%= name %>_<%= version %><% if (revision) { %>-<%= revision %><% } %>_<%= arch %>.deb')
+}
+
+/**
+ * Computes the total size in bytes of a folder, counting hard-linked files
+ * only once. Like the `get-folder-size` module it replaces, it includes the
+ * sizes of the directory entries themselves and does not follow symlinks.
+ */
+async function getFolderSize (folder) {
+  const folderStats = await fs.lstat(folder)
+  if (!folderStats.isDirectory()) {
+    return folderStats.size
+  }
+
+  let total = folderStats.size
+  const seenInodes = new Set([`${folderStats.dev}:${folderStats.ino}`])
+  for (const entry of await fs.readdir(folder, { withFileTypes: true, recursive: true })) {
+    const stats = await fs.lstat(path.join(entry.parentPath, entry.name))
+    const inode = `${stats.dev}:${stats.ino}`
+    if (!seenInodes.has(inode)) {
+      seenInodes.add(inode)
+      total += stats.size
+    }
+  }
+
+  return total
 }
 
 /**
@@ -66,19 +87,23 @@ class DebianInstaller extends common.ElectronInstaller {
   copyScripts () {
     const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
 
-    return common.wrapError('creating script files', async () =>
-      Promise.all(_.map(this.options.scripts, async (item, key) => {
-        if (scriptNames.includes(key)) {
-          const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
-          this.options.logger(`Creating script file at ${scriptFile}`)
+    return common.wrapError('creating script files', async () => {
+      const scripts = Object.entries(this.options.scripts || {})
+      const invalid = scripts.find(([key]) => !scriptNames.includes(key))
+      if (invalid) {
+        throw new Error(`Wrong executable script name: ${invalid[0]}`)
+      }
 
-          await fs.copy(item, scriptFile)
-          return fs.chmod(scriptFile, 0o755)
-        } else {
-          throw new Error(`Wrong executable script name: ${key}`)
-        }
+      await fs.mkdir(path.join(this.stagingDir, 'DEBIAN'), { recursive: true })
+
+      return Promise.all(scripts.map(async ([key, item]) => {
+        const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
+        this.options.logger(`Creating script file at ${scriptFile}`)
+
+        await fs.copyFile(item, scriptFile)
+        return fs.chmod(scriptFile, 0o755)
       }))
-    )
+    })
   }
 
   /**
@@ -133,7 +158,7 @@ class DebianInstaller extends common.ElectronInstaller {
   async generateDefaults () {
     const [pkg, size, electronVersion] = await Promise.all([
       (async () => (await common.readMetadata(this.userSupplied)) || {})(),
-      fsize(this.userSupplied.src),
+      getFolderSize(this.userSupplied.src),
       common.readElectronVersion(this.userSupplied.src)
     ])
 

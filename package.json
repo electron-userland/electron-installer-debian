@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/electron-userland/electron-installer-debian.git"
+    "url": "git+https://github.com/electron-userland/electron-installer-debian.git"
   },
   "keywords": [
     "electron",
@@ -21,42 +21,34 @@
     "linux"
   ],
   "main": "src/installer.js",
-  "bin": {
-    "electron-installer-debian": "src/cli.js"
-  },
+  "bin": "src/cli.js",
   "files": [
-    "bin",
     "src",
     "resources"
   ],
   "scripts": {
-    "lint": "eslint .",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "spec": "nyc mocha",
-    "test": "npm run lint && npm run spec"
+    "test": "yarn lint && yarn spec"
   },
   "engines": {
-    "node": ">= 14.0.0"
+    "node": ">= 22.12.0"
   },
+  "packageManager": "yarn@4.10.3+sha512.c38cafb5c7bb273f3926d04e55e1d8c9dfa7d9c3ea1f36a4868fa028b9e5f72298f0b7f401ad5eb921749eb012eb1c3bb74bf7503df3ee43fd600d14a018266f",
   "dependencies": {
-    "@malept/cross-spawn-promise": "^1.0.0",
+    "@malept/cross-spawn-promise": "^2.0.0",
     "debug": "^4.1.1",
-    "electron-installer-common": "^0.10.2",
-    "fs-extra": "^9.0.0",
-    "get-folder-size": "^2.0.1",
-    "lodash": "^4.17.4",
-    "word-wrap": "^1.2.3",
-    "yargs": "^16.0.2"
+    "electron-installer-common": "^0.10.3",
+    "parse-author": "^2.0.0",
+    "word-wrap": "^1.2.4",
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^7.2.0",
-    "eslint-config-standard": "^16.0.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-standard": "^5.0.0",
-    "mocha": "^8.0.1",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
     "nyc": "^15.0.0",
+    "oxlint": "^1.59.0",
     "promise-retry": "^2.0.1",
     "tmp-promise": "^3.0.2"
   }

@@ -1,16 +1,15 @@
 'use strict'
 
-const _ = require('lodash')
 const { expect } = require('chai')
-const fs = require('fs-extra')
-const os = require('os')
-const path = require('path')
+const fs = require('node:fs/promises')
+const os = require('node:os')
+const path = require('node:path')
 const tmp = require('tmp-promise')
 
 const installer = require('../..')
 
 module.exports = function describeInstaller (description, installerOptions, itDescription, itFunc) {
-  describe(description, test => {
+  describe(description, () => {
     const outputDir = module.exports.tempOutputDir(installerOptions.dest)
     const options = module.exports.testInstallerOptions(outputDir, installerOptions)
 
@@ -36,7 +35,7 @@ module.exports.describeInstallerWithException = function describeInstallerWithEx
 }
 
 module.exports.cleanupOutputDir = function cleanupOutputDir (outputDir) {
-  after(() => fs.remove(outputDir))
+  after(() => fs.rm(outputDir, { recursive: true, force: true }))
 }
 
 module.exports.tempOutputDir = function tempOutputDir (customDir) {
@@ -44,12 +43,15 @@ module.exports.tempOutputDir = function tempOutputDir (customDir) {
 }
 
 module.exports.testInstallerOptions = function testInstallerOptions (outputDir, installerOptions) {
-  return _.merge({
+  return {
     rename: debFile => {
       return path.join(debFile, '<%= name %>_<%= arch %>.deb')
     },
+    ...installerOptions,
     options: {
-      arch: 'amd64'
-    }
-  }, installerOptions, { dest: outputDir })
+      arch: 'amd64',
+      ...installerOptions.options
+    },
+    dest: outputDir
+  }
 }

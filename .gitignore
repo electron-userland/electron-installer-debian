@@ -1,6 +1,14 @@
 .nyc_output
 node_modules
 package-lock.json
-yarn.lock
 /example/dist/
 /test/fixtures/out/
+
+# yarn v4
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
