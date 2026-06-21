@@ -1,14 +1,11 @@
-'use strict'
+import chai from 'chai'
+import path from 'node:path'
+import { spawn } from '@malept/cross-spawn-promise'
 
-const chai = require('chai')
-const path = require('path')
-const { spawn } = require('@malept/cross-spawn-promise')
+import installer, { transformVersion } from '../src/installer.js'
 
-const installer = require('..')
-
-const access = require('./helpers/access')
-const describeInstaller = require('./helpers/describe_installer')
-const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
+import access from './helpers/access.js'
+import describeInstaller, { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } from './helpers/describe_installer.js'
 
 const assertASARDebExists = outputDir =>
   access(path.join(outputDir, 'footest_i386.deb'))
@@ -247,8 +244,8 @@ describe('module', function () {
 
   describe('transformVersion', () => {
     it('uses tildes for pre-release versions', () => {
-      chai.expect(installer.transformVersion('1.2.3')).to.equal('1.2.3')
-      chai.expect(installer.transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
+      chai.expect(transformVersion('1.2.3')).to.equal('1.2.3')
+      chai.expect(transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
     })
   })
 

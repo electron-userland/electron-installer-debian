@@ -1,7 +1,6 @@
-'use strict'
+import chai from 'chai'
 
-const chai = require('chai')
-const spawn = require('../src/spawn')
+import spawn from '../src/spawn.js'
 
 describe('spawn', () => {
   let oldPath

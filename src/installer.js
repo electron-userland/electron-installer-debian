@@ -1,14 +1,12 @@
-'use strict'
+import common from 'electron-installer-common'
+import debug from 'debug'
+import fs from 'node:fs/promises'
+import parseAuthor from 'parse-author'
+import path from 'node:path'
+import wrap from 'word-wrap'
 
-const common = require('electron-installer-common')
-const debug = require('debug')
-const fs = require('node:fs/promises')
-const parseAuthor = require('parse-author')
-const path = require('node:path')
-const wrap = require('word-wrap')
-
-const debianDependencies = require('./dependencies')
-const spawn = require('./spawn')
+import debianDependencies from './dependencies.js'
+import spawn from './spawn.js'
 
 const defaultLogger = debug('electron-installer-debian')
 
@@ -66,7 +64,7 @@ class DebianInstaller extends common.ElectronInstaller {
   }
 
   get defaultDesktopTemplatePath () {
-    return path.resolve(__dirname, '../resources/desktop.ejs')
+    return path.resolve(import.meta.dirname, '../resources/desktop.ejs')
   }
 
   get packagePattern () {
@@ -112,7 +110,7 @@ class DebianInstaller extends common.ElectronInstaller {
    * See: https://www.debian.org/doc/debian-policy/ch-controlfields.html
    */
   createControl () {
-    const src = path.resolve(__dirname, '../resources/control.ejs')
+    const src = path.resolve(import.meta.dirname, '../resources/control.ejs')
     const dest = path.join(this.stagingDir, 'DEBIAN', 'control')
     this.options.logger(`Creating control file at ${dest}`)
 
@@ -123,7 +121,7 @@ class DebianInstaller extends common.ElectronInstaller {
    * Create lintian overrides for the package.
    */
   async createOverrides () {
-    const src = path.resolve(__dirname, '../resources/overrides.ejs')
+    const src = path.resolve(import.meta.dirname, '../resources/overrides.ejs')
     const dest = path.join(this.stagingDir, this.baseAppDir, 'share/lintian/overrides', this.options.name)
     this.options.logger(`Creating lintian overrides at ${dest}`)
 
@@ -171,7 +169,7 @@ class DebianInstaller extends common.ElectronInstaller {
 
       maintainer: this.getMaintainer(pkg.author),
 
-      icon: path.resolve(__dirname, '../resources/icon.png'),
+      icon: path.resolve(import.meta.dirname, '../resources/icon.png'),
       lintianOverrides: []
     }, debianDependencies.forElectron(electronVersion))
 
@@ -269,7 +267,7 @@ class DebianInstaller extends common.ElectronInstaller {
 
 /* ************************************************************************** */
 
-module.exports = async data => {
+export default async function createDebianInstaller (data) {
   data.rename = data.rename || defaultRename
   data.logger = data.logger || defaultLogger
 
@@ -290,5 +288,4 @@ module.exports = async data => {
   return installer.options
 }
 
-module.exports.Installer = DebianInstaller
-module.exports.transformVersion = transformVersion
+export { DebianInstaller as Installer, transformVersion }

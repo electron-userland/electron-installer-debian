@@ -11,6 +11,8 @@
 
 ### Changed
 
+* The package is now an ES module: use `import` instead of `require` (CommonJS consumers on
+  Node.js >= 22.12 can use `require('electron-installer-debian').default`)
 * Switched package management to Yarn 4
 * Replaced ESLint with `oxlint`
 

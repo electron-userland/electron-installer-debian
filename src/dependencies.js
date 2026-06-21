@@ -1,6 +1,4 @@
-'use strict'
-
-const common = require('electron-installer-common')
+import common from 'electron-installer-common'
 
 const dependencyMap = {
   atspi: 'libatspi2.0-0',
@@ -30,7 +28,7 @@ function trashRequiresAsBoolean (electronVersion, dependencyMap) {
   return [common.getTrashDepends(electronVersion, dependencyMap).join(' | ')]
 }
 
-module.exports = {
+export default {
   /**
    * The dependencies for Electron itself, given an Electron version.
    */

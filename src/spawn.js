@@ -1,6 +1,4 @@
-'use strict'
-
-const { spawn } = require('@malept/cross-spawn-promise')
+import { spawn as crossSpawn } from '@malept/cross-spawn-promise'
 
 function updateExecutableMissingException (err, hasLogger) {
   if (hasLogger && err.code === 'ENOENT') {
@@ -16,8 +14,8 @@ function updateExecutableMissingException (err, hasLogger) {
   }
 }
 
-module.exports = async function (cmd, args, logger) {
-  return spawn(cmd, args, {
+export default async function spawn (cmd, args, logger) {
+  return crossSpawn(cmd, args, {
     logger,
     updateErrorCallback: updateExecutableMissingException
   })

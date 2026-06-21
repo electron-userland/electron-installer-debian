@@ -20,7 +20,8 @@
     "darwin",
     "linux"
   ],
-  "main": "src/installer.js",
+  "type": "module",
+  "exports": "./src/installer.js",
   "bin": "src/cli.js",
   "files": [
     "src",
