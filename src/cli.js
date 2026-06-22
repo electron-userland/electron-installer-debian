@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
-const yargs = require('yargs')
-const { hideBin } = require('yargs/helpers')
+import { readFileSync } from 'node:fs'
 
-const installer = require('./installer')
-const pkg = require('../package.json')
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
+
+import installer from './installer.js'
+
+const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)))
 
 const argv = yargs(hideBin(process.argv))
   .version(pkg.version)

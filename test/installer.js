@@ -1,14 +1,13 @@
-'use strict'
+import path from 'node:path'
 
-const chai = require('chai')
-const path = require('path')
-const { spawn } = require('@malept/cross-spawn-promise')
+import { spawn } from '@malept/cross-spawn-promise'
+import { after, before, describe, it } from 'node:test'
+import { expect } from 'chai'
 
-const installer = require('..')
+import installer, { transformVersion } from '../src/installer.js'
 
-const access = require('./helpers/access')
-const describeInstaller = require('./helpers/describe_installer')
-const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
+import access from './helpers/access.js'
+import describeInstaller, { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } from './helpers/describe_installer.js'
 
 const assertASARDebExists = outputDir =>
   access(path.join(outputDir, 'footest_i386.deb'))
@@ -16,9 +15,7 @@ const assertASARDebExists = outputDir =>
 const assertNonASARDebExists = outputDir =>
   access(path.join(outputDir, 'bartest_amd64.deb'))
 
-describe('module', function () {
-  this.timeout(30000)
-
+describe('module', () => {
   describeInstaller(
     'with an app with asar',
     {
@@ -196,10 +193,10 @@ describe('module', function () {
       }
 
       const permissions = chromeSandbox[0]
-      chai.expect(permissions).to.equal('-rwsr-xr-x')
+      expect(permissions).to.equal('-rwsr-xr-x')
 
       const owner = chromeSandbox[1]
-      chai.expect(owner).to.equal('root/root')
+      expect(owner).to.equal('root/root')
     }
   )
 
@@ -234,7 +231,7 @@ describe('module', function () {
         options: { arch: 'i386' }
       })
       return installer(installerOptions)
-        .catch(() => chai.expect(warning).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
+        .catch(() => expect(warning).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
     })
 
     cleanupOutputDir(outputDir)
@@ -247,8 +244,8 @@ describe('module', function () {
 
   describe('transformVersion', () => {
     it('uses tildes for pre-release versions', () => {
-      chai.expect(installer.transformVersion('1.2.3')).to.equal('1.2.3')
-      chai.expect(installer.transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
+      expect(transformVersion('1.2.3')).to.equal('1.2.3')
+      expect(transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
     })
   })
 
@@ -266,7 +263,7 @@ describe('module', function () {
       await assertASARDebExists(outputDir)
 
       const output = await spawn('file', [path.join(outputDir, 'footest_i386.deb')])
-      chai.expect(output).to.contain('compression gz')
+      expect(output).to.contain('compression gz')
     }
   )
 

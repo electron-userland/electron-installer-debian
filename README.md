@@ -158,7 +158,7 @@ $ npm install --save-dev electron-installer-debian
 And write something like this:
 
 ```javascript
-const installer = require('electron-installer-debian')
+import installer from 'electron-installer-debian'
 
 const options = {
   src: 'dist/app-linux-x64/',
@@ -166,18 +166,18 @@ const options = {
   arch: 'amd64'
 }
 
-async function main (options) {
-  console.log('Creating package (this may take a while)')
-  try {
-    await installer(options)
-    console.log(`Successfully created package at ${options.dest}`)
-  } catch (err) {
-    console.error(err, err.stack)
-    process.exit(1)
-  }
+console.log('Creating package (this may take a while)')
+try {
+  await installer(options)
+  console.log(`Successfully created package at ${options.dest}`)
+} catch (err) {
+  console.error(err, err.stack)
+  process.exit(1)
 }
-main(options)
 ```
+
+This package is an [ES module](https://nodejs.org/api/esm.html). On Node.js 22.12 and newer,
+CommonJS code can still load it with `require('electron-installer-debian').default`.
 
 You'll end up with the package at `dist/installers/app_0.0.1_amd64.deb`.
 

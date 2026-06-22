@@ -20,16 +20,18 @@
     "darwin",
     "linux"
   ],
-  "main": "src/installer.js",
+  "type": "module",
+  "exports": "./src/installer.js",
   "bin": "src/cli.js",
   "files": [
     "src",
     "resources"
   ],
   "scripts": {
+    "coverage": "node --test --experimental-test-coverage test/*.js",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "spec": "nyc mocha",
+    "spec": "node --test test/*.js",
     "test": "yarn lint && yarn spec"
   },
   "engines": {
@@ -45,9 +47,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "chai": "^4.5.0",
-    "mocha": "^10.8.2",
-    "nyc": "^15.0.0",
+    "chai": "^6.2.0",
     "oxlint": "^1.59.0",
     "promise-retry": "^2.0.1",
     "tmp-promise": "^3.0.2"
