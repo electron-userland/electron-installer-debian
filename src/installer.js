@@ -129,23 +129,17 @@ class DebianInstaller extends common.ElectronInstaller {
   }
 
   /**
-   * Package everything using `dpkg` and `fakeroot`.
+   * Package everything using `dpkg-deb`.
    */
   async createPackage () {
     this.options.logger(`Creating package at ${this.stagingDir}`)
 
-    const command = ['--build', this.stagingDir]
-    if (process.platform === 'darwin') {
-      command.unshift('--root-owner-group')
-    }
-
+    const command = ['--root-owner-group', '--build', this.stagingDir]
     if (this.options.compression) {
       command.unshift(`-Z${this.options.compression}`)
     }
 
-    command.unshift('dpkg-deb')
-
-    const output = await spawn('fakeroot', command, this.options.logger)
+    const output = await spawn('dpkg-deb', command, this.options.logger)
     this.options.logger(`dpkg-deb output: ${output}`)
   }
 
@@ -165,6 +159,7 @@ class DebianInstaller extends common.ElectronInstaller {
 
       section: 'utils',
       priority: 'optional',
+      compression: 'xz',
       size: Math.ceil((size || 0) / 1024),
 
       maintainer: this.getMaintainer(pkg.author),

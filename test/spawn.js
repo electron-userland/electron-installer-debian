@@ -11,12 +11,12 @@ describe('spawn', () => {
     process.env.PATH = '/non-existent-path'
   })
 
-  it('should throw a human-friendly error when it cannot find dpkg or fakeroot', async () => {
+  it('should throw a human-friendly error when it cannot find dpkg-deb', async () => {
     try {
-      await spawn('dpkg', ['--version'], () => {})
-      throw new Error('dpkg should not have been executed')
+      await spawn('dpkg-deb', ['--version'], () => {})
+      throw new Error('dpkg-deb should not have been executed')
     } catch (error) {
-      expect(error.message).to.match(/Error executing command \(dpkg --version\):\nYour system is missing the dpkg package/)
+      expect(error.message).to.match(/Error executing command \(dpkg-deb --version\):\nYour system is missing the dpkg package/)
     }
   })
 
