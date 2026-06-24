@@ -1,8 +1,9 @@
 # `electron-installer-debian` - Changes by Version
 
-## [Unreleased]
+## New Release Notes on GitHub Releases
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.2.0...main
+Release notes for new releases are now on [GitHub Releases](https://github.com/electron-userland/electron-installer-debian/releases)
+for the repository.
 
 ### Removed
 
