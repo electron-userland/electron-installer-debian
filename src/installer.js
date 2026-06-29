@@ -1,23 +1,42 @@
-'use strict'
+import common from 'electron-installer-common'
+import debug from 'debug'
+import fs from 'node:fs/promises'
+import parseAuthor from 'parse-author'
+import path from 'node:path'
+import wrap from 'word-wrap'
 
-const { promisify } = require('util')
-
-const _ = require('lodash')
-const common = require('electron-installer-common')
-const debug = require('debug')
-const fs = require('fs-extra')
-const fsize = promisify(require('get-folder-size'))
-const parseAuthor = require('parse-author')
-const path = require('path')
-const wrap = require('word-wrap')
-
-const debianDependencies = require('./dependencies')
-const spawn = require('./spawn')
+import debianDependencies from './dependencies.js'
+import spawn from './spawn.js'
 
 const defaultLogger = debug('electron-installer-debian')
 
-const defaultRename = (dest, src) => {
+const defaultRename = dest => {
   return path.join(dest, '<%= name %>_<%= version %><% if (revision) { %>-<%= revision %><% } %>_<%= arch %>.deb')
+}
+
+/**
+ * Computes the total size in bytes of a folder, counting hard-linked files
+ * only once. Like the `get-folder-size` module it replaces, it includes the
+ * sizes of the directory entries themselves and does not follow symlinks.
+ */
+async function getFolderSize (folder) {
+  const folderStats = await fs.lstat(folder)
+  if (!folderStats.isDirectory()) {
+    return folderStats.size
+  }
+
+  let total = folderStats.size
+  const seenInodes = new Set([`${folderStats.dev}:${folderStats.ino}`])
+  for (const entry of await fs.readdir(folder, { withFileTypes: true, recursive: true })) {
+    const stats = await fs.lstat(path.join(entry.parentPath, entry.name))
+    const inode = `${stats.dev}:${stats.ino}`
+    if (!seenInodes.has(inode)) {
+      seenInodes.add(inode)
+      total += stats.size
+    }
+  }
+
+  return total
 }
 
 /**
@@ -28,19 +47,6 @@ const defaultRename = (dest, src) => {
  */
 function transformVersion (version) {
   return version.replace(/(\d)[_.+-]?((RC|rc|pre|dev|beta|alpha)[_.+-]?\d*)$/, '$1~$2')
-}
-
-/**
- * Recursively set permissions on a directory and its contents.
- */
-async function setDirectoryPermissions (directoryPath, permissions) {
-  await fs.chmod(directoryPath, permissions)
-  const entries = await fs.readdir(directoryPath, { withFileTypes: true })
-  entries.forEach(entry => {
-    if (entry.isDirectory()) {
-      fs.chmod(path.join(directoryPath, entry.name), permissions)
-    }
-  })
 }
 
 class DebianInstaller extends common.ElectronInstaller {
@@ -58,7 +64,7 @@ class DebianInstaller extends common.ElectronInstaller {
   }
 
   get defaultDesktopTemplatePath () {
-    return path.resolve(__dirname, '../resources/desktop.ejs')
+    return path.resolve(import.meta.dirname, '../resources/desktop.ejs')
   }
 
   get packagePattern () {
@@ -79,19 +85,23 @@ class DebianInstaller extends common.ElectronInstaller {
   copyScripts () {
     const scriptNames = ['preinst', 'postinst', 'prerm', 'postrm']
 
-    return common.wrapError('creating script files', async () =>
-      Promise.all(_.map(this.options.scripts, async (item, key) => {
-        if (scriptNames.includes(key)) {
-          const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
-          this.options.logger(`Creating script file at ${scriptFile}`)
+    return common.wrapError('creating script files', async () => {
+      const scripts = Object.entries(this.options.scripts || {})
+      const invalid = scripts.find(([key]) => !scriptNames.includes(key))
+      if (invalid) {
+        throw new Error(`Wrong executable script name: ${invalid[0]}`)
+      }
 
-          await fs.copy(item, scriptFile)
-          return fs.chmod(scriptFile, 0o755)
-        } else {
-          throw new Error(`Wrong executable script name: ${key}`)
-        }
+      await fs.mkdir(path.join(this.stagingDir, 'DEBIAN'), { recursive: true })
+
+      return Promise.all(scripts.map(async ([key, item]) => {
+        const scriptFile = path.join(this.stagingDir, 'DEBIAN', key)
+        this.options.logger(`Creating script file at ${scriptFile}`)
+
+        await fs.copyFile(item, scriptFile)
+        return fs.chmod(scriptFile, 0o755)
       }))
-    )
+    })
   }
 
   /**
@@ -100,7 +110,7 @@ class DebianInstaller extends common.ElectronInstaller {
    * See: https://www.debian.org/doc/debian-policy/ch-controlfields.html
    */
   createControl () {
-    const src = path.resolve(__dirname, '../resources/control.ejs')
+    const src = path.resolve(import.meta.dirname, '../resources/control.ejs')
     const dest = path.join(this.stagingDir, 'DEBIAN', 'control')
     this.options.logger(`Creating control file at ${dest}`)
 
@@ -111,7 +121,7 @@ class DebianInstaller extends common.ElectronInstaller {
    * Create lintian overrides for the package.
    */
   async createOverrides () {
-    const src = path.resolve(__dirname, '../resources/overrides.ejs')
+    const src = path.resolve(import.meta.dirname, '../resources/overrides.ejs')
     const dest = path.join(this.stagingDir, this.baseAppDir, 'share/lintian/overrides', this.options.name)
     this.options.logger(`Creating lintian overrides at ${dest}`)
 
@@ -119,25 +129,17 @@ class DebianInstaller extends common.ElectronInstaller {
   }
 
   /**
-   * Package everything using `dpkg` and `fakeroot`.
+   * Package everything using `dpkg-deb`.
    */
   async createPackage () {
     this.options.logger(`Creating package at ${this.stagingDir}`)
 
-    await setDirectoryPermissions(this.stagingDir, 0o755)
-
-    const command = ['--build', this.stagingDir]
-    if (process.platform === 'darwin') {
-      command.unshift('--root-owner-group')
-    }
-
+    const command = ['--root-owner-group', '--build', this.stagingDir]
     if (this.options.compression) {
       command.unshift(`-Z${this.options.compression}`)
     }
 
-    command.unshift('dpkg-deb')
-
-    const output = await spawn('fakeroot', command, this.options.logger)
+    const output = await spawn('dpkg-deb', command, this.options.logger)
     this.options.logger(`dpkg-deb output: ${output}`)
   }
 
@@ -148,7 +150,7 @@ class DebianInstaller extends common.ElectronInstaller {
   async generateDefaults () {
     const [pkg, size, electronVersion] = await Promise.all([
       (async () => (await common.readMetadata(this.userSupplied)) || {})(),
-      fsize(this.userSupplied.src),
+      getFolderSize(this.userSupplied.src),
       common.readElectronVersion(this.userSupplied.src)
     ])
 
@@ -157,11 +159,12 @@ class DebianInstaller extends common.ElectronInstaller {
 
       section: 'utils',
       priority: 'optional',
+      compression: 'xz',
       size: Math.ceil((size || 0) / 1024),
 
       maintainer: this.getMaintainer(pkg.author),
 
-      icon: path.resolve(__dirname, '../resources/icon.png'),
+      icon: path.resolve(import.meta.dirname, '../resources/icon.png'),
       lintianOverrides: []
     }, debianDependencies.forElectron(electronVersion))
 
@@ -259,7 +262,7 @@ class DebianInstaller extends common.ElectronInstaller {
 
 /* ************************************************************************** */
 
-module.exports = async data => {
+export default async function createDebianInstaller (data) {
   data.rename = data.rename || defaultRename
   data.logger = data.logger || defaultLogger
 
@@ -280,6 +283,4 @@ module.exports = async data => {
   return installer.options
 }
 
-module.exports.Installer = DebianInstaller
-module.exports.transformVersion = transformVersion
-module.exports.setDirectoryPermissions = setDirectoryPermissions
+export { DebianInstaller as Installer, transformVersion }

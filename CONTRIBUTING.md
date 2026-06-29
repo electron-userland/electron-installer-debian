@@ -32,19 +32,20 @@ We use the label [`help wanted`](https://github.com/electron-userland/electron-i
 
 Here are some things to keep in mind as you file pull requests to fix bugs, add new features, etc.:
 
-* Travis CI is used to make sure that the project builds packages as expected on the supported
+* GitHub Actions is used to make sure that the project builds packages as expected on the supported
   platforms, using supported Node.js versions.
 * Unless it's impractical, please write tests for your changes. This will help us so that we can
   spot regressions much easier.
 * If your PR changes the behavior of an existing feature, or adds a new feature, please add/edit
   the package's documentation. Files that will likely need to be updated include `README.md`.
-* This project uses the [JavaScript Standard Style](https://standardjs.com/) as a coding convention.
-  CI will fail if the PR does not conform to this standard.
+* This project uses [oxlint](https://oxc.rs/docs/guide/usage/linter) for linting. CI will fail if
+  the PR does not conform; run `yarn lint:fix` to fix most issues automatically.
 * One of the philosophies of the project is to keep the code base as small as possible. If you are
   adding a new feature, think about whether it is appropriate to go into a separate Node module,
   and then be integrated into this project.
-* If you are contributing a nontrivial change, please add an entry to `NEWS.md`. The format is
-  similar to the one described at [Keep a Changelog](http://keepachangelog.com/).
+* Pull request titles and commit messages should follow the
+  [Conventional Commits](https://www.conventionalcommits.org/) format, since releases and release
+  notes are generated automatically from them.
 * Please **do not** bump the version number in your pull requests, the maintainers will do that.
   Feel free to indicate whether the changes require a major, minor, or patch version bump, as
   prescribed by the [semantic versioning specification](http://semver.org/).
@@ -87,14 +88,8 @@ Make sure to get an approval from another collaborator before merging a PR.
 
 ### Release process
 
-- if you aren't sure if a release should happen, open an issue
-- create a release branch
-- make sure that `NEWS.md` is up to date
-- make sure the tests pass
-- increment the version number appropriately, but not via `npm version` (we'll need to create the
-  tag ourselves)
-- push the release branch and create a PR
-- once the PR's merged, `git checkout main && git pull && git tag $VERSION && git push --tags`
-- create a new GitHub release from the pushed tag with the contents of `NEWS.md` for that version
-- close the milestone associated with the version if one is open
-- `npm publish`
+Releases are fully automated with [semantic-release](https://github.com/semantic-release/semantic-release):
+when a pull request is merged to `main`, the release workflow determines the next version from the
+Conventional Commit messages, publishes to npm via
+[trusted publishing](https://docs.npmjs.com/trusted-publishers), and creates a GitHub release with
+generated release notes. There are no manual release steps.

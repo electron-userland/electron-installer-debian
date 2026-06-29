@@ -1,15 +1,13 @@
-'use strict'
+import path from 'node:path'
 
-const chai = require('chai')
-const path = require('path')
-const fs = require('fs').promises
-const { spawn } = require('@malept/cross-spawn-promise')
+import { spawn } from '@malept/cross-spawn-promise'
+import { after, before, describe, it } from 'node:test'
+import { expect } from 'chai'
 
-const installer = require('..')
+import installer, { transformVersion } from '../src/installer.js'
 
-const access = require('./helpers/access')
-const describeInstaller = require('./helpers/describe_installer')
-const { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } = require('./helpers/describe_installer')
+import access from './helpers/access.js'
+import describeInstaller, { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } from './helpers/describe_installer.js'
 
 const assertASARDebExists = outputDir =>
   access(path.join(outputDir, 'footest_i386.deb'))
@@ -17,9 +15,7 @@ const assertASARDebExists = outputDir =>
 const assertNonASARDebExists = outputDir =>
   access(path.join(outputDir, 'bartest_amd64.deb'))
 
-describe('module', function () {
-  this.timeout(30000)
-
+describe('module', () => {
   describeInstaller(
     'with an app with asar',
     {
@@ -34,8 +30,13 @@ describe('module', function () {
         categories: []
       }
     },
-    'generates a .deb package',
-    assertASARDebExists
+    'generates a .deb package compressed with xz by default',
+    async outputDir => {
+      await assertASARDebExists(outputDir)
+
+      const output = await spawn('file', [path.join(outputDir, 'footest_i386.deb')])
+      expect(output).to.contain('compression xz')
+    }
   )
 
   describeInstaller(
@@ -197,10 +198,10 @@ describe('module', function () {
       }
 
       const permissions = chromeSandbox[0]
-      chai.expect(permissions).to.equal('-rwsr-xr-x')
+      expect(permissions).to.equal('-rwsr-xr-x')
 
       const owner = chromeSandbox[1]
-      chai.expect(owner).to.equal('root/root')
+      expect(owner).to.equal('root/root')
     }
   )
 
@@ -215,7 +216,7 @@ describe('module', function () {
     /^Wrong executable script name: invalid$/
   )
 
-  describe('with restrictive umask', test => {
+  describe('with restrictive umask', () => {
     const outputDir = tempOutputDir()
     let defaultMask
     let consoleWarn
@@ -235,7 +236,7 @@ describe('module', function () {
         options: { arch: 'i386' }
       })
       return installer(installerOptions)
-        .catch(() => chai.expect(warning).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
+        .catch(() => expect(warning).to.contain(`The current umask, ${process.umask().toString(8)}, is not supported. You should use 0022 or 0002`))
     })
 
     cleanupOutputDir(outputDir)
@@ -248,8 +249,8 @@ describe('module', function () {
 
   describe('transformVersion', () => {
     it('uses tildes for pre-release versions', () => {
-      chai.expect(installer.transformVersion('1.2.3')).to.equal('1.2.3')
-      chai.expect(installer.transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
+      expect(transformVersion('1.2.3')).to.equal('1.2.3')
+      expect(transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
     })
   })
 
@@ -267,7 +268,7 @@ describe('module', function () {
       await assertASARDebExists(outputDir)
 
       const output = await spawn('file', [path.join(outputDir, 'footest_i386.deb')])
-      chai.expect(output).to.contain('compression gz')
+      expect(output).to.contain('compression gz')
     }
   )
 
@@ -280,23 +281,5 @@ describe('module', function () {
       }
     },
     /^Invalid compression type. xz, gzip, bzip2, lzma, zstd, or none are supported.$/
-  )
-
-  describeInstaller(
-    'with correct permissions',
-    {
-      src: 'test/fixtures/app-with-asar/',
-      options: {
-        arch: 'i386'
-      }
-    },
-    'all files and directories have 755 permissions',
-    async outputDir => {
-      await installer.setDirectoryPermissions(outputDir, 0o755)
-      const stats = await fs.stat(outputDir)
-      const mode = stats.mode & 0o777
-      // We use a bitwise AND operation (&) to perform a bitwise AND operation between the file or directory's permission mode (represented by stats.mode) and the octal value 0o777.
-      chai.expect(mode.toString(8)).to.equal('755')
-    }
   )
 })

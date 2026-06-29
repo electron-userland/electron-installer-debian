@@ -1,9 +1,10 @@
-'use strict'
+import path from 'node:path'
 
-const access = require('./helpers/access')
-const { cleanupOutputDir, tempOutputDir } = require('./helpers/describe_installer')
-const path = require('path')
-const spawn = require('../src/spawn')
+import { before, describe, it } from 'node:test'
+
+import access from './helpers/access.js'
+import { cleanupOutputDir, tempOutputDir } from './helpers/describe_installer.js'
+import spawn from '../src/spawn.js'
 
 function runCLI (options) {
   const args = [
@@ -16,10 +17,8 @@ function runCLI (options) {
   before(() => spawn('./src/cli.js', args))
 }
 
-describe('cli', function () {
-  this.timeout(10000)
-
-  describe('with an app with asar', test => {
+describe('cli', () => {
+  describe('with an app with asar', () => {
     const outputDir = tempOutputDir()
 
     runCLI({ src: 'test/fixtures/app-with-asar/', dest: outputDir, arch: 'i386', config: 'test/fixtures/config.json' })
@@ -29,7 +28,7 @@ describe('cli', function () {
     cleanupOutputDir(outputDir)
   })
 
-  describe('with an app without asar', test => {
+  describe('with an app without asar', () => {
     const outputDir = tempOutputDir()
 
     runCLI({ src: 'test/fixtures/app-without-asar/', dest: outputDir, arch: 'amd64' })

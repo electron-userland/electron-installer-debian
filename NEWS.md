@@ -1,8 +1,27 @@
 # `electron-installer-debian` - Changes by Version
 
-## [Unreleased]
+## New Release Notes on GitHub Releases
 
-[Unreleased]: https://github.com/electron-userland/electron-installer-debian/compare/v3.2.0...main
+Release notes for new releases are now on [GitHub Releases](https://github.com/electron-userland/electron-installer-debian/releases)
+for the repository.
+
+### Removed
+
+* Node < 22 support
+* `fs-extra`, `lodash`, and `get-folder-size` dependencies, in favor of Node builtins
+* `fakeroot` requirement: packages are now built with `dpkg-deb --root-owner-group`
+
+### Changed
+
+* Default compression is now explicitly `xz`, regardless of the host's `dpkg-deb` default
+* Default package dependencies updated for modern distributions: `libsecret-1-0` added to
+  `Depends`, `gnome-keyring` replaces the obsolete GNOME keyring packages in `Suggests`, and
+  `gvfs` replaces the removed `gvfs-bin`
+* Generated desktop entries now include `Terminal=false` and `StartupWMClass`
+* The package is now an ES module: use `import` instead of `require` (CommonJS consumers on
+  Node.js >= 22.12 can use `require('electron-installer-debian').default`)
+* Switched package management to Yarn 4
+* Replaced ESLint with `oxlint`
 
 ## [3.2.0] - 2023-08-18
 

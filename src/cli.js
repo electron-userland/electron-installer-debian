@@ -1,25 +1,28 @@
 #!/usr/bin/env node
 
-const _ = require('lodash')
-const yargs = require('yargs')
+import { readFileSync } from 'node:fs'
 
-const installer = require('./installer')
-const pkg = require('../package.json')
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 
-const argv = yargs
+import installer from './installer.js'
+
+const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)))
+
+const argv = yargs(hideBin(process.argv))
   .version(pkg.version)
   .usage(`${pkg.description}\n\nUsage: $0 --src <inputdir> --dest <outputdir> --arch <architecture>`)
   .option('src', {
     describe: 'Directory that contains your built Electron app (e.g. with `electron-packager`)',
-    demand: true
+    demandOption: true
   })
   .option('dest', {
     describe: 'Directory that will contain the resulting Debian installer',
-    demand: true
+    demandOption: true
   })
   .option('arch', {
     describe: 'Machine architecture the package is targeted to',
-    demand: true
+    demandOption: true
   })
   .option('config', {
     describe: 'JSON file that contains the metadata for your application',
@@ -36,15 +39,15 @@ const argv = yargs
   .example('$0 --src dist/app/ --dest dist/installer/ --arch i386', 'use metadata from `dist/app/`')
   .example('$0 --src dist/app/ --dest dist/installer/ --config config.json', 'use metadata from `config.json`')
   .wrap(null)
-  .argv
+  .parse()
 
 console.log('Creating package (this may take a while)')
 
-const options = _.omit(argv, ['$0', '_', 'version'])
+const { $0, _, version, ...options } = argv
 
 installer(options)
   .then(() => console.log(`Successfully created package at ${argv.dest}`))
   .catch(/* istanbul ignore next */ err => {
     console.error(err, err.stack)
-    process.exit(1)
+    process.exitCode = 1
   })

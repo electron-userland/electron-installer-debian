@@ -1,6 +1,4 @@
-'use strict'
-
-const common = require('electron-installer-common')
+import common from 'electron-installer-common'
 
 const dependencyMap = {
   atspi: 'libatspi2.0-0',
@@ -10,7 +8,7 @@ const dependencyMap = {
   glib2: 'libglib2.0-bin',
   gtk2: 'libgtk2.0-0',
   gtk3: 'libgtk-3-0',
-  gvfs: 'gvfs-bin',
+  gvfs: 'gvfs',
   kdeCliTools: 'kde-cli-tools',
   kdeRuntime: 'kde-runtime',
   notify: 'libnotify4',
@@ -30,20 +28,20 @@ function trashRequiresAsBoolean (electronVersion, dependencyMap) {
   return [common.getTrashDepends(electronVersion, dependencyMap).join(' | ')]
 }
 
-module.exports = {
+export default {
   /**
    * The dependencies for Electron itself, given an Electron version.
    */
   forElectron: function dependenciesForElectron (electronVersion) {
     return {
       depends: common.getDepends(electronVersion, dependencyMap)
+        .concat(['libsecret-1-0'])
         .concat(trashRequiresAsBoolean(electronVersion, dependencyMap)),
       recommends: [
-        'pulseaudio | libasound2'
+        'libasound2t64 | libasound2 | pulseaudio'
       ],
       suggests: [
-        'gir1.2-gnomekeyring-1.0',
-        'libgnome-keyring0',
+        'gnome-keyring',
         'lsb-release'
       ],
       enhances: [

@@ -8,19 +8,19 @@
 
 [Usage](#usage) |
 [Options](#options) |
-[Release Notes](https://github.com/electron-userland/electron-installer-debian/blob/main/NEWS.md) |
+[Release Notes](https://github.com/electron-userland/electron-installer-debian/releases) |
 [License](https://github.com/electron-userland/electron-installer-debian/blob/main/LICENSE) |
 [Code of Conduct](https://github.com/electron-userland/electron-installer-debian/blob/main/CODE_OF_CONDUCT.md) |
 [Support](https://github.com/electron-userland/electron-installer-debian/blob/main/SUPPORT.md)
 
 ## Requirements
 
-This tool requires Node 10 or greater, `fakeroot`, and `dpkg` to build the `.deb` package.
+This tool requires Node 22.12 or greater and `dpkg` 1.19.0 or newer to build the `.deb` package.
 
 I'd recommend building your packages on your target platform, but if you insist on using Mac OS X, you can install these tools through [Homebrew](http://brew.sh/):
 
 ```
-$ brew install fakeroot dpkg
+$ brew install dpkg
 ```
 
 
@@ -158,7 +158,7 @@ $ npm install --save-dev electron-installer-debian
 And write something like this:
 
 ```javascript
-const installer = require('electron-installer-debian')
+import installer from 'electron-installer-debian'
 
 const options = {
   src: 'dist/app-linux-x64/',
@@ -166,18 +166,18 @@ const options = {
   arch: 'amd64'
 }
 
-async function main (options) {
-  console.log('Creating package (this may take a while)')
-  try {
-    await installer(options)
-    console.log(`Successfully created package at ${options.dest}`)
-  } catch (err) {
-    console.error(err, err.stack)
-    process.exit(1)
-  }
+console.log('Creating package (this may take a while)')
+try {
+  await installer(options)
+  console.log(`Successfully created package at ${options.dest}`)
+} catch (err) {
+  console.error(err, err.stack)
+  process.exit(1)
 }
-main(options)
 ```
+
+This package is an [ES module](https://nodejs.org/api/esm.html). On Node.js 22.12 and newer,
+CommonJS code can still load it with `require('electron-installer-debian').default`.
 
 You'll end up with the package at `dist/installers/app_0.0.1_amd64.deb`.
 
@@ -310,7 +310,7 @@ Estimate of the total amount of disk space required to install the named package
 
 #### options.depends, recommends, suggests, enhances, preDepends
 Type: `Array[String]`
-Default: For `depends`, the minimum set of packages necessary for Electron to run; See [source code](https://github.com/electron-userland/electron-installer-debian/blob/53fb5c5/src/installer.js#L146-L157) for `recommends`, `suggests`, `enhances`, and `preDepends` default values
+Default: For `depends`, the minimum set of packages necessary for Electron to run; See [`src/dependencies.js`](https://github.com/electron-userland/electron-installer-debian/blob/main/src/dependencies.js) for `recommends`, `suggests`, `enhances`, and `preDepends` default values
 
 Relationships to other packages, used in the [`Depends`, `Recommends`, `Suggests`, `Enhances` and `Pre-Depends` fields of the `control` specification](https://www.debian.org/doc/debian-policy/#binary-dependencies-depends-recommends-suggests-enhances-pre-depends).
 
