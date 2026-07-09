@@ -5,6 +5,19 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@electron/asar@npm:^3.2.5":
+  version: 3.4.1
+  resolution: "@electron/asar@npm:3.4.1"
+  dependencies:
+    commander: "npm:^5.0.0"
+    glob: "npm:^7.1.6"
+    minimatch: "npm:^3.0.4"
+  bin:
+    asar: bin/asar.js
+  checksum: 10c0/9df7983125faaa29c266e4beec6ceb205e139ede0e8fb81dde84c73ac8114388a99aad21379412a972163d8879ca959621f4e4896214bf8d296ba217e7cf8170
+  languageName: node
+  linkType: hard
+
 "@malept/cross-spawn-promise@npm:^1.0.0":
   version: 1.1.1
   resolution: "@malept/cross-spawn-promise@npm:1.1.1"
@@ -165,23 +178,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/glob@npm:^7.1.1":
-  version: 7.2.0
-  resolution: "@types/glob@npm:7.2.0"
-  dependencies:
-    "@types/minimatch": "npm:*"
-    "@types/node": "npm:*"
-  checksum: 10c0/a8eb5d5cb5c48fc58c7ca3ff1e1ddf771ee07ca5043da6e4871e6757b4472e2e73b4cfef2644c38983174a4bc728c73f8da02845c28a1212f98cabd293ecae98
-  languageName: node
-  linkType: hard
-
-"@types/minimatch@npm:*":
-  version: 5.1.2
-  resolution: "@types/minimatch@npm:5.1.2"
-  checksum: 10c0/83cf1c11748891b714e129de0585af4c55dd4c2cafb1f1d5233d79246e5e1e19d1b5ad9e8db449667b3ffa2b6c80125c429dbee1054e9efb45758dbc4e118562
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:*":
   version: 25.9.1
   resolution: "@types/node@npm:25.9.1"
@@ -202,24 +198,6 @@ __metadata:
   version: 6.2.3
   resolution: "ansi-styles@npm:6.2.3"
   checksum: 10c0/23b8a4ce14e18fb854693b95351e286b771d23d8844057ed2e7d083cd3e708376c3323707ec6a24365f7d7eda3ca00327fe04092e29e551499ec4c8b7bfac868
-  languageName: node
-  linkType: hard
-
-"asar@npm:^3.0.0":
-  version: 3.2.0
-  resolution: "asar@npm:3.2.0"
-  dependencies:
-    "@types/glob": "npm:^7.1.1"
-    chromium-pickle-js: "npm:^0.2.0"
-    commander: "npm:^5.0.0"
-    glob: "npm:^7.1.6"
-    minimatch: "npm:^3.0.4"
-  dependenciesMeta:
-    "@types/glob":
-      optional: true
-  bin:
-    asar: bin/asar.js
-  checksum: 10c0/1eea9686e3df8102251b911951d374c4bb758ce2881471c94c3999f7c473c96be6036ac09aafbd9453ba43b901e96ad0082d7e1bafc12f6768571353297c516f
   languageName: node
   linkType: hard
 
@@ -258,13 +236,6 @@ __metadata:
   version: 6.2.2
   resolution: "chai@npm:6.2.2"
   checksum: 10c0/e6c69e5f0c11dffe6ea13d0290936ebb68fcc1ad688b8e952e131df6a6d5797d5e860bc55cef1aca2e950c3e1f96daf79e9d5a70fb7dbaab4e46355e2635ed53
-  languageName: node
-  linkType: hard
-
-"chromium-pickle-js@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "chromium-pickle-js@npm:0.2.0"
-  checksum: 10c0/0a95bd280acdf05b0e08fa1a0e1db58c815dd24e92d639add8f494d23a8a49c26e4829721224d68f2f0e57a69047714db29bcff6deb5d029332321223416cb29
   languageName: node
   linkType: hard
 
@@ -317,12 +288,12 @@ __metadata:
   linkType: hard
 
 "electron-installer-common@npm:^0.10.3":
-  version: 0.10.3
-  resolution: "electron-installer-common@npm:0.10.3"
+  version: 0.10.4
+  resolution: "electron-installer-common@npm:0.10.4"
   dependencies:
+    "@electron/asar": "npm:^3.2.5"
     "@malept/cross-spawn-promise": "npm:^1.0.0"
     "@types/fs-extra": "npm:^9.0.1"
-    asar: "npm:^3.0.0"
     debug: "npm:^4.1.1"
     fs-extra: "npm:^9.0.0"
     glob: "npm:^7.1.4"
@@ -333,7 +304,7 @@ __metadata:
   dependenciesMeta:
     "@types/fs-extra":
       optional: true
-  checksum: 10c0/c52c0f2d59f66fea9bf4d1009895d0df5790ed5c1796fb4b6a689c4bb9de1a31518cb8f6c6b3506e73bd39da89b0547b08a373a3ded897bb26d6108a9c3d7258
+  checksum: 10c0/b4b780ea06604ae72041ddb8578f05ea38d723a295b0dc2bff99a6be400ddb49392a0fdbaf283294a690a2f6aa3a1786cc8a690043244b1066f4b150e931be0f
   languageName: node
   linkType: hard
 
