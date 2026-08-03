@@ -403,7 +403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-east-asian-width@npm:^1.0.0":
+"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.5.0":
   version: 1.6.0
   resolution: "get-east-asian-width@npm:1.6.0"
   checksum: 10c0/7e72e9550fd49ca5b246f9af6bb2afc129c96412845ff6556b3274fd44817a381702ca17028efe9866b261a3d44254cbf21e6c90cf05b4b61675630af776d431
@@ -652,7 +652,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:^7.1.0":
+"string-width@npm:^8.2.1":
+  version: 8.2.2
+  resolution: "string-width@npm:8.2.2"
+  dependencies:
+    get-east-asian-width: "npm:^1.5.0"
+    strip-ansi: "npm:^7.1.2"
+  checksum: 10c0/895624534e4e2f229e880bbc30aa77bdeb758e1a0edce203e0a17b8b4f08b8d3c1156516efc50a35e3efd0052d938a73797692111250ac9f52ee384710a01714
+  languageName: node
+  linkType: hard
+
+"strip-ansi@npm:^7.1.0, strip-ansi@npm:^7.1.2":
   version: 7.2.0
   resolution: "strip-ansi@npm:7.2.0"
   dependencies:
@@ -742,15 +752,15 @@ __metadata:
   linkType: hard
 
 "yargs@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "yargs@npm:18.0.0"
+  version: 18.1.0
+  resolution: "yargs@npm:18.1.0"
   dependencies:
     cliui: "npm:^9.0.1"
     escalade: "npm:^3.1.1"
     get-caller-file: "npm:^2.0.5"
-    string-width: "npm:^7.2.0"
+    string-width: "npm:^8.2.1"
     y18n: "npm:^5.0.5"
     yargs-parser: "npm:^22.0.0"
-  checksum: 10c0/bf290e4723876ea9c638c786a5c42ac28e03c9ca2325e1424bf43b94e5876456292d3ed905b853ebbba6daf43ed29e772ac2a6b3c5fb1b16533245d6211778f3
+  checksum: 10c0/86052bbed90a9aaaaf1eabe004f47c7420e1b7f8d314170cfb0ad4721f518ec2fb7ba5a6daa20708b1595aba257f1554b2d5b3f5606356f86aa9dae18de0bec5
   languageName: node
   linkType: hard
