@@ -1,10 +1,12 @@
+import fs from 'node:fs/promises'
 import path from 'node:path'
 
 import { spawn } from '@malept/cross-spawn-promise'
 import { after, before, describe, it } from 'node:test'
 import { expect } from 'chai'
+import tmp from 'tmp-promise'
 
-import installer, { transformVersion } from '../src/installer.js'
+import installer, { setDirectoryPermissions, transformVersion } from '../src/installer.js'
 
 import access from './helpers/access.js'
 import describeInstaller, { cleanupOutputDir, describeInstallerWithException, tempOutputDir, testInstallerOptions } from './helpers/describe_installer.js'
@@ -251,6 +253,36 @@ describe('module', () => {
     it('uses tildes for pre-release versions', () => {
       expect(transformVersion('1.2.3')).to.equal('1.2.3')
       expect(transformVersion('1.2.3-beta.4')).to.equal('1.2.3~beta.4')
+    })
+  })
+
+  describe('setDirectoryPermissions', () => {
+    it('recursively sets directory permissions while leaving files untouched', async () => {
+      const root = await tmp.dir({ unsafeCleanup: true })
+      try {
+        const nestedDir = path.join(root.path, 'DEBIAN', 'nested')
+        await fs.mkdir(nestedDir, { recursive: true })
+        const file = path.join(root.path, 'DEBIAN', 'control')
+        await fs.writeFile(file, '')
+
+        // Simulate directories left with permissions dpkg-deb rejects (<0755).
+        await fs.chmod(path.join(root.path, 'DEBIAN'), 0o750)
+        await fs.chmod(nestedDir, 0o750)
+        await fs.chmod(file, 0o640)
+
+        await setDirectoryPermissions(root.path, 0o755)
+
+        for (const dir of [root.path, path.join(root.path, 'DEBIAN'), nestedDir]) {
+          const stats = await fs.stat(dir)
+          expect((stats.mode & 0o777).toString(8)).to.equal('755')
+        }
+
+        // Files keep their mode so data files don't become executable.
+        const fileStats = await fs.stat(file)
+        expect((fileStats.mode & 0o777).toString(8)).to.equal('640')
+      } finally {
+        await root.cleanup()
+      }
     })
   })
 

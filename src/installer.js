@@ -49,6 +49,25 @@ function transformVersion (version) {
   return version.replace(/(\d)[_.+-]?((RC|rc|pre|dev|beta|alpha)[_.+-]?\d*)$/, '$1~$2')
 }
 
+/**
+ * Recursively ensures every directory at or under `directory` has the given
+ * permissions. Files are left untouched so that data files aren't made
+ * executable.
+ *
+ * `dpkg-deb --build` rejects a control directory whose permissions are below
+ * 0755 ("control directory has bad permissions 756 (must be >=0755)"), which
+ * happens under restrictive umasks such as those used by some CI environments
+ * (e.g. GitHub Codespaces).
+ */
+async function setDirectoryPermissions (directory, mode) {
+  await fs.chmod(directory, mode)
+  for (const entry of await fs.readdir(directory, { withFileTypes: true, recursive: true })) {
+    if (entry.isDirectory()) {
+      await fs.chmod(path.join(entry.parentPath, entry.name), mode)
+    }
+  }
+}
+
 class DebianInstaller extends common.ElectronInstaller {
   get contentFunctions () {
     return [
@@ -133,6 +152,8 @@ class DebianInstaller extends common.ElectronInstaller {
    */
   async createPackage () {
     this.options.logger(`Creating package at ${this.stagingDir}`)
+
+    await setDirectoryPermissions(this.stagingDir, 0o755)
 
     const command = ['--root-owner-group', '--build', this.stagingDir]
     if (this.options.compression) {
@@ -283,4 +304,4 @@ export default async function createDebianInstaller (data) {
   return installer.options
 }
 
-export { DebianInstaller as Installer, transformVersion }
+export { DebianInstaller as Installer, setDirectoryPermissions, transformVersion }
